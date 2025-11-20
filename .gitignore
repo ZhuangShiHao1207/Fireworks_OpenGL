@@ -417,4 +417,4 @@ FodyWeavers.xsd
 *.msm
 *.msp
 
-external/glfw/glfw-3.4/build/
+**build/
