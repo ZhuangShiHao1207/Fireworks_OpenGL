@@ -1,0 +1,24 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<Project ToolsVersion="17.0" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
+  <ItemGroup>
+    <CustomBuild Include="C:\Users\12077\Desktop\college\大三上\Fireworks_OpenGL\external\glfw\glfw-3.4\build\CMakeFiles\75f71bc3b648a9a40993c9e15581defa\update_mappings.rule">
+      <Filter>CMake Rules</Filter>
+    </CustomBuild>
+    <CustomBuild Include="C:\Users\12077\Desktop\college\大三上\Fireworks_OpenGL\external\glfw\glfw-3.4\src\CMakeLists.txt" />
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="C:\Users\12077\Desktop\college\大三上\Fireworks_OpenGL\external\glfw\glfw-3.4\src\mappings.h.in">
+      <Filter>Header Files</Filter>
+    </None>
+    <None Include="C:\Users\12077\Desktop\college\大三上\Fireworks_OpenGL\external\glfw\glfw-3.4\CMake\GenerateMappings.cmake" />
+    <None Include="C:\Users\12077\Desktop\college\大三上\Fireworks_OpenGL\external\glfw\glfw-3.4\build\src\CMakeFiles\update_mappings" />
+  </ItemGroup>
+  <ItemGroup>
+    <Filter Include="CMake Rules">
+      <UniqueIdentifier>{DFBD9079-FCE5-3F09-9A49-0413B4B9171F}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Header Files">
+      <UniqueIdentifier>{3D094A9C-160F-3486-BD9A-CD8B55E4D75A}</UniqueIdentifier>
+    </Filter>
+  </ItemGroup>
+</Project>

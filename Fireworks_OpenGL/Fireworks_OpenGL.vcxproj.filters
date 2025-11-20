@@ -18,5 +18,11 @@
     <ClCompile Include="Fireworks_OpenGL.cpp">
       <Filter>源文件</Filter>
     </ClCompile>
+    <ClCompile Include="external\glad\src\glad.c">
+      <Filter>源文件</Filter>
+    </ClCompile>
+    <ClCompile Include="test_lib.cpp">
+      <Filter>源文件</Filter>
+    </ClCompile>
   </ItemGroup>
 </Project>
