@@ -22,7 +22,7 @@
     </ProjectConfiguration>
   </ItemGroup>
   <PropertyGroup Label="Globals">
-    <ProjectGuid>{F0D8703C-8B62-3581-A116-EDCAF6EEEDA7}</ProjectGuid>
+    <ProjectGuid>{9F58E8ED-C601-3230-8B2B-BED81D342742}</ProjectGuid>
     <Keyword>Win32Proj</Keyword>
     <WindowsTargetPlatformVersion>10.0.26100.0</WindowsTargetPlatformVersion>
     <Platform>x64</Platform>
@@ -59,25 +59,25 @@
   <PropertyGroup Label="UserMacros" />
   <PropertyGroup>
     <_ProjectFileVersion>10.0.20506.1</_ProjectFileVersion>
-    <OutDir Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">C:\Users\12077\Desktop\college\大三上\Fireworks_OpenGL\external\glfw\glfw-3.4\build\tests\Debug\</OutDir>
+    <OutDir Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">D:\zlearning\project\Fireworks_OpenGL\Fireworks_OpenGL\external\glfw\glfw-3.4\build\tests\Debug\</OutDir>
     <IntDir Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">triangle-vulkan.dir\Debug\</IntDir>
     <TargetName Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">triangle-vulkan</TargetName>
     <TargetExt Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">.exe</TargetExt>
     <LinkIncremental Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">true</LinkIncremental>
     <GenerateManifest Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">true</GenerateManifest>
-    <OutDir Condition="'$(Configuration)|$(Platform)'=='Release|x64'">C:\Users\12077\Desktop\college\大三上\Fireworks_OpenGL\external\glfw\glfw-3.4\build\tests\Release\</OutDir>
+    <OutDir Condition="'$(Configuration)|$(Platform)'=='Release|x64'">D:\zlearning\project\Fireworks_OpenGL\Fireworks_OpenGL\external\glfw\glfw-3.4\build\tests\Release\</OutDir>
     <IntDir Condition="'$(Configuration)|$(Platform)'=='Release|x64'">triangle-vulkan.dir\Release\</IntDir>
     <TargetName Condition="'$(Configuration)|$(Platform)'=='Release|x64'">triangle-vulkan</TargetName>
     <TargetExt Condition="'$(Configuration)|$(Platform)'=='Release|x64'">.exe</TargetExt>
     <LinkIncremental Condition="'$(Configuration)|$(Platform)'=='Release|x64'">false</LinkIncremental>
     <GenerateManifest Condition="'$(Configuration)|$(Platform)'=='Release|x64'">true</GenerateManifest>
-    <OutDir Condition="'$(Configuration)|$(Platform)'=='MinSizeRel|x64'">C:\Users\12077\Desktop\college\大三上\Fireworks_OpenGL\external\glfw\glfw-3.4\build\tests\MinSizeRel\</OutDir>
+    <OutDir Condition="'$(Configuration)|$(Platform)'=='MinSizeRel|x64'">D:\zlearning\project\Fireworks_OpenGL\Fireworks_OpenGL\external\glfw\glfw-3.4\build\tests\MinSizeRel\</OutDir>
     <IntDir Condition="'$(Configuration)|$(Platform)'=='MinSizeRel|x64'">triangle-vulkan.dir\MinSizeRel\</IntDir>
     <TargetName Condition="'$(Configuration)|$(Platform)'=='MinSizeRel|x64'">triangle-vulkan</TargetName>
     <TargetExt Condition="'$(Configuration)|$(Platform)'=='MinSizeRel|x64'">.exe</TargetExt>
     <LinkIncremental Condition="'$(Configuration)|$(Platform)'=='MinSizeRel|x64'">false</LinkIncremental>
     <GenerateManifest Condition="'$(Configuration)|$(Platform)'=='MinSizeRel|x64'">true</GenerateManifest>
-    <OutDir Condition="'$(Configuration)|$(Platform)'=='RelWithDebInfo|x64'">C:\Users\12077\Desktop\college\大三上\Fireworks_OpenGL\external\glfw\glfw-3.4\build\tests\RelWithDebInfo\</OutDir>
+    <OutDir Condition="'$(Configuration)|$(Platform)'=='RelWithDebInfo|x64'">D:\zlearning\project\Fireworks_OpenGL\Fireworks_OpenGL\external\glfw\glfw-3.4\build\tests\RelWithDebInfo\</OutDir>
     <IntDir Condition="'$(Configuration)|$(Platform)'=='RelWithDebInfo|x64'">triangle-vulkan.dir\RelWithDebInfo\</IntDir>
     <TargetName Condition="'$(Configuration)|$(Platform)'=='RelWithDebInfo|x64'">triangle-vulkan</TargetName>
     <TargetExt Condition="'$(Configuration)|$(Platform)'=='RelWithDebInfo|x64'">.exe</TargetExt>
@@ -86,15 +86,12 @@
   </PropertyGroup>
   <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">
     <ClCompile>
-      <AdditionalIncludeDirectories>C:\Users\12077\Desktop\college\大三上\Fireworks_OpenGL\external\glfw\glfw-3.4\deps;C:\Users\12077\Desktop\college\大三上\Fireworks_OpenGL\external\glfw\glfw-3.4\include;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
+      <AdditionalIncludeDirectories>D:\zlearning\project\Fireworks_OpenGL\Fireworks_OpenGL\external\glfw\glfw-3.4\deps;D:\zlearning\project\Fireworks_OpenGL\Fireworks_OpenGL\external\glfw\glfw-3.4\include;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
       <AssemblerListingLocation>$(IntDir)</AssemblerListingLocation>
       <BasicRuntimeChecks>EnableFastChecks</BasicRuntimeChecks>
-      <BufferSecurityCheck></BufferSecurityCheck>
-      <CallingConvention></CallingConvention>
       <DebugInformationFormat>ProgramDatabase</DebugInformationFormat>
       <ExceptionHandling>
       </ExceptionHandling>
-      <FloatingPointModel></FloatingPointModel>
       <ForceConformanceInForLoopScope></ForceConformanceInForLoopScope>
       <InlineFunctionExpansion>Disabled</InlineFunctionExpansion>
       <MinimalRebuild></MinimalRebuild>
@@ -107,15 +104,14 @@
       <UseFullPaths>false</UseFullPaths>
       <PreprocessorDefinitions>%(PreprocessorDefinitions);WIN32;_WINDOWS;_CRT_SECURE_NO_WARNINGS;CMAKE_INTDIR="Debug"</PreprocessorDefinitions>
       <ObjectFileName>$(IntDir)</ObjectFileName>
-      <ProgramDataBaseFileName>C:\Users\12077\Desktop\college\大三上\Fireworks_OpenGL\external\glfw\glfw-3.4\build\tests\triangle-vulkan.dir\Debug\</ProgramDataBaseFileName>
       <ScanSourceForModuleDependencies>false</ScanSourceForModuleDependencies>
     </ClCompile>
     <ResourceCompile>
       <PreprocessorDefinitions>%(PreprocessorDefinitions);WIN32;_DEBUG;_WINDOWS;_CRT_SECURE_NO_WARNINGS;CMAKE_INTDIR=\"Debug\"</PreprocessorDefinitions>
-      <AdditionalIncludeDirectories>C:\Users\12077\Desktop\college\大三上\Fireworks_OpenGL\external\glfw\glfw-3.4\deps;C:\Users\12077\Desktop\college\大三上\Fireworks_OpenGL\external\glfw\glfw-3.4\include;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
+      <AdditionalIncludeDirectories>D:\zlearning\project\Fireworks_OpenGL\Fireworks_OpenGL\external\glfw\glfw-3.4\deps;D:\zlearning\project\Fireworks_OpenGL\Fireworks_OpenGL\external\glfw\glfw-3.4\include;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
     </ResourceCompile>
     <Midl>
-      <AdditionalIncludeDirectories>C:\Users\12077\Desktop\college\大三上\Fireworks_OpenGL\external\glfw\glfw-3.4\deps;C:\Users\12077\Desktop\college\大三上\Fireworks_OpenGL\external\glfw\glfw-3.4\include;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
+      <AdditionalIncludeDirectories>D:\zlearning\project\Fireworks_OpenGL\Fireworks_OpenGL\external\glfw\glfw-3.4\deps;D:\zlearning\project\Fireworks_OpenGL\Fireworks_OpenGL\external\glfw\glfw-3.4\include;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
       <OutputDirectory>$(ProjectDir)/$(IntDir)</OutputDirectory>
       <HeaderFileName>%(Filename).h</HeaderFileName>
       <TypeLibraryName>%(Filename).tlb</TypeLibraryName>
@@ -131,9 +127,9 @@
       <GenerateDebugInformation>true</GenerateDebugInformation>
       <IgnoreSpecificDefaultLibraries>%(IgnoreSpecificDefaultLibraries)</IgnoreSpecificDefaultLibraries>
       <ImageHasSafeExceptionHandlers></ImageHasSafeExceptionHandlers>
-      <ImportLibrary>C:/Users/12077/Desktop/college/大三上/Fireworks_OpenGL/external/glfw/glfw-3.4/build/tests/Debug/triangle-vulkan.lib</ImportLibrary>
+      <ImportLibrary>D:/zlearning/project/Fireworks_OpenGL/Fireworks_OpenGL/external/glfw/glfw-3.4/build/tests/Debug/triangle-vulkan.lib</ImportLibrary>
       <LinkErrorReporting></LinkErrorReporting>
-      <ProgramDataBaseFile>C:/Users/12077/Desktop/college/大三上/Fireworks_OpenGL/external/glfw/glfw-3.4/build/tests/Debug/triangle-vulkan.pdb</ProgramDataBaseFile>
+      <ProgramDataBaseFile>D:/zlearning/project/Fireworks_OpenGL/Fireworks_OpenGL/external/glfw/glfw-3.4/build/tests/Debug/triangle-vulkan.pdb</ProgramDataBaseFile>
       <RandomizedBaseAddress></RandomizedBaseAddress>
       <SubSystem>Windows</SubSystem>
     </Link>
@@ -143,14 +139,11 @@
   </ItemDefinitionGroup>
   <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Release|x64'">
     <ClCompile>
-      <AdditionalIncludeDirectories>C:\Users\12077\Desktop\college\大三上\Fireworks_OpenGL\external\glfw\glfw-3.4\deps;C:\Users\12077\Desktop\college\大三上\Fireworks_OpenGL\external\glfw\glfw-3.4\include;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
+      <AdditionalIncludeDirectories>D:\zlearning\project\Fireworks_OpenGL\Fireworks_OpenGL\external\glfw\glfw-3.4\deps;D:\zlearning\project\Fireworks_OpenGL\Fireworks_OpenGL\external\glfw\glfw-3.4\include;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
       <AssemblerListingLocation>$(IntDir)</AssemblerListingLocation>
       <BasicRuntimeChecks>Default</BasicRuntimeChecks>
-      <BufferSecurityCheck></BufferSecurityCheck>
-      <CallingConvention></CallingConvention>
       <ExceptionHandling>
       </ExceptionHandling>
-      <FloatingPointModel></FloatingPointModel>
       <ForceConformanceInForLoopScope></ForceConformanceInForLoopScope>
       <InlineFunctionExpansion>AnySuitable</InlineFunctionExpansion>
       <MinimalRebuild></MinimalRebuild>
@@ -165,15 +158,14 @@
       <ObjectFileName>$(IntDir)</ObjectFileName>
       <DebugInformationFormat>
       </DebugInformationFormat>
-      <ProgramDataBaseFileName>C:\Users\12077\Desktop\college\大三上\Fireworks_OpenGL\external\glfw\glfw-3.4\build\tests\triangle-vulkan.dir\Release\</ProgramDataBaseFileName>
       <ScanSourceForModuleDependencies>false</ScanSourceForModuleDependencies>
     </ClCompile>
     <ResourceCompile>
       <PreprocessorDefinitions>%(PreprocessorDefinitions);WIN32;_WINDOWS;NDEBUG;_CRT_SECURE_NO_WARNINGS;CMAKE_INTDIR=\"Release\"</PreprocessorDefinitions>
-      <AdditionalIncludeDirectories>C:\Users\12077\Desktop\college\大三上\Fireworks_OpenGL\external\glfw\glfw-3.4\deps;C:\Users\12077\Desktop\college\大三上\Fireworks_OpenGL\external\glfw\glfw-3.4\include;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
+      <AdditionalIncludeDirectories>D:\zlearning\project\Fireworks_OpenGL\Fireworks_OpenGL\external\glfw\glfw-3.4\deps;D:\zlearning\project\Fireworks_OpenGL\Fireworks_OpenGL\external\glfw\glfw-3.4\include;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
     </ResourceCompile>
     <Midl>
-      <AdditionalIncludeDirectories>C:\Users\12077\Desktop\college\大三上\Fireworks_OpenGL\external\glfw\glfw-3.4\deps;C:\Users\12077\Desktop\college\大三上\Fireworks_OpenGL\external\glfw\glfw-3.4\include;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
+      <AdditionalIncludeDirectories>D:\zlearning\project\Fireworks_OpenGL\Fireworks_OpenGL\external\glfw\glfw-3.4\deps;D:\zlearning\project\Fireworks_OpenGL\Fireworks_OpenGL\external\glfw\glfw-3.4\include;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
       <OutputDirectory>$(ProjectDir)/$(IntDir)</OutputDirectory>
       <HeaderFileName>%(Filename).h</HeaderFileName>
       <TypeLibraryName>%(Filename).tlb</TypeLibraryName>
@@ -189,9 +181,9 @@
       <GenerateDebugInformation>false</GenerateDebugInformation>
       <IgnoreSpecificDefaultLibraries>%(IgnoreSpecificDefaultLibraries)</IgnoreSpecificDefaultLibraries>
       <ImageHasSafeExceptionHandlers></ImageHasSafeExceptionHandlers>
-      <ImportLibrary>C:/Users/12077/Desktop/college/大三上/Fireworks_OpenGL/external/glfw/glfw-3.4/build/tests/Release/triangle-vulkan.lib</ImportLibrary>
+      <ImportLibrary>D:/zlearning/project/Fireworks_OpenGL/Fireworks_OpenGL/external/glfw/glfw-3.4/build/tests/Release/triangle-vulkan.lib</ImportLibrary>
       <LinkErrorReporting></LinkErrorReporting>
-      <ProgramDataBaseFile>C:/Users/12077/Desktop/college/大三上/Fireworks_OpenGL/external/glfw/glfw-3.4/build/tests/Release/triangle-vulkan.pdb</ProgramDataBaseFile>
+      <ProgramDataBaseFile>D:/zlearning/project/Fireworks_OpenGL/Fireworks_OpenGL/external/glfw/glfw-3.4/build/tests/Release/triangle-vulkan.pdb</ProgramDataBaseFile>
       <RandomizedBaseAddress></RandomizedBaseAddress>
       <SubSystem>Windows</SubSystem>
     </Link>
@@ -201,14 +193,11 @@
   </ItemDefinitionGroup>
   <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='MinSizeRel|x64'">
     <ClCompile>
-      <AdditionalIncludeDirectories>C:\Users\12077\Desktop\college\大三上\Fireworks_OpenGL\external\glfw\glfw-3.4\deps;C:\Users\12077\Desktop\college\大三上\Fireworks_OpenGL\external\glfw\glfw-3.4\include;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
+      <AdditionalIncludeDirectories>D:\zlearning\project\Fireworks_OpenGL\Fireworks_OpenGL\external\glfw\glfw-3.4\deps;D:\zlearning\project\Fireworks_OpenGL\Fireworks_OpenGL\external\glfw\glfw-3.4\include;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
       <AssemblerListingLocation>$(IntDir)</AssemblerListingLocation>
       <BasicRuntimeChecks>Default</BasicRuntimeChecks>
-      <BufferSecurityCheck></BufferSecurityCheck>
-      <CallingConvention></CallingConvention>
       <ExceptionHandling>
       </ExceptionHandling>
-      <FloatingPointModel></FloatingPointModel>
       <ForceConformanceInForLoopScope></ForceConformanceInForLoopScope>
       <InlineFunctionExpansion>OnlyExplicitInline</InlineFunctionExpansion>
       <MinimalRebuild></MinimalRebuild>
@@ -223,15 +212,14 @@
       <ObjectFileName>$(IntDir)</ObjectFileName>
       <DebugInformationFormat>
       </DebugInformationFormat>
-      <ProgramDataBaseFileName>C:\Users\12077\Desktop\college\大三上\Fireworks_OpenGL\external\glfw\glfw-3.4\build\tests\triangle-vulkan.dir\MinSizeRel\</ProgramDataBaseFileName>
       <ScanSourceForModuleDependencies>false</ScanSourceForModuleDependencies>
     </ClCompile>
     <ResourceCompile>
       <PreprocessorDefinitions>%(PreprocessorDefinitions);WIN32;_WINDOWS;NDEBUG;_CRT_SECURE_NO_WARNINGS;CMAKE_INTDIR=\"MinSizeRel\"</PreprocessorDefinitions>
-      <AdditionalIncludeDirectories>C:\Users\12077\Desktop\college\大三上\Fireworks_OpenGL\external\glfw\glfw-3.4\deps;C:\Users\12077\Desktop\college\大三上\Fireworks_OpenGL\external\glfw\glfw-3.4\include;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
+      <AdditionalIncludeDirectories>D:\zlearning\project\Fireworks_OpenGL\Fireworks_OpenGL\external\glfw\glfw-3.4\deps;D:\zlearning\project\Fireworks_OpenGL\Fireworks_OpenGL\external\glfw\glfw-3.4\include;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
     </ResourceCompile>
     <Midl>
-      <AdditionalIncludeDirectories>C:\Users\12077\Desktop\college\大三上\Fireworks_OpenGL\external\glfw\glfw-3.4\deps;C:\Users\12077\Desktop\college\大三上\Fireworks_OpenGL\external\glfw\glfw-3.4\include;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
+      <AdditionalIncludeDirectories>D:\zlearning\project\Fireworks_OpenGL\Fireworks_OpenGL\external\glfw\glfw-3.4\deps;D:\zlearning\project\Fireworks_OpenGL\Fireworks_OpenGL\external\glfw\glfw-3.4\include;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
       <OutputDirectory>$(ProjectDir)/$(IntDir)</OutputDirectory>
       <HeaderFileName>%(Filename).h</HeaderFileName>
       <TypeLibraryName>%(Filename).tlb</TypeLibraryName>
@@ -247,9 +235,9 @@
       <GenerateDebugInformation>false</GenerateDebugInformation>
       <IgnoreSpecificDefaultLibraries>%(IgnoreSpecificDefaultLibraries)</IgnoreSpecificDefaultLibraries>
       <ImageHasSafeExceptionHandlers></ImageHasSafeExceptionHandlers>
-      <ImportLibrary>C:/Users/12077/Desktop/college/大三上/Fireworks_OpenGL/external/glfw/glfw-3.4/build/tests/MinSizeRel/triangle-vulkan.lib</ImportLibrary>
+      <ImportLibrary>D:/zlearning/project/Fireworks_OpenGL/Fireworks_OpenGL/external/glfw/glfw-3.4/build/tests/MinSizeRel/triangle-vulkan.lib</ImportLibrary>
       <LinkErrorReporting></LinkErrorReporting>
-      <ProgramDataBaseFile>C:/Users/12077/Desktop/college/大三上/Fireworks_OpenGL/external/glfw/glfw-3.4/build/tests/MinSizeRel/triangle-vulkan.pdb</ProgramDataBaseFile>
+      <ProgramDataBaseFile>D:/zlearning/project/Fireworks_OpenGL/Fireworks_OpenGL/external/glfw/glfw-3.4/build/tests/MinSizeRel/triangle-vulkan.pdb</ProgramDataBaseFile>
       <RandomizedBaseAddress></RandomizedBaseAddress>
       <SubSystem>Windows</SubSystem>
     </Link>
@@ -259,15 +247,12 @@
   </ItemDefinitionGroup>
   <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='RelWithDebInfo|x64'">
     <ClCompile>
-      <AdditionalIncludeDirectories>C:\Users\12077\Desktop\college\大三上\Fireworks_OpenGL\external\glfw\glfw-3.4\deps;C:\Users\12077\Desktop\college\大三上\Fireworks_OpenGL\external\glfw\glfw-3.4\include;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
+      <AdditionalIncludeDirectories>D:\zlearning\project\Fireworks_OpenGL\Fireworks_OpenGL\external\glfw\glfw-3.4\deps;D:\zlearning\project\Fireworks_OpenGL\Fireworks_OpenGL\external\glfw\glfw-3.4\include;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
       <AssemblerListingLocation>$(IntDir)</AssemblerListingLocation>
       <BasicRuntimeChecks>Default</BasicRuntimeChecks>
-      <BufferSecurityCheck></BufferSecurityCheck>
-      <CallingConvention></CallingConvention>
       <DebugInformationFormat>ProgramDatabase</DebugInformationFormat>
       <ExceptionHandling>
       </ExceptionHandling>
-      <FloatingPointModel></FloatingPointModel>
       <ForceConformanceInForLoopScope></ForceConformanceInForLoopScope>
       <InlineFunctionExpansion>OnlyExplicitInline</InlineFunctionExpansion>
       <MinimalRebuild></MinimalRebuild>
@@ -280,15 +265,14 @@
       <UseFullPaths>false</UseFullPaths>
       <PreprocessorDefinitions>%(PreprocessorDefinitions);WIN32;_WINDOWS;NDEBUG;_CRT_SECURE_NO_WARNINGS;CMAKE_INTDIR="RelWithDebInfo"</PreprocessorDefinitions>
       <ObjectFileName>$(IntDir)</ObjectFileName>
-      <ProgramDataBaseFileName>C:\Users\12077\Desktop\college\大三上\Fireworks_OpenGL\external\glfw\glfw-3.4\build\tests\triangle-vulkan.dir\RelWithDebInfo\</ProgramDataBaseFileName>
       <ScanSourceForModuleDependencies>false</ScanSourceForModuleDependencies>
     </ClCompile>
     <ResourceCompile>
       <PreprocessorDefinitions>%(PreprocessorDefinitions);WIN32;_WINDOWS;NDEBUG;_CRT_SECURE_NO_WARNINGS;CMAKE_INTDIR=\"RelWithDebInfo\"</PreprocessorDefinitions>
-      <AdditionalIncludeDirectories>C:\Users\12077\Desktop\college\大三上\Fireworks_OpenGL\external\glfw\glfw-3.4\deps;C:\Users\12077\Desktop\college\大三上\Fireworks_OpenGL\external\glfw\glfw-3.4\include;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
+      <AdditionalIncludeDirectories>D:\zlearning\project\Fireworks_OpenGL\Fireworks_OpenGL\external\glfw\glfw-3.4\deps;D:\zlearning\project\Fireworks_OpenGL\Fireworks_OpenGL\external\glfw\glfw-3.4\include;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
     </ResourceCompile>
     <Midl>
-      <AdditionalIncludeDirectories>C:\Users\12077\Desktop\college\大三上\Fireworks_OpenGL\external\glfw\glfw-3.4\deps;C:\Users\12077\Desktop\college\大三上\Fireworks_OpenGL\external\glfw\glfw-3.4\include;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
+      <AdditionalIncludeDirectories>D:\zlearning\project\Fireworks_OpenGL\Fireworks_OpenGL\external\glfw\glfw-3.4\deps;D:\zlearning\project\Fireworks_OpenGL\Fireworks_OpenGL\external\glfw\glfw-3.4\include;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
       <OutputDirectory>$(ProjectDir)/$(IntDir)</OutputDirectory>
       <HeaderFileName>%(Filename).h</HeaderFileName>
       <TypeLibraryName>%(Filename).tlb</TypeLibraryName>
@@ -304,9 +288,9 @@
       <GenerateDebugInformation>true</GenerateDebugInformation>
       <IgnoreSpecificDefaultLibraries>%(IgnoreSpecificDefaultLibraries)</IgnoreSpecificDefaultLibraries>
       <ImageHasSafeExceptionHandlers></ImageHasSafeExceptionHandlers>
-      <ImportLibrary>C:/Users/12077/Desktop/college/大三上/Fireworks_OpenGL/external/glfw/glfw-3.4/build/tests/RelWithDebInfo/triangle-vulkan.lib</ImportLibrary>
+      <ImportLibrary>D:/zlearning/project/Fireworks_OpenGL/Fireworks_OpenGL/external/glfw/glfw-3.4/build/tests/RelWithDebInfo/triangle-vulkan.lib</ImportLibrary>
       <LinkErrorReporting></LinkErrorReporting>
-      <ProgramDataBaseFile>C:/Users/12077/Desktop/college/大三上/Fireworks_OpenGL/external/glfw/glfw-3.4/build/tests/RelWithDebInfo/triangle-vulkan.pdb</ProgramDataBaseFile>
+      <ProgramDataBaseFile>D:/zlearning/project/Fireworks_OpenGL/Fireworks_OpenGL/external/glfw/glfw-3.4/build/tests/RelWithDebInfo/triangle-vulkan.pdb</ProgramDataBaseFile>
       <RandomizedBaseAddress></RandomizedBaseAddress>
       <SubSystem>Windows</SubSystem>
     </Link>
@@ -315,11 +299,11 @@
     </ProjectReference>
   </ItemDefinitionGroup>
   <ItemGroup>
-    <CustomBuild Include="C:\Users\12077\Desktop\college\大三上\Fireworks_OpenGL\external\glfw\glfw-3.4\tests\CMakeLists.txt">
+    <CustomBuild Include="D:\zlearning\project\Fireworks_OpenGL\Fireworks_OpenGL\external\glfw\glfw-3.4\tests\CMakeLists.txt">
       <UseUtf8Encoding>Always</UseUtf8Encoding>
-      <Message Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">Building Custom Rule C:/Users/12077/Desktop/college/大三上/Fireworks_OpenGL/external/glfw/glfw-3.4/tests/CMakeLists.txt</Message>
+      <Message Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">Building Custom Rule D:/zlearning/project/Fireworks_OpenGL/Fireworks_OpenGL/external/glfw/glfw-3.4/tests/CMakeLists.txt</Message>
       <Command Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">setlocal
-D:\tools\cmake\bin\cmake.exe -SC:/Users/12077/Desktop/college/大三上/Fireworks_OpenGL/external/glfw/glfw-3.4 -BC:/Users/12077/Desktop/college/大三上/Fireworks_OpenGL/external/glfw/glfw-3.4/build --check-stamp-file C:/Users/12077/Desktop/college/大三上/Fireworks_OpenGL/external/glfw/glfw-3.4/build/tests/CMakeFiles/generate.stamp
+"C:\Program Files\CMake\bin\cmake.exe" -SD:/zlearning/project/Fireworks_OpenGL/Fireworks_OpenGL/external/glfw/glfw-3.4 -BD:/zlearning/project/Fireworks_OpenGL/Fireworks_OpenGL/external/glfw/glfw-3.4/build --check-stamp-file D:/zlearning/project/Fireworks_OpenGL/Fireworks_OpenGL/external/glfw/glfw-3.4/build/tests/CMakeFiles/generate.stamp
 if %errorlevel% neq 0 goto :cmEnd
 :cmEnd
 endlocal &amp; call :cmErrorLevel %errorlevel% &amp; goto :cmDone
@@ -328,11 +312,11 @@ exit /b %1
 :cmDone
 if %errorlevel% neq 0 goto :VCEnd</Command>
       <AdditionalInputs Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">%(AdditionalInputs)</AdditionalInputs>
-      <Outputs Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">C:\Users\12077\Desktop\college\大三上\Fireworks_OpenGL\external\glfw\glfw-3.4\build\tests\CMakeFiles\generate.stamp</Outputs>
+      <Outputs Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">D:\zlearning\project\Fireworks_OpenGL\Fireworks_OpenGL\external\glfw\glfw-3.4\build\tests\CMakeFiles\generate.stamp</Outputs>
       <LinkObjects Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">false</LinkObjects>
-      <Message Condition="'$(Configuration)|$(Platform)'=='Release|x64'">Building Custom Rule C:/Users/12077/Desktop/college/大三上/Fireworks_OpenGL/external/glfw/glfw-3.4/tests/CMakeLists.txt</Message>
+      <Message Condition="'$(Configuration)|$(Platform)'=='Release|x64'">Building Custom Rule D:/zlearning/project/Fireworks_OpenGL/Fireworks_OpenGL/external/glfw/glfw-3.4/tests/CMakeLists.txt</Message>
       <Command Condition="'$(Configuration)|$(Platform)'=='Release|x64'">setlocal
-D:\tools\cmake\bin\cmake.exe -SC:/Users/12077/Desktop/college/大三上/Fireworks_OpenGL/external/glfw/glfw-3.4 -BC:/Users/12077/Desktop/college/大三上/Fireworks_OpenGL/external/glfw/glfw-3.4/build --check-stamp-file C:/Users/12077/Desktop/college/大三上/Fireworks_OpenGL/external/glfw/glfw-3.4/build/tests/CMakeFiles/generate.stamp
+"C:\Program Files\CMake\bin\cmake.exe" -SD:/zlearning/project/Fireworks_OpenGL/Fireworks_OpenGL/external/glfw/glfw-3.4 -BD:/zlearning/project/Fireworks_OpenGL/Fireworks_OpenGL/external/glfw/glfw-3.4/build --check-stamp-file D:/zlearning/project/Fireworks_OpenGL/Fireworks_OpenGL/external/glfw/glfw-3.4/build/tests/CMakeFiles/generate.stamp
 if %errorlevel% neq 0 goto :cmEnd
 :cmEnd
 endlocal &amp; call :cmErrorLevel %errorlevel% &amp; goto :cmDone
@@ -341,11 +325,11 @@ exit /b %1
 :cmDone
 if %errorlevel% neq 0 goto :VCEnd</Command>
       <AdditionalInputs Condition="'$(Configuration)|$(Platform)'=='Release|x64'">%(AdditionalInputs)</AdditionalInputs>
-      <Outputs Condition="'$(Configuration)|$(Platform)'=='Release|x64'">C:\Users\12077\Desktop\college\大三上\Fireworks_OpenGL\external\glfw\glfw-3.4\build\tests\CMakeFiles\generate.stamp</Outputs>
+      <Outputs Condition="'$(Configuration)|$(Platform)'=='Release|x64'">D:\zlearning\project\Fireworks_OpenGL\Fireworks_OpenGL\external\glfw\glfw-3.4\build\tests\CMakeFiles\generate.stamp</Outputs>
       <LinkObjects Condition="'$(Configuration)|$(Platform)'=='Release|x64'">false</LinkObjects>
-      <Message Condition="'$(Configuration)|$(Platform)'=='MinSizeRel|x64'">Building Custom Rule C:/Users/12077/Desktop/college/大三上/Fireworks_OpenGL/external/glfw/glfw-3.4/tests/CMakeLists.txt</Message>
+      <Message Condition="'$(Configuration)|$(Platform)'=='MinSizeRel|x64'">Building Custom Rule D:/zlearning/project/Fireworks_OpenGL/Fireworks_OpenGL/external/glfw/glfw-3.4/tests/CMakeLists.txt</Message>
       <Command Condition="'$(Configuration)|$(Platform)'=='MinSizeRel|x64'">setlocal
-D:\tools\cmake\bin\cmake.exe -SC:/Users/12077/Desktop/college/大三上/Fireworks_OpenGL/external/glfw/glfw-3.4 -BC:/Users/12077/Desktop/college/大三上/Fireworks_OpenGL/external/glfw/glfw-3.4/build --check-stamp-file C:/Users/12077/Desktop/college/大三上/Fireworks_OpenGL/external/glfw/glfw-3.4/build/tests/CMakeFiles/generate.stamp
+"C:\Program Files\CMake\bin\cmake.exe" -SD:/zlearning/project/Fireworks_OpenGL/Fireworks_OpenGL/external/glfw/glfw-3.4 -BD:/zlearning/project/Fireworks_OpenGL/Fireworks_OpenGL/external/glfw/glfw-3.4/build --check-stamp-file D:/zlearning/project/Fireworks_OpenGL/Fireworks_OpenGL/external/glfw/glfw-3.4/build/tests/CMakeFiles/generate.stamp
 if %errorlevel% neq 0 goto :cmEnd
 :cmEnd
 endlocal &amp; call :cmErrorLevel %errorlevel% &amp; goto :cmDone
@@ -354,11 +338,11 @@ exit /b %1
 :cmDone
 if %errorlevel% neq 0 goto :VCEnd</Command>
       <AdditionalInputs Condition="'$(Configuration)|$(Platform)'=='MinSizeRel|x64'">%(AdditionalInputs)</AdditionalInputs>
-      <Outputs Condition="'$(Configuration)|$(Platform)'=='MinSizeRel|x64'">C:\Users\12077\Desktop\college\大三上\Fireworks_OpenGL\external\glfw\glfw-3.4\build\tests\CMakeFiles\generate.stamp</Outputs>
+      <Outputs Condition="'$(Configuration)|$(Platform)'=='MinSizeRel|x64'">D:\zlearning\project\Fireworks_OpenGL\Fireworks_OpenGL\external\glfw\glfw-3.4\build\tests\CMakeFiles\generate.stamp</Outputs>
       <LinkObjects Condition="'$(Configuration)|$(Platform)'=='MinSizeRel|x64'">false</LinkObjects>
-      <Message Condition="'$(Configuration)|$(Platform)'=='RelWithDebInfo|x64'">Building Custom Rule C:/Users/12077/Desktop/college/大三上/Fireworks_OpenGL/external/glfw/glfw-3.4/tests/CMakeLists.txt</Message>
+      <Message Condition="'$(Configuration)|$(Platform)'=='RelWithDebInfo|x64'">Building Custom Rule D:/zlearning/project/Fireworks_OpenGL/Fireworks_OpenGL/external/glfw/glfw-3.4/tests/CMakeLists.txt</Message>
       <Command Condition="'$(Configuration)|$(Platform)'=='RelWithDebInfo|x64'">setlocal
-D:\tools\cmake\bin\cmake.exe -SC:/Users/12077/Desktop/college/大三上/Fireworks_OpenGL/external/glfw/glfw-3.4 -BC:/Users/12077/Desktop/college/大三上/Fireworks_OpenGL/external/glfw/glfw-3.4/build --check-stamp-file C:/Users/12077/Desktop/college/大三上/Fireworks_OpenGL/external/glfw/glfw-3.4/build/tests/CMakeFiles/generate.stamp
+"C:\Program Files\CMake\bin\cmake.exe" -SD:/zlearning/project/Fireworks_OpenGL/Fireworks_OpenGL/external/glfw/glfw-3.4 -BD:/zlearning/project/Fireworks_OpenGL/Fireworks_OpenGL/external/glfw/glfw-3.4/build --check-stamp-file D:/zlearning/project/Fireworks_OpenGL/Fireworks_OpenGL/external/glfw/glfw-3.4/build/tests/CMakeFiles/generate.stamp
 if %errorlevel% neq 0 goto :cmEnd
 :cmEnd
 endlocal &amp; call :cmErrorLevel %errorlevel% &amp; goto :cmDone
@@ -367,24 +351,24 @@ exit /b %1
 :cmDone
 if %errorlevel% neq 0 goto :VCEnd</Command>
       <AdditionalInputs Condition="'$(Configuration)|$(Platform)'=='RelWithDebInfo|x64'">%(AdditionalInputs)</AdditionalInputs>
-      <Outputs Condition="'$(Configuration)|$(Platform)'=='RelWithDebInfo|x64'">C:\Users\12077\Desktop\college\大三上\Fireworks_OpenGL\external\glfw\glfw-3.4\build\tests\CMakeFiles\generate.stamp</Outputs>
+      <Outputs Condition="'$(Configuration)|$(Platform)'=='RelWithDebInfo|x64'">D:\zlearning\project\Fireworks_OpenGL\Fireworks_OpenGL\external\glfw\glfw-3.4\build\tests\CMakeFiles\generate.stamp</Outputs>
       <LinkObjects Condition="'$(Configuration)|$(Platform)'=='RelWithDebInfo|x64'">false</LinkObjects>
     </CustomBuild>
   </ItemGroup>
   <ItemGroup>
-    <ClCompile Include="C:\Users\12077\Desktop\college\大三上\Fireworks_OpenGL\external\glfw\glfw-3.4\tests\triangle-vulkan.c" />
-    <ClInclude Include="C:\Users\12077\Desktop\college\大三上\Fireworks_OpenGL\external\glfw\glfw-3.4\deps\glad\vulkan.h" />
+    <ClCompile Include="D:\zlearning\project\Fireworks_OpenGL\Fireworks_OpenGL\external\glfw\glfw-3.4\tests\triangle-vulkan.c" />
+    <ClInclude Include="D:\zlearning\project\Fireworks_OpenGL\Fireworks_OpenGL\external\glfw\glfw-3.4\deps\glad\vulkan.h" />
   </ItemGroup>
   <ItemGroup />
   <ItemGroup>
-    <ProjectReference Include="C:\Users\12077\Desktop\college\大三上\Fireworks_OpenGL\external\glfw\glfw-3.4\build\ZERO_CHECK.vcxproj">
-      <Project>{594EB168-F961-3E36-876D-8F21AD582194}</Project>
+    <ProjectReference Include="D:\zlearning\project\Fireworks_OpenGL\Fireworks_OpenGL\external\glfw\glfw-3.4\build\ZERO_CHECK.vcxproj">
+      <Project>{FD88A525-9ACF-303A-B972-217469FA59FA}</Project>
       <Name>ZERO_CHECK</Name>
       <ReferenceOutputAssembly>false</ReferenceOutputAssembly>
       <CopyToOutputDirectory>Never</CopyToOutputDirectory>
     </ProjectReference>
-    <ProjectReference Include="C:\Users\12077\Desktop\college\大三上\Fireworks_OpenGL\external\glfw\glfw-3.4\build\src\glfw.vcxproj">
-      <Project>{3BFCD501-9EE9-38B5-A68F-76588DE529AA}</Project>
+    <ProjectReference Include="D:\zlearning\project\Fireworks_OpenGL\Fireworks_OpenGL\external\glfw\glfw-3.4\build\src\glfw.vcxproj">
+      <Project>{381BC6F9-1C2C-3D6C-ADDE-966CE58ED335}</Project>
       <Name>glfw</Name>
     </ProjectReference>
   </ItemGroup>

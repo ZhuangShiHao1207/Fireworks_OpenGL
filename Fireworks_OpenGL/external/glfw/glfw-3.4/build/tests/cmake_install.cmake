@@ -1,8 +1,8 @@
-# Install script for directory: C:/Users/12077/Desktop/college/大三上/Fireworks_OpenGL/external/glfw/glfw-3.4/tests
+# Install script for directory: D:/zlearning/project/Fireworks_OpenGL/Fireworks_OpenGL/external/glfw/glfw-3.4/tests
 
 # Set the install prefix
 if(NOT DEFINED CMAKE_INSTALL_PREFIX)
-  set(CMAKE_INSTALL_PREFIX "C:/Program Files/GLFW")
+  set(CMAKE_INSTALL_PREFIX "C:/Program Files (x86)/GLFW")
 endif()
 string(REGEX REPLACE "/$" "" CMAKE_INSTALL_PREFIX "${CMAKE_INSTALL_PREFIX}")
 
@@ -35,6 +35,6 @@ endif()
 string(REPLACE ";" "\n" CMAKE_INSTALL_MANIFEST_CONTENT
        "${CMAKE_INSTALL_MANIFEST_FILES}")
 if(CMAKE_INSTALL_LOCAL_ONLY)
-  file(WRITE "C:/Users/12077/Desktop/college/大三上/Fireworks_OpenGL/external/glfw/glfw-3.4/build/tests/install_local_manifest.txt"
+  file(WRITE "D:/zlearning/project/Fireworks_OpenGL/Fireworks_OpenGL/external/glfw/glfw-3.4/build/tests/install_local_manifest.txt"
      "${CMAKE_INSTALL_MANIFEST_CONTENT}")
 endif()

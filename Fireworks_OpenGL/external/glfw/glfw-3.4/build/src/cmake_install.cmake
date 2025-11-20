@@ -1,8 +1,8 @@
-# Install script for directory: C:/Users/12077/Desktop/college/大三上/Fireworks_OpenGL/external/glfw/glfw-3.4/src
+# Install script for directory: D:/zlearning/project/Fireworks_OpenGL/Fireworks_OpenGL/external/glfw/glfw-3.4/src
 
 # Set the install prefix
 if(NOT DEFINED CMAKE_INSTALL_PREFIX)
-  set(CMAKE_INSTALL_PREFIX "C:/Program Files/GLFW")
+  set(CMAKE_INSTALL_PREFIX "C:/Program Files (x86)/GLFW")
 endif()
 string(REGEX REPLACE "/$" "" CMAKE_INSTALL_PREFIX "${CMAKE_INSTALL_PREFIX}")
 
@@ -34,19 +34,19 @@ endif()
 
 if(CMAKE_INSTALL_COMPONENT STREQUAL "Unspecified" OR NOT CMAKE_INSTALL_COMPONENT)
   if(CMAKE_INSTALL_CONFIG_NAME MATCHES "^([Dd][Ee][Bb][Uu][Gg])$")
-    file(INSTALL DESTINATION "${CMAKE_INSTALL_PREFIX}/lib" TYPE STATIC_LIBRARY FILES "C:/Users/12077/Desktop/college/大三上/Fireworks_OpenGL/external/glfw/glfw-3.4/build/src/Debug/glfw3.lib")
+    file(INSTALL DESTINATION "${CMAKE_INSTALL_PREFIX}/lib" TYPE STATIC_LIBRARY FILES "D:/zlearning/project/Fireworks_OpenGL/Fireworks_OpenGL/external/glfw/glfw-3.4/build/src/Debug/glfw3.lib")
   elseif(CMAKE_INSTALL_CONFIG_NAME MATCHES "^([Rr][Ee][Ll][Ee][Aa][Ss][Ee])$")
-    file(INSTALL DESTINATION "${CMAKE_INSTALL_PREFIX}/lib" TYPE STATIC_LIBRARY FILES "C:/Users/12077/Desktop/college/大三上/Fireworks_OpenGL/external/glfw/glfw-3.4/build/src/Release/glfw3.lib")
+    file(INSTALL DESTINATION "${CMAKE_INSTALL_PREFIX}/lib" TYPE STATIC_LIBRARY FILES "D:/zlearning/project/Fireworks_OpenGL/Fireworks_OpenGL/external/glfw/glfw-3.4/build/src/Release/glfw3.lib")
   elseif(CMAKE_INSTALL_CONFIG_NAME MATCHES "^([Mm][Ii][Nn][Ss][Ii][Zz][Ee][Rr][Ee][Ll])$")
-    file(INSTALL DESTINATION "${CMAKE_INSTALL_PREFIX}/lib" TYPE STATIC_LIBRARY FILES "C:/Users/12077/Desktop/college/大三上/Fireworks_OpenGL/external/glfw/glfw-3.4/build/src/MinSizeRel/glfw3.lib")
+    file(INSTALL DESTINATION "${CMAKE_INSTALL_PREFIX}/lib" TYPE STATIC_LIBRARY FILES "D:/zlearning/project/Fireworks_OpenGL/Fireworks_OpenGL/external/glfw/glfw-3.4/build/src/MinSizeRel/glfw3.lib")
   elseif(CMAKE_INSTALL_CONFIG_NAME MATCHES "^([Rr][Ee][Ll][Ww][Ii][Tt][Hh][Dd][Ee][Bb][Ii][Nn][Ff][Oo])$")
-    file(INSTALL DESTINATION "${CMAKE_INSTALL_PREFIX}/lib" TYPE STATIC_LIBRARY FILES "C:/Users/12077/Desktop/college/大三上/Fireworks_OpenGL/external/glfw/glfw-3.4/build/src/RelWithDebInfo/glfw3.lib")
+    file(INSTALL DESTINATION "${CMAKE_INSTALL_PREFIX}/lib" TYPE STATIC_LIBRARY FILES "D:/zlearning/project/Fireworks_OpenGL/Fireworks_OpenGL/external/glfw/glfw-3.4/build/src/RelWithDebInfo/glfw3.lib")
   endif()
 endif()
 
 string(REPLACE ";" "\n" CMAKE_INSTALL_MANIFEST_CONTENT
        "${CMAKE_INSTALL_MANIFEST_FILES}")
 if(CMAKE_INSTALL_LOCAL_ONLY)
-  file(WRITE "C:/Users/12077/Desktop/college/大三上/Fireworks_OpenGL/external/glfw/glfw-3.4/build/src/install_local_manifest.txt"
+  file(WRITE "D:/zlearning/project/Fireworks_OpenGL/Fireworks_OpenGL/external/glfw/glfw-3.4/build/src/install_local_manifest.txt"
      "${CMAKE_INSTALL_MANIFEST_CONTENT}")
 endif()
