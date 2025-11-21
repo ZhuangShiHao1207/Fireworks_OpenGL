@@ -119,19 +119,33 @@
       <SDLCheck>true</SDLCheck>
       <PreprocessorDefinitions>NDEBUG;_CONSOLE;%(PreprocessorDefinitions)</PreprocessorDefinitions>
       <ConformanceMode>true</ConformanceMode>
-      <AdditionalIncludeDirectories>$(ProjectDir)include;$(ProjectDir)external\glm;$(ProjectDir)external\glad\include;D:\zlearning\project\Fireworks_OpenGL\Fireworks_OpenGL\external\glfw\glfw-3.4\include;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
     </ClCompile>
     <Link>
       <SubSystem>Console</SubSystem>
       <GenerateDebugInformation>true</GenerateDebugInformation>
-      <AdditionalLibraryDirectories>$(ProjectDir)external\glfw\&lt;version&gt;\build\src\Release;%(AdditionalLibraryDirectories)</AdditionalLibraryDirectories>
-      <AdditionalDependencies>D:\zlearning\project\Fireworks_OpenGL\Fireworks_OpenGL\external\glfw\glfw-3.4\build\src\Release\glfw3.lib;opengl32.lib;%(AdditionalDependencies)</AdditionalDependencies>
     </Link>
   </ItemDefinitionGroup>
   <ItemGroup>
     <ClCompile Include="external\glad\src\glad.c" />
-    <ClCompile Include="Fireworks_OpenGL.cpp" />
+    <ClCompile Include="main.cpp" />
+    <ClCompile Include="stb_image_impl.cpp" />
     <ClCompile Include="test_lib.cpp" />
+  </ItemGroup>
+  <ItemGroup>
+    <Image Include="assets\skybox\Satara_Night\StandardCubeMap.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <ClInclude Include="include\Camera.h" />
+    <ClInclude Include="include\Ground.h" />
+    <ClInclude Include="include\Shader.h" />
+    <ClInclude Include="include\Skybox.h" />
+    <ClInclude Include="include\stb_image.h" />
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="assets\shaders\ground.fs" />
+    <None Include="assets\shaders\ground.vs" />
+    <None Include="assets\shaders\skybox.fs" />
+    <None Include="assets\shaders\skybox.vs" />
   </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
   <ImportGroup Label="ExtensionTargets">

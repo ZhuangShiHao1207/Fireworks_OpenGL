@@ -15,7 +15,7 @@
     </Filter>
   </ItemGroup>
   <ItemGroup>
-    <ClCompile Include="Fireworks_OpenGL.cpp">
+    <ClCompile Include="main.cpp">
       <Filter>源文件</Filter>
     </ClCompile>
     <ClCompile Include="external\glad\src\glad.c">
@@ -24,5 +24,44 @@
     <ClCompile Include="test_lib.cpp">
       <Filter>源文件</Filter>
     </ClCompile>
+    <ClCompile Include="stb_image_impl.cpp">
+      <Filter>源文件</Filter>
+    </ClCompile>
+  </ItemGroup>
+  <ItemGroup>
+    <Image Include="assets\skybox\Satara_Night\StandardCubeMap.png">
+      <Filter>资源文件</Filter>
+    </Image>
+  </ItemGroup>
+  <ItemGroup>
+    <ClInclude Include="include\Shader.h">
+      <Filter>头文件</Filter>
+    </ClInclude>
+    <ClInclude Include="include\Camera.h">
+      <Filter>头文件</Filter>
+    </ClInclude>
+    <ClInclude Include="include\Skybox.h">
+      <Filter>头文件</Filter>
+    </ClInclude>
+    <ClInclude Include="include\Ground.h">
+      <Filter>头文件</Filter>
+    </ClInclude>
+    <ClInclude Include="include\stb_image.h">
+      <Filter>头文件</Filter>
+    </ClInclude>
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="assets\shaders\ground.fs">
+      <Filter>资源文件</Filter>
+    </None>
+    <None Include="assets\shaders\ground.vs">
+      <Filter>资源文件</Filter>
+    </None>
+    <None Include="assets\shaders\skybox.fs">
+      <Filter>资源文件</Filter>
+    </None>
+    <None Include="assets\shaders\skybox.vs">
+      <Filter>资源文件</Filter>
+    </None>
   </ItemGroup>
 </Project>
