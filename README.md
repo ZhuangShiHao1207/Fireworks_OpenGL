@@ -317,7 +317,7 @@ Assimp 需要 DLL 才能运行，需要将 DLL 复制到可执行文件目录：
 在 Visual Studio 中，项目 → 属性 → 生成事件 → 生成后时间 → 命令行，添加：
 
 ```cmd
-xcopy /y /d "C:\vcpkg\installed\x64-windows\bin\assimp-vc143-mt.dll" "$(OutDir)"
+xcopy /y /d "$(VcpkgRoot)\installed\x64-windows\bin\assimp-vc143-mt.dll" "$(OutDir)"
 ```
 
 （将 `C:\vcpkg` 替换为你的实际 vcpkg 路径）
