@@ -14,6 +14,15 @@ uniform bool useTexture;
 // Simple ground material
 uniform vec3 groundColor;
 
+// Material properties for specular reflection
+uniform float groundShininess = 32.0;     // Ground is less shiny than model
+uniform float groundSpecularStrength = 0.3; // Ground reflects less light
+
+// Fog parameters for infinite ground illusion
+uniform vec3 fogColor;
+uniform float fogDensity;
+uniform float fogStart;
+
 // Point lights (for fireworks - maximum 16 lights)
 #define MAX_LIGHTS 16
 uniform int numLights;
@@ -21,7 +30,7 @@ uniform vec3 lightPositions[MAX_LIGHTS];
 uniform vec3 lightColors[MAX_LIGHTS];
 uniform float lightIntensities[MAX_LIGHTS];
 
-vec3 CalcPointLight(vec3 lightPos, vec3 lightColor, float intensity, vec3 normal, vec3 fragPos, vec3 viewDir)
+vec3 CalcPointLight(vec3 lightPos, vec3 lightColor, float intensity, vec3 normal, vec3 fragPos, vec3 viewDir, vec3 baseColor)
 {
     vec3 lightDir = normalize(lightPos - fragPos);
     
@@ -30,7 +39,7 @@ vec3 CalcPointLight(vec3 lightPos, vec3 lightColor, float intensity, vec3 normal
     
     // Specular shading (Blinn-Phong)
     vec3 halfwayDir = normalize(lightDir + viewDir);
-    float spec = pow(max(dot(normal, halfwayDir), 0.0), 32.0);
+    float spec = pow(max(dot(normal, halfwayDir), 0.0), groundShininess);
     
     // Attenuation
     float distance = length(lightPos - fragPos);
@@ -39,9 +48,14 @@ vec3 CalcPointLight(vec3 lightPos, vec3 lightColor, float intensity, vec3 normal
     // Combine results
     vec3 ambient = 0.05 * lightColor;
     vec3 diffuse = diff * lightColor;
-    vec3 specular = spec * lightColor * 0.5;
+    vec3 specular = spec * lightColor * groundSpecularStrength;
     
-    return (ambient + diffuse + specular) * attenuation;
+    // Apply attenuation
+    ambient *= attenuation * baseColor;
+    diffuse *= attenuation * baseColor;
+    specular *= attenuation;  // Specular is additive
+    
+    return ambient + diffuse + specular;
 }
 
 void main()
@@ -58,7 +72,7 @@ void main()
     // Calculate lighting from all active point lights
     for(int i = 0; i < numLights && i < MAX_LIGHTS; i++)
     {
-        result += CalcPointLight(lightPositions[i], lightColors[i], lightIntensities[i], norm, FragPos, viewDir) * baseColor;
+        result += CalcPointLight(lightPositions[i], lightColors[i], lightIntensities[i], norm, FragPos, viewDir, baseColor);
     }
     
     // Simple grid pattern (optional visual enhancement) - only if not using texture
@@ -68,6 +82,20 @@ void main()
         float grid = step(0.95, gridCoord.x) + step(0.95, gridCoord.y);
         result = mix(result, result * 1.2, grid * 0.3);
     }
+    
+    // Calculate fog effect for infinite ground illusion
+    float distance = length(viewPos - FragPos);
+    float fogFactor = 0.0;
+    
+    // Exponential fog with smooth transition
+    if (distance > fogStart) {
+        float fogDistance = distance - fogStart;
+        fogFactor = 1.0 - exp(-fogDensity * fogDistance);
+        fogFactor = clamp(fogFactor, 0.0, 1.0);
+    }
+    
+    // Mix result with fog color based on distance
+    result = mix(result, fogColor, fogFactor);
     
     FragColor = vec4(result, 1.0);
 }

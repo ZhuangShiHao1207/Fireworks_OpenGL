@@ -21,17 +21,9 @@
     <ClCompile Include="external\glad\src\glad.c">
       <Filter>源文件</Filter>
     </ClCompile>
-    <ClCompile Include="test_lib.cpp">
-      <Filter>源文件</Filter>
-    </ClCompile>
     <ClCompile Include="stb_image_impl.cpp">
       <Filter>源文件</Filter>
     </ClCompile>
-  </ItemGroup>
-  <ItemGroup>
-    <Image Include="assets\skybox\Satara_Night\StandardCubeMap.png">
-      <Filter>资源文件</Filter>
-    </Image>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="include\Shader.h">
@@ -49,6 +41,18 @@
     <ClInclude Include="include\stb_image.h">
       <Filter>头文件</Filter>
     </ClInclude>
+    <ClInclude Include="include\Mesh.h">
+      <Filter>头文件</Filter>
+    </ClInclude>
+    <ClInclude Include="include\Model.h">
+      <Filter>头文件</Filter>
+    </ClInclude>
+    <ClInclude Include="include\SimpleModel.h">
+      <Filter>头文件</Filter>
+    </ClInclude>
+    <ClInclude Include="include\PointLight.h">
+      <Filter>头文件</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <None Include="assets\shaders\ground.fs">
@@ -63,5 +67,7 @@
     <None Include="assets\shaders\skybox.vs">
       <Filter>资源文件</Filter>
     </None>
+    <None Include="assets\shaders\model.vs" />
+    <None Include="assets\shaders\model.fs" />
   </ItemGroup>
 </Project>

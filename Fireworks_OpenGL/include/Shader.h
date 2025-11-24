@@ -8,80 +8,85 @@
 #include <sstream>
 #include <iostream>
 
+/**
+ * Shader 类
+ * 用于加载、编译和管理 OpenGL 着色器程序
+ * 提供设置 uniform 变量的便捷方法
+ */
 class Shader {
 public:
-    unsigned int ID;
+    unsigned int ID;  // 着色器程序 ID
 
-    // Constructor reads and builds the shader
+    // 构造函数：读取并编译着色器
     Shader(const char* vertexPath, const char* fragmentPath) {
-        // 1. Retrieve the vertex/fragment source code from filePath
+        // 1. 从文件路径读取顶点/片段着色器源码
         std::string vertexCode;
         std::string fragmentCode;
         std::ifstream vShaderFile;
         std::ifstream fShaderFile;
 
-        // Ensure ifstream objects can throw exceptions:
+        // 确保 ifstream 对象可以抛出异常
         vShaderFile.exceptions(std::ifstream::failbit | std::ifstream::badbit);
         fShaderFile.exceptions(std::ifstream::failbit | std::ifstream::badbit);
 
         try {
-            // Open files
+            // 打开文件
             vShaderFile.open(vertexPath);
             fShaderFile.open(fragmentPath);
             std::stringstream vShaderStream, fShaderStream;
 
-            // Read file's buffer contents into streams
+            // 读取文件缓冲内容到流
             vShaderStream << vShaderFile.rdbuf();
             fShaderStream << fShaderFile.rdbuf();
 
-            // Close file handlers
+            // 关闭文件处理器
             vShaderFile.close();
             fShaderFile.close();
 
-            // Convert stream into string
+            // 将流转换为字符串
             vertexCode = vShaderStream.str();
             fragmentCode = fShaderStream.str();
         }
         catch (std::ifstream::failure& e) {
-            std::cout << "ERROR::SHADER::FILE_NOT_SUCCESSFULLY_READ: " << e.what() << std::endl;
+            std::cout << "错误::着色器::文件读取失败: " << e.what() << std::endl;
         }
 
         const char* vShaderCode = vertexCode.c_str();
         const char* fShaderCode = fragmentCode.c_str();
 
-        // 2. Compile shaders
+        // 2. 编译着色器
         unsigned int vertex, fragment;
 
-        // Vertex shader
+        // 顶点着色器
         vertex = glCreateShader(GL_VERTEX_SHADER);
         glShaderSource(vertex, 1, &vShaderCode, NULL);
         glCompileShader(vertex);
         checkCompileErrors(vertex, "VERTEX");
 
-        // Fragment Shader
+        // 片段着色器
         fragment = glCreateShader(GL_FRAGMENT_SHADER);
         glShaderSource(fragment, 1, &fShaderCode, NULL);
         glCompileShader(fragment);
         checkCompileErrors(fragment, "FRAGMENT");
 
-        // Shader Program
+        // 着色器程序
         ID = glCreateProgram();
         glAttachShader(ID, vertex);
         glAttachShader(ID, fragment);
         glLinkProgram(ID);
         checkCompileErrors(ID, "PROGRAM");
 
-        // Delete the shaders as they're linked into our program now and no longer necessary
+        // 删除着色器，它们已经链接到程序中，不再需要
         glDeleteShader(vertex);
         glDeleteShader(fragment);
     }
 
-    // Activate the shader
+    // 激活着色器
     void use() {
         glUseProgram(ID);
     }
 
-    // Utility uniform functions
+    // uniform 工具函数
     void setBool(const std::string& name, bool value) const {
         glUniform1i(glGetUniformLocation(ID, name.c_str()), (int)value);
     }
@@ -131,7 +136,7 @@ public:
     }
 
 private:
-    // Utility function for checking shader compilation/linking errors
+    // 检查着色器编译/链接错误的工具函数
     void checkCompileErrors(GLuint shader, std::string type) {
         GLint success;
         GLchar infoLog[1024];
@@ -139,14 +144,14 @@ private:
             glGetShaderiv(shader, GL_COMPILE_STATUS, &success);
             if (!success) {
                 glGetShaderInfoLog(shader, 1024, NULL, infoLog);
-                std::cout << "ERROR::SHADER_COMPILATION_ERROR of type: " << type << "\n" << infoLog << "\n -- --------------------------------------------------- -- " << std::endl;
+                std::cout << "错误::着色器编译错误，类型: " << type << "\n" << infoLog << std::endl;
             }
         }
         else {
             glGetProgramiv(shader, GL_LINK_STATUS, &success);
             if (!success) {
                 glGetProgramInfoLog(shader, 1024, NULL, infoLog);
-                std::cout << "ERROR::PROGRAM_LINKING_ERROR of type: " << type << "\n" << infoLog << "\n -- --------------------------------------------------- -- " << std::endl;
+                std::cout << "错误::程序链接错误，类型: " << type << "\n" << infoLog << std::endl;
             }
         }
     }

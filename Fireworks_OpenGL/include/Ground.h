@@ -7,6 +7,11 @@
 #include "stb_image.h"
 #include <iostream>
 
+/**
+ * Ground 类
+ * 用于创建和渲染带有雾效的无限地面
+ * 支持纹理加载和 Blinn-Phong 光照
+ */
 class Ground {
 public:
     unsigned int VAO, VBO, EBO;
@@ -14,14 +19,17 @@ public:
     glm::vec3 position;
     float size;
     bool hasTexture;
+    float textureRepeat; // 纹理重复次数
 
     Ground(float groundSize = 50.0f, glm::vec3 pos = glm::vec3(0.0f, 0.0f, 0.0f)) 
-        : size(groundSize), position(pos), hasTexture(false), textureID(0) {
+        : size(groundSize), position(pos), hasTexture(false), textureID(0), textureRepeat(20.0f) {
         setupGround();
     }
 
-    // Load ground texture
-    void LoadTexture(const std::string& path) {
+    // 加载地面纹理
+    void LoadTexture(const std::string& path, float repeat = 20.0f) {
+        textureRepeat = repeat;
+        
         glGenTextures(1, &textureID);
         
         int width, height, nrChannels;
@@ -43,10 +51,14 @@ public:
 
             stbi_image_free(data);
             hasTexture = true;
-            std::cout << "Loaded ground texture: " << path << std::endl;
+            
+            // 使用新的纹理坐标更新地面
+            updateTextureCoordinates();
+            
+            std::cout << "加载地面纹理: " << path << " (重复: " << repeat << "x)" << std::endl;
         }
         else {
-            std::cout << "Failed to load ground texture: " << path << std::endl;
+            std::cout << "地面纹理加载失败: " << path << std::endl;
             stbi_image_free(data);
         }
     }
@@ -80,13 +92,13 @@ private:
     void setupGround() {
         float halfSize = size / 2.0f;
         
-        // Ground vertices with positions, normals, and texture coordinates
+        // 地面顶点：位置、法线、纹理坐标
         float vertices[] = {
-            // positions                           // normals              // texcoords
-            -halfSize, 0.0f,  halfSize,    0.0f, 1.0f, 0.0f,    0.0f, 0.0f,  // top-left
-             halfSize, 0.0f,  halfSize,    0.0f, 1.0f, 0.0f,    10.0f, 0.0f,  // top-right
-             halfSize, 0.0f, -halfSize,    0.0f, 1.0f, 0.0f,    10.0f, 10.0f, // bottom-right
-            -halfSize, 0.0f, -halfSize,    0.0f, 1.0f, 0.0f,    0.0f, 10.0f  // bottom-left
+            // 位置                           // 法线              // 纹理坐标
+            -halfSize, 0.0f,  halfSize,    0.0f, 1.0f, 0.0f,    0.0f, 0.0f,  // 左上
+             halfSize, 0.0f,  halfSize,    0.0f, 1.0f, 0.0f,    textureRepeat, 0.0f,  // 右上
+             halfSize, 0.0f, -halfSize,    0.0f, 1.0f, 0.0f,    textureRepeat, textureRepeat, // 右下
+            -halfSize, 0.0f, -halfSize,    0.0f, 1.0f, 0.0f,    0.0f, textureRepeat  // 左下
         };
 
         unsigned int indices[] = {
@@ -106,19 +118,34 @@ private:
         glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, EBO);
         glBufferData(GL_ELEMENT_ARRAY_BUFFER, sizeof(indices), indices, GL_STATIC_DRAW);
 
-        // Position attribute
+        // 位置属性
         glVertexAttribPointer(0, 3, GL_FLOAT, GL_FALSE, 8 * sizeof(float), (void*)0);
         glEnableVertexAttribArray(0);
 
-        // Normal attribute
+        // 法线属性
         glVertexAttribPointer(1, 3, GL_FLOAT, GL_FALSE, 8 * sizeof(float), (void*)(3 * sizeof(float)));
         glEnableVertexAttribArray(1);
 
-        // Texture coordinate attribute
+        // 纹理坐标属性
         glVertexAttribPointer(2, 2, GL_FLOAT, GL_FALSE, 8 * sizeof(float), (void*)(6 * sizeof(float)));
         glEnableVertexAttribArray(2);
 
         glBindVertexArray(0);
+    }
+
+    void updateTextureCoordinates() {
+        float halfSize = size / 2.0f;
+        
+        float vertices[] = {
+            // 位置                           // 法线              // 纹理坐标
+            -halfSize, 0.0f,  halfSize,    0.0f, 1.0f, 0.0f,    0.0f, 0.0f,
+             halfSize, 0.0f,  halfSize,    0.0f, 1.0f, 0.0f,    textureRepeat, 0.0f,
+             halfSize, 0.0f, -halfSize,    0.0f, 1.0f, 0.0f,    textureRepeat, textureRepeat,
+            -halfSize, 0.0f, -halfSize,    0.0f, 1.0f, 0.0f,    0.0f, textureRepeat
+        };
+
+        glBindBuffer(GL_ARRAY_BUFFER, VBO);
+        glBufferSubData(GL_ARRAY_BUFFER, 0, sizeof(vertices), vertices);
     }
 };
 

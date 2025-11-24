@@ -22,26 +22,24 @@ SYSU Computer Graphics Final Project
 ## 初步想法
 做一个多种烟花类型的三维烟花粒子系统，会有多个键位绑定不同烟花类型，后续有时间会加上鼠标点击位置发射烟花功能
 
-
+------
 
 ## 项目的详细要求
 
-------
-
-### 🎇 二、具体策略：怎么“变得不normal”
+### 🎇 二、具体策略：怎么"变得不normal"
 
 #### 💡【视觉层面】增强建议
 
 | 功能项                  | 描述                                 | 可视化提升         |
 | ----------------------- | ------------------------------------ | ------------------ |
-| 🌈 **多色渐变烟花**      | 粒子颜色随时间从亮到暗（如黄→红→蓝） | 烟花更“鲜活”       |
+| 🌈 **多色渐变烟花**      | 粒子颜色随时间从亮到暗（如黄→红→蓝） | 烟花更"鲜活"       |
 | 💥 **多阶段爆炸**        | 烟花二次爆炸（中间再分裂）           | 动态复杂、真实感强 |
 | 🌠 **轨迹拖尾**          | 粒子移动时保留尾迹（alpha 淡出）     | 烟花轨迹更连贯     |
 | 🌌 **镜头跟随 / 环绕**   | 摄像机自动旋转或跟随烟花上升         | 演示更立体         |
-| ✨ **高亮辉光**          | 爆炸时光晕扩散明显                   | “亮点”更震撼       |
+| ✨ **高亮辉光**          | 爆炸时光晕扩散明显                   | "亮点"更震撼       |
 | 🔊 **音效同步闪光**      | 声音与闪光同步播放                   | 视听结合，气氛强   |
 | 🖱️ **点击发射交互**      | 鼠标点击触发烟花                     | 可玩性提升         |
-| 🎆 **形状创意**          | 除球形外加“心形”“笑脸”“星形”         | 有趣且独特         |
+| 🎆 **形状创意**          | 除球形外加"心形""笑脸""星形"         | 有趣且独特         |
 | 🎵 **背景音乐+节奏发射** | 节拍触发烟花                         | 动感展示           |
 | 🧭 **HUD/状态UI**        | 左上角显示当前模式、发射数           | 展示专业性         |
 
@@ -53,8 +51,8 @@ SYSU Computer Graphics Final Project
 | ----------------------- | ------------------------------------------------------------ | ------------------------ |
 | **1. 开场视频（30秒）** | 自动播放烟花秀（含多种类型、不同颜色、镜头环绕）             | 吸引注意力，一眼给印象分 |
 | **2. 功能展示**         | 以 PPT 或屏幕录制展示 5 个功能点（类型切换、光照、辉光、交互、音效） | 对照演示                 |
-| **3. 可视化讲解**       | 一张“系统结构图”+ 一张“渲染流程图”                           | 说明技术含量             |
-| **4. 小结**             | 提出亮点：“自主粒子系统实现 + 多类型爆炸 + 后处理 + 可交互”  | 结尾收紧逻辑             |
+| **3. 可视化讲解**       | 一张"系统结构图"+ 一张"渲染流程图"                           | 说明技术含量             |
+| **4. 小结**             | 提出亮点："自主粒子系统实现 + 多类型爆炸 + 后处理 + 可交互"  | 结尾收紧逻辑             |
 
 ------
 
@@ -62,13 +60,11 @@ SYSU Computer Graphics Final Project
 
 | 角色         | 原职责               | 现在可加任务                   |
 | ------------ | -------------------- | ------------------------------ |
-| A：主架构    | 摄像机、地面、天空盒 | 加“摄像机环绕/跟随动画”        |
-| B：粒子逻辑  | 粒子系统核心         | 加“颜色渐变”“二次爆炸”“拖尾”   |
-| C：渲染/光照 | 光照+辉光            | 加“高亮提取 + 多层辉光”        |
-| D：交互/UI   | 键盘+鼠标            | 加“左上角UI + 模式提示文本”    |
-| E：音效/资源 | Boom 声 + 录制       | 加“背景音乐节奏发射”“视频剪辑” |
-
-
+| A：主架构    | 摄像机、地面、天空盒 | 加"摄像机环绕/跟随动画"        |
+| B：粒子逻辑  | 粒子系统核心         | 加"颜色渐变""二次爆炸""拖尾"   |
+| C：渲染/光照 | 光照+辉光            | 加"高亮提取 + 多层辉光"        |
+| D：交互/UI   | 键盘+鼠标            | 加"左上角UI + 模式提示文本"    |
+| E：音效/资源 | Boom 声 + 录制       | 加"背景音乐节奏发射""视频剪辑" |
 
 ------
 
@@ -79,7 +75,7 @@ SYSU Computer Graphics Final Project
 1️⃣ **片头（5 秒）**
 
 - 黑夜天空 + 组名/项目名 LOGO（淡入）
-- 文字：“3D Firework Particle System by Group X”
+- 文字："3D Firework Particle System by Group X"
 
 2️⃣ **功能展示（60 秒）**
 
@@ -94,22 +90,14 @@ SYSU Computer Graphics Final Project
 - 切换键盘控制模式
 - UI 显示当前类型
 
-🎬 最后淡出 + 文字 “Thanks for watching!”
-
-------
-
-
-
-
-
-
+🎬 最后淡出 + 文字 "Thanks for watching!"
 
 ------
 
 # 🧨 Fireworks OpenGL — 项目构建说明（Clone 后必读）
 
-本项目基于 **OpenGL + GLFW + GLAD + GLM** 实现 3D 烟花粒子特效。
- 该说明文档用于指导团队成员在 clone 项目后如何在本地完成构建环境配置。
+本项目基于 **OpenGL + GLFW + GLAD + GLM + Assimp** 实现 3D 烟花粒子特效。
+该说明文档用于指导团队成员在 clone 项目后如何在本地完成构建环境配置。
 
 ------
 
@@ -120,11 +108,13 @@ Fireworks_OpenGL/
 │── Fireworks_OpenGL/
 │   │── src/               # 所有 C++ 源文件
 │   │── include/           # 所有头文件
-│   │── assets/            # 资源（shader、texture、skybox、sound）
+│   │── assets/            # 资源（shader、texture、skybox、sound、model）
 │   │   ├── shaders/
 │   │   ├── textures/
 │   │   ├── skybox/
 │   │   ├── sounds/
+│   │   ├── model/         # 3D模型文件（如tropical_island.glb）
+│   │   ├── ground/        # 地面纹理
 │   │── external/          # 第三方库（源码形式）
 │   │   ├── glfw/
 │   │   ├── glad/
@@ -139,11 +129,12 @@ Fireworks_OpenGL/
 
 ## 🛠 二、环境依赖
 
-| 工具                                  | 用途           |
-| ------------------------------------- | -------------- |
-| **Visual Studio 2022**                | C++17 编译环境 |
-| **CMake**                             | 用于编译 GLFW  |
-| **Win10/Win11 系统自带 OpenGL32.lib** | 无需安装       |
+| 工具                                  | 用途                    |
+| ------------------------------------- | ----------------------- |
+| **Visual Studio 2022**                | C++17 编译环境          |
+| **CMake**                             | 用于编译 GLFW           |
+| **vcpkg**                             | 用于安装 Assimp         |
+| **Win10/Win11 系统自带 OpenGL32.lib** | 无需安装                |
 
 ------
 
@@ -163,8 +154,8 @@ external/glfw/
 
 1. 打开 **CMake GUI**
 2. 设置：
-   - Source：`external/glfw/<glfw-version>`
-   - Build：`external/glfw/<glfw-version>/build`
+   - Source：`external/glfw/glfw-3.4`
+   - Build：`external/glfw/glfw-3.4/build`
 3. 点击 **Configure**
 4. 点击 **Generate**
 5. 点击 **Open Project**
@@ -175,7 +166,7 @@ external/glfw/
 生成位置：
 
 ```
-external/glfw/<version>/build/src/Release/glfw3.lib
+external/glfw/glfw-3.4/build/src/Release/glfw3.lib
 ```
 
 ------
@@ -203,7 +194,7 @@ external/glad/src/glad.c
 
 下载路径：[Releases · g-truc/glm](https://github.com/g-truc/glm/releases)
 
-GLM 是 header-only，无需编译，直接下载zip然后解压到下面这个路径：
+GLM 是 header-only，无需编译，直接下载 zip 然后解压到下面这个路径：
 
 ```
 external/glm/
@@ -211,7 +202,150 @@ external/glm/
 
 ------
 
-## ⚙️ 四、配置 Visual Studio
+### 4. 配置 Assimp（必须）— 使用 vcpkg
+
+#### 为什么需要 Assimp？
+Assimp 用于加载 3D 模型文件（如 `.glb`、`.obj`、`.fbx` 等），项目中的海岛模型 `tropical_island.glb` 需要 Assimp 才能正确加载。
+
+#### 🚀 安装步骤
+
+**步骤 1：安装 vcpkg（如果还没有）**
+
+如果你的电脑上还没有 vcpkg，按以下步骤安装：
+
+```powershell
+# 1. 克隆 vcpkg 仓库到任意目录（第一行自己选择路径）
+cd C:\
+git clone https://github.com/microsoft/vcpkg.git
+cd vcpkg
+
+# 2. 运行 bootstrap 脚本
+.\bootstrap-vcpkg.bat
+
+# 3. 集成到 Visual Studio（可选但推荐）
+.\vcpkg integrate install
+```
+
+**步骤 2：安装 Assimp**
+
+```powershell
+# 在 vcpkg 目录下运行
+.\vcpkg install assimp:x64-windows
+```
+
+安装完成后，Assimp 库会被安装到：
+```
+[vcpkg安装路径]\installed\x64-windows\
+├── include\assimp\     # 头文件
+├── lib\                # Release 库文件
+│   └── assimp-vc143-mt.lib
+├── debug\lib\          # Debug 库文件
+│   └── assimp-vc143-mtd.lib
+└── bin\                # DLL 文件
+    └── assimp-vc143-mt.dll
+```
+
+**步骤 3：配置 Visual Studio 项目**
+
+打开 Visual Studio，右键项目 → 属性 → 确保配置为 **x64**
+
+**3.1 配置 Include 目录**
+
+在 `C/C++ → General → Additional Include Directories` 中添加：
+
+```
+$(ProjectDir)include
+$(ProjectDir)external\glfw\glfw-3.4\include
+$(ProjectDir)external\glad\include
+$(ProjectDir)external\glm
+$(VcpkgRoot)installed\x64-windows\include
+```
+
+**示例**（假设 vcpkg 在 C:\vcpkg）：
+```
+C:\vcpkg\installed\x64-windows\include
+```
+
+**3.2 配置 Library 目录**
+
+在 `Linker → General → Additional Library Directories` 中添加：
+
+注：下面的所有Debug配置和Release配置的设置只要在左上角切换Release/Debug进行配置即可，如果嫌麻烦可以只配置Release
+
+**Debug 配置**：
+```
+$(ProjectDir)external\glfw\glfw-3.4\build\src\Release
+$(VcpkgRoot)installed\x64-windows\debug\lib
+```
+
+**Release 配置**：
+```
+$(ProjectDir)external\glfw\glfw-3.4\build\src\Release
+$(VcpkgRoot)installed\x64-windows\lib
+```
+
+**3.3 配置链接库**
+
+在 `Linker → Input → Additional Dependencies` 中添加：
+
+**Debug 配置**：
+```
+glfw3.lib
+opengl32.lib
+assimp-vc143-mtd.lib
+```
+
+**Release 配置**：
+```
+glfw3.lib
+opengl32.lib
+assimp-vc143-mt.lib
+```
+
+**步骤 4：复制 DLL 文件**
+
+Assimp 需要 DLL 才能运行，需要将 DLL 复制到可执行文件目录：
+
+**方法 1：手动复制（每次编译后）**
+```
+从：[vcpkg路径]\installed\x64-windows\bin\assimp-vc143-mt.dll
+到：  x64\Debug\   或   x64\Release\
+```
+
+**方法 2：自动复制（推荐）**
+
+在 Visual Studio 中，项目 → 属性 → 生成事件 → 生成后时间 → 命令行，添加：
+
+```cmd
+xcopy /y /d "C:\vcpkg\installed\x64-windows\bin\assimp-vc143-mt.dll" "$(OutDir)"
+```
+
+（将 `C:\vcpkg` 替换为你的实际 vcpkg 路径）
+
+------
+
+#### ⚠️ 常见问题
+
+**问题 1：找不到 assimp.hpp**
+- 检查 Include Directories 是否正确添加 vcpkg 的 include 路径
+- 确保 vcpkg 安装成功：`.\vcpkg list assimp`
+
+**问题 2：链接错误 LNK1104: 无法打开 assimp-vc143-mt.lib**
+- 检查 Library Directories 是否正确
+- Debug 配置应使用 `debug\lib`，Release 配置使用 `lib`
+- 检查库文件名是否匹配（Debug 是 `mtd`，Release 是 `mt`）
+
+**问题 3：运行时错误：找不到 DLL**
+- 确保已将 `assimp-vc143-mt.dll` 复制到 exe 所在目录
+- 或设置 Post-Build Event 自动复制
+
+**问题 4：vcpkg integrate install 失败**
+- 以管理员身份运行 PowerShell
+- 或者不使用 integrate，手动配置项目路径也可以
+
+------
+
+## ⚙️ 四、配置 Visual Studio（完整版）
 
 右键项目 → 属性 → 配置：Release / Debug、平台：x64
 
@@ -219,51 +353,77 @@ external/glm/
 
 ### 📌 1. C/C++ → General → Additional Include Directories
 
-添加：
+**完整配置**（替换 `[vcpkg路径]` 为你的实际路径）：
 
 ```
 $(ProjectDir)include
-$(ProjectDir)external\glfw\<version>\include
+$(ProjectDir)external\glfw\glfw-3.4\include
 $(ProjectDir)external\glad\include
 $(ProjectDir)external\glm
+[vcpkg路径]\installed\x64-windows\include
 ```
 
 ------
 
 ### 📌 2. Linker → General → Additional Library Directories
 
-添加：
-
+**Debug 配置**：
 ```
-$(ProjectDir)external\glfw\<version>\build\src\Release
+$(ProjectDir)external\glfw\glfw-3.4\build\src\Release
+[vcpkg路径]\installed\x64-windows\debug\lib
+```
+
+**Release 配置**：
+```
+$(ProjectDir)external\glfw\glfw-3.4\build\src\Release
+[vcpkg路径]\installed\x64-windows\lib
 ```
 
 ------
 
 ### 📌 3. Linker → Input → Additional Dependencies
 
-添加：
-
+**Debug 配置**：
 ```
 glfw3.lib
 opengl32.lib
+assimp-vc143-mtd.lib
 ```
 
-系统自带 opengl32.lib。
+**Release 配置**：
+```
+glfw3.lib
+opengl32.lib
+assimp-vc143-mt.lib
+```
 
 ------
 
-### 🧪 五、构建 & 运行
+### 📌 4. Build Events → Post-Build Event（推荐）
+
+Command Line：
+```cmd
+xcopy /y /d "[vcpkg路径]\installed\x64-windows\bin\assimp-vc143-mt.dll" "$(OutDir)"
+```
+
+------
+
+## 🧪 五、构建 & 运行
 
 1. Visual Studio 选择：
    - **x64**
    - **Debug** 或 **Release**
 2. 点击 Build → Build Solution
-3. 运行即可看到窗口 + 你的测试场景（初期是黑色窗口正常）
+3. 确保没有编译错误
+4. 运行程序（F5 或 Ctrl+F5）
+5. 应该能看到：
+   - 夜空天空盒
+   - 草地地面
+   - 海岛模型（如果 Assimp 配置正确）
 
 ------
 
-### ✨ 六、常见问题
+## ✨ 六、常见问题
 
 #### ✔ external/build 目录不提交
 
@@ -271,22 +431,54 @@ opengl32.lib
 
 #### ✔ 如果 clone 后无法编译 GLFW
 
-一定是没有运行 CMake
- 或 VS 缺少 C++ Desktop Development 组件。
+一定是没有运行 CMake 或 VS 缺少 C++ Desktop Development 组件。
+
+#### ✔ Assimp 相关错误
+
+参考上面的 **Assimp 配置 → 常见问题** 部分。
+
+#### ✔ 模型加载失败
+
+- 检查 `assets/model/tropical_island.glb` 文件是否存在
+- 检查控制台输出的错误信息
+- 确保 Assimp DLL 已正确复制
 
 ------
 
-### 🎯 七、团队成员如何继续开发
+## 🎯 七、团队成员如何继续开发
 
 1. clone 本项目
-2. 通过 CMake 编译一次 GLFW
-3. 设置 VS 项目 include/library 目录
-4. 确保 glad.c 被添加
-5. 开始编写 src/ 下的模块代码即可
-6. 如果要添加头文件，选择 添加->新建项->include/文件名 即可
+2. 安装 vcpkg（如果没有）
+3. 通过 vcpkg 安装 Assimp：`.\vcpkg install assimp:x64-windows`
+4. 通过 CMake 编译一次 GLFW
+5. 设置 VS 项目的 include/library 目录（参考上面配置）
+6. 确保 glad.c 被添加到项目
+7. 复制 Assimp DLL 到输出目录
+8. 开始编写代码即可
+9. 如果要添加头文件，选择 添加→新建项→include/文件名 即可
 
 ------
 
+## 📋 配置检查清单
 
+在提交代码前，请确保：
 
-## 
+- [ ] GLFW 已编译，glfw3.lib 存在
+- [ ] glad.c 已添加到项目
+- [ ] GLM 已解压到 external/glm
+- [ ] vcpkg 已安装 Assimp
+- [ ] Visual Studio 项目配置中包含所有必要路径
+- [ ] Post-Build Event 已配置（或手动复制了 DLL）
+- [ ] 项目能成功编译（无链接错误）
+- [ ] 程序能正常运行（能看到天空盒、地面、模型）
+
+------
+
+## 🆘 获取帮助
+
+如果遇到配置问题，请：
+
+1. 检查上面的"常见问题"部分
+2. 查看 Visual Studio 的 Output 窗口获取详细错误信息
+4. 在团队群里提问
+

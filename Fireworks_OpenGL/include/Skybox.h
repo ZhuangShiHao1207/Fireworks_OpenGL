@@ -10,6 +10,11 @@
 
 #include "stb_image.h"
 
+/**
+ * Skybox 类
+ * 用于创建和渲染立方体贴图天空盒
+ * 支持从6个独立面或等距柱状图加载
+ */
 class Skybox {
 public:
     unsigned int VAO, VBO;
@@ -19,7 +24,7 @@ public:
         setupSkybox();
     }
 
-    // Load cubemap texture from individual faces
+    // 从6个独立面加载立方体贴图
     void LoadCubemap(std::vector<std::string> faces) {
         glGenTextures(1, &cubemapTexture);
         glBindTexture(GL_TEXTURE_CUBE_MAP, cubemapTexture);
@@ -36,10 +41,10 @@ public:
                 glTexImage2D(GL_TEXTURE_CUBE_MAP_POSITIVE_X + i,
                     0, format, width, height, 0, format, GL_UNSIGNED_BYTE, data);
                 stbi_image_free(data);
-                std::cout << "Loaded skybox face " << i << ": " << faces[i] << std::endl;
+                std::cout << "加载天空盒面 " << i << ": " << faces[i] << std::endl;
             }
             else {
-                std::cout << "Cubemap texture failed to load at path: " << faces[i] << std::endl;
+                std::cout << "立方体贴图纹理加载失败: " << faces[i] << std::endl;
                 stbi_image_free(data);
             }
         }
@@ -51,20 +56,21 @@ public:
         glTexParameteri(GL_TEXTURE_CUBE_MAP, GL_TEXTURE_WRAP_R, GL_CLAMP_TO_EDGE);
     }
 
-    // Load cubemap from 6 separate faces with standard naming (px, nx, py, ny, pz, nz)
+    // 从标准命名的6个独立面加载立方体贴图 (px, nx, py, ny, pz, nz)
     void LoadCubemapSeparateFaces(const std::string& directory) {
         std::vector<std::string> faces = {
-            directory + "/px.png",  // right  (+X)
-            directory + "/nx.png",  // left   (-X)
-            directory + "/py.png",  // top    (+Y)
-            directory + "/ny.png",  // bottom (-Y)
-            directory + "/pz.png",  // front  (+Z)
-            directory + "/nz.png"   // back   (-Z)
+            directory + "/px.png",  // 右侧  (+X)
+            directory + "/nx.png",  // 左侧  (-X)
+            directory + "/py.png",  // 顶部  (+Y)
+            directory + "/ny.png",  // 底部  (-Y)
+            directory + "/pz.png",  // 前方  (+Z)
+            directory + "/nz.png"   // 后方  (-Z)
         };
         LoadCubemap(faces);
     }
 
-    // Load cubemap from a single equirectangular image (like StandardCubeMap.png)
+    // 从单个等距柱状图加载立方体贴图（如 StandardCubeMap.png）
+    // 注：这是一个简化实现，实际使用时建议用6个独立面
     void LoadCubemapFromEquirectangular(const std::string& path) {
         glGenTextures(1, &cubemapTexture);
         glBindTexture(GL_TEXTURE_CUBE_MAP, cubemapTexture);
@@ -74,25 +80,20 @@ public:
         unsigned char* data = stbi_load(path.c_str(), &width, &height, &nrChannels, 0);
 
         if (data) {
-            // For standard cube map layout (horizontal cross or vertical strip)
-            // We need to extract 6 faces from the image
-            // Assuming horizontal cross layout: right, left, top, bottom, front, back
-            
-            // Simple approach: load same image to all 6 faces (not ideal but works for testing)
-            // You should implement proper face extraction based on your image layout
             GLenum format = GL_RGB;
             if (nrChannels == 4) format = GL_RGBA;
             
+            // 简化方法：将同一图像加载到所有6个面（仅用于测试）
             for (unsigned int i = 0; i < 6; i++) {
                 glTexImage2D(GL_TEXTURE_CUBE_MAP_POSITIVE_X + i,
                     0, format, width, height, 0, format, GL_UNSIGNED_BYTE, data);
             }
 
             stbi_image_free(data);
-            std::cout << "Loaded skybox from equirectangular: " << path << std::endl;
+            std::cout << "从等距柱状图加载天空盒: " << path << std::endl;
         }
         else {
-            std::cout << "Failed to load skybox texture: " << path << std::endl;
+            std::cout << "天空盒纹理加载失败: " << path << std::endl;
             stbi_image_free(data);
         }
 
@@ -104,13 +105,13 @@ public:
     }
 
     void Draw() {
-        glDepthFunc(GL_LEQUAL);  // Change depth function so depth test passes when values are equal to depth buffer's content
+        glDepthFunc(GL_LEQUAL);  // 改变深度函数，使深度测试在值等于深度缓冲内容时通过
         glBindVertexArray(VAO);
         glActiveTexture(GL_TEXTURE0);
         glBindTexture(GL_TEXTURE_CUBE_MAP, cubemapTexture);
         glDrawArrays(GL_TRIANGLES, 0, 36);
         glBindVertexArray(0);
-        glDepthFunc(GL_LESS); // Set depth function back to default
+        glDepthFunc(GL_LESS); // 将深度函数设置回默认值
     }
 
     ~Skybox() {
@@ -121,7 +122,7 @@ public:
 private:
     void setupSkybox() {
         float skyboxVertices[] = {
-            // positions          
+            // 位置坐标          
             -1.0f,  1.0f, -1.0f,
             -1.0f, -1.0f, -1.0f,
              1.0f, -1.0f, -1.0f,
