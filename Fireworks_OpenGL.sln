@@ -8,8 +8,11 @@ EndProject
 Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "解决方案项", "解决方案项", "{9FA3D6BD-1EC1-3BA5-80CB-CE02773A58D5}"
 	ProjectSection(SolutionItems) = preProject
 		.gitignore = .gitignore
+		A角色实现内容与接口介绍.md = A角色实现内容与接口介绍.md
+		B角色实现内容与接口介绍.md = B角色实现内容与接口介绍.md
 		README.md = README.md
 		分工.md = 分工.md
+		模型系统完整指南.md = 模型系统完整指南.md
 	EndProjectSection
 EndProject
 Global
