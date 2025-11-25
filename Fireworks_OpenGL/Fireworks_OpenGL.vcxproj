@@ -134,6 +134,7 @@
   <ItemGroup>
     <ClCompile Include="external\glad\src\glad.c" />
     <ClCompile Include="main.cpp" />
+    <ClCompile Include="src\InputHandler.cpp" />
     <ClCompile Include="src\FireworkParticleSystem.cpp" />
     <ClCompile Include="stb_image_impl.cpp" />
   </ItemGroup>
@@ -147,6 +148,7 @@
     <ClInclude Include="include\Shader.h" />
     <ClInclude Include="include\SimpleModel.h" />
     <ClInclude Include="include\Skybox.h" />
+    <ClInclude Include="include\InputHandler.h" />
     <ClInclude Include="include\stb_image.h" />
   </ItemGroup>
   <ItemGroup>
