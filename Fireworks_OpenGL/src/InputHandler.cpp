@@ -1,6 +1,7 @@
 ﻿#include "InputHandler.h"
 #include "Camera.h"
 #include "PointLight.h"
+#include "FireworkParticleSystem.h"
 #include <iostream>
 
 
@@ -12,6 +13,7 @@ extern bool mouseEnabled;
 extern float lastX, lastY;
 extern bool firstMouse;
 extern PointLightManager lightManager;
+extern FireworkParticleSystem fireworkSystem;
 
 // 处理所有输入
 void processInput(GLFWwindow* window)
@@ -84,6 +86,55 @@ void processInput(GLFWwindow* window)
     }
     if (glfwGetKey(window, GLFW_KEY_T) == GLFW_RELEASE)
         tKeyPressed = false;
+
+    // 发射烟花
+    static bool key1Pressed = false;
+    if (glfwGetKey(window, GLFW_KEY_1) == GLFW_PRESS && !key1Pressed)
+    {
+        glm::vec3 launchPos = camera.Position + camera.Front * 2.0f; // 在摄像机前方2单位处发射
+        glm::vec3 launchVel = camera.Front * 22.0f + glm::vec3(0.0f, 12.0f, 0.0f); // 更快更高
+        fireworkSystem.launch(launchPos, launchVel, FireworkParticleSystem::FireworkType::Sphere);
+        key1Pressed = true;
+        std::cout << "[烟花] 发射球形烟花！" << std::endl;
+    }
+    if (glfwGetKey(window, GLFW_KEY_1) == GLFW_RELEASE)
+        key1Pressed = false;
+
+    static bool key2Pressed = false;
+    if (glfwGetKey(window, GLFW_KEY_2) == GLFW_PRESS && !key2Pressed)
+    {
+        glm::vec3 launchPos = camera.Position + camera.Front * 2.0f;
+        glm::vec3 launchVel = camera.Front * 22.0f + glm::vec3(0.0f, 12.0f, 0.0f);
+        fireworkSystem.launch(launchPos, launchVel, FireworkParticleSystem::FireworkType::Ring);
+        key2Pressed = true;
+        std::cout << "[烟花] 发射环形烟花！" << std::endl;
+    }
+    if (glfwGetKey(window, GLFW_KEY_2) == GLFW_RELEASE)
+        key2Pressed = false;
+
+    static bool key3Pressed = false;
+    if (glfwGetKey(window, GLFW_KEY_3) == GLFW_PRESS && !key3Pressed)
+    {
+        glm::vec3 launchPos = camera.Position + camera.Front * 2.0f;
+        glm::vec3 launchVel = camera.Front * 22.0f + glm::vec3(0.0f, 12.0f, 0.0f);
+        fireworkSystem.launch(launchPos, launchVel, FireworkParticleSystem::FireworkType::Heart);
+        key3Pressed = true;
+        std::cout << "[烟花] 发射心形烟花！" << std::endl;
+    }
+    if (glfwGetKey(window, GLFW_KEY_3) == GLFW_RELEASE)
+        key3Pressed = false;
+
+    static bool key4Pressed = false;
+    if (glfwGetKey(window, GLFW_KEY_4) == GLFW_PRESS && !key4Pressed)
+    {
+        glm::vec3 launchPos = camera.Position + camera.Front * 2.0f;
+        glm::vec3 launchVel = camera.Front * 22.0f + glm::vec3(0.0f, 12.0f, 0.0f);
+        fireworkSystem.launch(launchPos, launchVel, FireworkParticleSystem::FireworkType::Star);
+        key4Pressed = true;
+        std::cout << "[烟花] 发射星形烟花！" << std::endl;
+    }
+    if (glfwGetKey(window, GLFW_KEY_4) == GLFW_RELEASE)
+        key4Pressed = false;
 }
 
 // glfw: 窗口大小改变时调用此回调函数

@@ -13,6 +13,7 @@
 #include "include/Ground.h"
 #include "include/Model.h"
 #include "include/PointLight.h"
+#include "include/FireworkParticleSystem.h"
 
 // 输入处理相关
 #include "include/InputHandler.h"
@@ -37,6 +38,9 @@ bool mouseEnabled = false;
 // 光源管理器（全局变量，以便在 processInput 中访问）
 PointLightManager lightManager;
 
+// 烟花粒子系统（全局变量，以便在 processInput 中访问）
+FireworkParticleSystem fireworkSystem;
+
 int main()
 {
     glfwInit();
@@ -58,33 +62,36 @@ int main()
 
     glfwSetInputMode(window, GLFW_CURSOR, GLFW_CURSOR_NORMAL);
 
+
     if (!gladLoadGLLoader((GLADloadproc)glfwGetProcAddress))
     {
         std::cout << "初始化 GLAD 失败" << std::endl;
         return -1;
     }
+    // 启用着色器控制点大小
+    glEnable(GL_PROGRAM_POINT_SIZE);
 
     glEnable(GL_DEPTH_TEST);
     glEnable(GL_BLEND);
     glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
 
-    Shader skyboxShader("assets/shaders/skybox.vs", "assets/shaders/skybox.fs");
-    Shader groundShader("assets/shaders/ground.vs", "assets/shaders/ground.fs");
-    Shader modelShader("assets/shaders/model.vs", "assets/shaders/model.fs");
+    Shader skyboxShader("D:/zlearning/project/Fireworks_OpenGL/Fireworks_OpenGL/assets/shaders/skybox.vs", "D:/zlearning/project/Fireworks_OpenGL/Fireworks_OpenGL/assets/shaders/skybox.fs");
+    Shader groundShader("D:/zlearning/project/Fireworks_OpenGL/Fireworks_OpenGL/assets/shaders/ground.vs", "D:/zlearning/project/Fireworks_OpenGL/Fireworks_OpenGL/assets/shaders/ground.fs");
+    Shader modelShader("D:/zlearning/project/Fireworks_OpenGL/Fireworks_OpenGL/assets/shaders/model.vs", "D:/zlearning/project/Fireworks_OpenGL/Fireworks_OpenGL/assets/shaders/model.fs");
 
     Skybox skybox;
     Ground ground(100.0f);
     
     // 使用 Assimp 加载书本模型
     std::cout << "正在加载模型..." << std::endl;
-    Model island("assets/model/book/source/TEST2.fbx");
+    Model island("D:/zlearning/project/Fireworks_OpenGL/Fireworks_OpenGL/assets/model/book/source/TEST2.fbx");
     std::cout << "模型加载成功！" << std::endl;
 
     std::cout << "正在加载天空盒..." << std::endl;
-    skybox.LoadCubemapSeparateFaces("assets/skybox/NightSkyHDRI007_4K");
+    skybox.LoadCubemapSeparateFaces("D:/zlearning/project/Fireworks_OpenGL/Fireworks_OpenGL/assets/skybox/NightSkyHDRI007_4K");
 
     std::cout << "正在加载地面纹理..." << std::endl;
-    ground.LoadTexture("assets/ground/sea.png");
+    ground.LoadTexture("D:/zlearning/project/Fireworks_OpenGL/Fireworks_OpenGL/assets/ground/sea.png");
 
     // 添加场景永久光源
     // 光源围绕书本模型放置
@@ -127,6 +134,7 @@ int main()
     std::cout << "  F - 聚焦中心" << std::endl;
     std::cout << "  M - 切换鼠标控制（重要：按 M 启用摄像机旋转）" << std::endl;
     std::cout << "  T - 测试：添加临时烟花光源（持续 5 秒）" << std::endl;
+    std::cout << "  1-4 - 发射烟花（球形、环形、心形、星形）" << std::endl;
     std::cout << "  ESC - 退出" << std::endl;
     std::cout << "\n[信息] 鼠标默认为自由模式。按 M 锁定/解锁鼠标以控制摄像机。\n" << std::endl;
 
@@ -140,6 +148,9 @@ int main()
 
         // 更新光源管理器（移除过期的临时光源）
         lightManager.Update(deltaTime);
+
+        // 更新烟花粒子系统
+        fireworkSystem.update(deltaTime);
 
         camera.UpdateOrbitMode(deltaTime);
 
@@ -231,6 +242,12 @@ int main()
         }
         
         island.Draw(modelShader);
+
+        // 设置烟花粒子系统的视图和投影矩阵
+        fireworkSystem.setViewProj(view, projection);
+        
+        // 渲染烟花粒子系统
+        fireworkSystem.render();
 
         // 绘制天空盒（最后渲染以优化）
         skyboxShader.use();

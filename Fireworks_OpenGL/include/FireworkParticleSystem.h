@@ -3,6 +3,7 @@
 #include <glm/glm.hpp>
 #include <vector>
 #include <glad/glad.h>
+#include "../include/Shader.h" // 包含Shader类
 
 /**
  * @brief FireworkParticleSystem 烟花粒子系统核心类
@@ -67,11 +68,13 @@ private:
         glm::vec4 color;
         float life;
         float size;
-        // ...可扩展属性
+        FireworkType type; // 烟花类型
+        // ...?????????
     };
     std::vector<Particle> particles;
     glm::mat4 viewMatrix;
     glm::mat4 projMatrix;
+    Shader* shader; // 烟花着色器指针
     // Modern OpenGL: VAO/VBO for particle rendering
     GLuint vao = 0;
     GLuint vbo = 0;
