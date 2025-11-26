@@ -314,7 +314,7 @@ Assimp 需要 DLL 才能运行，需要将 DLL 复制到可执行文件目录：
 
 **方法 2：自动复制（推荐）**
 
-在 Visual Studio 中，项目 → 属性 → 生成事件 → 生成后时间 → 命令行，添加：
+在 Visual Studio 中，项目 → 属性 → 生成事件 → 生成后事件 → 命令行，添加：
 
 ```cmd
 xcopy /y /d "$(VcpkgRoot)\installed\x64-windows\bin\assimp-vc143-mt.dll" "$(OutDir)"
@@ -418,8 +418,8 @@ xcopy /y /d "[vcpkg路径]\installed\x64-windows\bin\assimp-vc143-mt.dll" "$(Out
 4. 运行程序（F5 或 Ctrl+F5）
 5. 应该能看到：
    - 夜空天空盒
-   - 草地地面
-   - 海岛模型（如果 Assimp 配置正确）
+   - 海洋地面
+   - 魔法书模型+光照（如果 Assimp 配置正确）
 
 ------
 
@@ -468,7 +468,7 @@ xcopy /y /d "[vcpkg路径]\installed\x64-windows\bin\assimp-vc143-mt.dll" "$(Out
 - [ ] GLM 已解压到 external/glm
 - [ ] vcpkg 已安装 Assimp
 - [ ] Visual Studio 项目配置中包含所有必要路径
-- [ ] Post-Build Event 已配置（或手动复制了 DLL）
+- [ ] 生成后事件 已配置（或手动复制了 DLL）
 - [ ] 项目能成功编译（无链接错误）
 - [ ] 程序能正常运行（能看到天空盒、地面、模型）
 
@@ -480,5 +480,5 @@ xcopy /y /d "[vcpkg路径]\installed\x64-windows\bin\assimp-vc143-mt.dll" "$(Out
 
 1. 检查上面的"常见问题"部分
 2. 查看 Visual Studio 的 Output 窗口获取详细错误信息
-4. 在团队群里提问
+3. 在团队群里提问
 
