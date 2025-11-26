@@ -1,83 +1,73 @@
-#pragma once
+ï»¿#pragma once
 
 #include <glm/glm.hpp>
 #include <vector>
 #include <glad/glad.h>
-#include "../include/Shader.h" // °üº¬ShaderÀà
+#include "Shader.h"
 
-/**
- * @brief FireworkParticleSystem ÑÌ»¨Á£×ÓÏµÍ³ºËĞÄÀà
- * 
- * ÓÃÓÚ¹ÜÀíºÍäÖÈ¾ÑÌ»¨Á£×Ó£¬Ö§³Ö¶àÖÖÑÌ»¨ÀàĞÍ¡¢ÑÕÉ«½¥±ä¡¢±¬Õ¨·ÖÁÑµÈĞ§¹û¡£
- * 
- * Ö÷Òª½Ó¿Ú£º
- *   - launch£º·¢ÉäÑÌ»¨
- *   - update£º¸üĞÂÁ£×Ó×´Ì¬
- *   - render£ºäÖÈ¾Á£×Ó
- *   - setViewProj£ºÉèÖÃÊÓÍ¼ºÍÍ¶Ó°¾ØÕó
- */
+// FireworkParticleSystem - çƒŸèŠ±ç²’å­ç³»ç»Ÿ
+// æ”¯æŒå‘å°„å™¨ï¼ˆlauncherï¼‰ã€ä¸Šå‡çš„ç¤¼å¼¹ï¼ˆshellï¼‰å’Œçˆ†ç‚¸åçš„å­ç²’å­ï¼ˆsecondary shellï¼‰ï¼Œ
+// å¹¶åŒ…å«å¯é€‰çš„æ‹–å°¾ï¼ˆtrailï¼‰è§†è§‰æ•ˆæœã€‚
 class FireworkParticleSystem {
 public:
-    /**
-     * @brief Ö§³ÖµÄÑÌ»¨ÀàĞÍ
-     */
+    // æ”¯æŒçš„çƒŸèŠ±ç±»å‹
     enum class FireworkType { Sphere, Ring, Heart, Star };
 
-    /**
-     * @brief ¹¹Ôìº¯Êı£¬³õÊ¼»¯Á£×ÓÏµÍ³
-     */
     FireworkParticleSystem();
-
-    /**
-     * @brief Îö¹¹º¯Êı£¬ÇåÀí×ÊÔ´
-     */
     ~FireworkParticleSystem();
 
-    /**
-     * @brief ·¢ÉäÒ»Ã¶ÑÌ»¨
-     * @param position ·¢ÉäÆğµã
-     * @param velocity ³õËÙ¶È
-     * @param type ÑÌ»¨ÀàĞÍ£¨ÇòĞÎ¡¢»·ĞÎ¡¢ĞÄĞÎ¡¢ĞÇĞÎµÈ£©
-     */
+    // å‘å°„ä¸€ä¸ªçƒŸèŠ±ï¼ˆä¸Šå‡å¼¹ï¼‰
     void launch(const glm::vec3& position, const glm::vec3& velocity, FireworkType type);
 
-    /**
-     * @brief ¸üĞÂËùÓĞÁ£×Ó×´Ì¬
-     * @param deltaTime Ê±¼ä²½³¤£¨Ãë£©
-     */
+    // æ›´æ–°ç²’å­ç³»ç»Ÿï¼ˆæ¯å¸§è°ƒç”¨ï¼ŒdeltaTime å•ä½ï¼šç§’ï¼‰
     void update(float deltaTime);
 
-    /**
-     * @brief äÖÈ¾ËùÓĞÁ£×Ó
-     */
+    // æ¸²æŸ“ç²’å­ï¼ˆéœ€è¦å…ˆ setViewProjï¼‰
     void render();
 
-    /**
-     * @brief ÉèÖÃÊÓÍ¼ºÍÍ¶Ó°¾ØÕó£¨äÖÈ¾ÓÃ£©
-     * @param view ÊÓÍ¼¾ØÕó
-     * @param proj Í¶Ó°¾ØÕó
-     */
+    // è®¾ç½®è§†å›¾å’ŒæŠ•å½±çŸ©é˜µ
     void setViewProj(const glm::mat4& view, const glm::mat4& proj);
 
-    // ...¿ÉÀ©Õ¹ÆäËû½Ó¿Ú£¬ÈçÇå¿Õ¡¢»ñÈ¡Á£×ÓÊıµÈ
+    // === Configurable parameters (tweak at runtime) ===
+    // Tail (trail) parameters for moving particles
+    int tailCount = 3;              // number of tail particles generated per active particle per frame
+    float tailStep = 0.03f;         // distance multiplier for tail placement along reverse velocity
+    float tailLife = 0.1f;         // lifetime (seconds) of generated tail particles (reduced to prevent lingering after explosion)
+    float tailBrightFactor = 1.0f;  // per-step brightness multiplier increment for tail particles (increased for brightness)
+
+    // Initial tails generated for explosion particles
+    int initTailCount = 3;
+    float initTailStep = 0.03f;
+    float initTailLife = 1.0f;       // reduced to prevent lingering
+    float initTailBrightFactor = 0.18f;
+
+    // Sizes and physics
+    float launcherSize = 0.04f; // size of the launcher (ascending shell)
+    float childSize = 0.015f;   // default size for explosion child particles
+    float gravity = -0.8f;      // gravity acceleration (negative Y)
+    float alphaDecayFactor = 0.5f; // divisor for alpha decay (larger -> slower decay)
+    float timeScale = 0.3f;     // time scale for slow motion (1.0 = normal, 0.5 = half speed)
 
 private:
     struct Particle {
         glm::vec3 position;
         glm::vec3 velocity;
-        glm::vec4 color;
-        float life;
-        float size;
-        FireworkType type; // ÑÌ»¨ÀàĞÍ
-        // ...?????????
+        glm::vec4 color;   // rgba
+        float life;        // å‰©ä½™å¯¿å‘½ï¼ˆç§’ï¼‰
+        float size;        // è§„æ ¼åŒ–å°ºå¯¸ï¼ˆ0..1ï¼‰ï¼Œåœ¨é¡¶ç‚¹ç€è‰²å™¨ä¸­è½¬æ¢ä¸ºåƒç´ å¤§å°
+        FireworkType type;
+        bool isTail = false; // æ ‡è®°ä¸ºæ‹–å°¾ç²’å­ï¼Œé˜²æ­¢é€’å½’äº§ç”Ÿå°¾è¿¹
     };
+
     std::vector<Particle> particles;
     glm::mat4 viewMatrix;
     glm::mat4 projMatrix;
-    Shader* shader; // ÑÌ»¨×ÅÉ«Æ÷Ö¸Õë
-    // Modern OpenGL: VAO/VBO for particle rendering
+    Shader* shader = nullptr;
+
+    // OpenGL å¯¹è±¡
     GLuint vao = 0;
     GLuint vbo = 0;
+
     void initGL();
     void cleanupGL();
     bool glInited = false;

@@ -75,23 +75,22 @@ int main()
     glEnable(GL_BLEND);
     glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
 
-    Shader skyboxShader("D:/zlearning/project/Fireworks_OpenGL/Fireworks_OpenGL/assets/shaders/skybox.vs", "D:/zlearning/project/Fireworks_OpenGL/Fireworks_OpenGL/assets/shaders/skybox.fs");
-    Shader groundShader("D:/zlearning/project/Fireworks_OpenGL/Fireworks_OpenGL/assets/shaders/ground.vs", "D:/zlearning/project/Fireworks_OpenGL/Fireworks_OpenGL/assets/shaders/ground.fs");
-    Shader modelShader("D:/zlearning/project/Fireworks_OpenGL/Fireworks_OpenGL/assets/shaders/model.vs", "D:/zlearning/project/Fireworks_OpenGL/Fireworks_OpenGL/assets/shaders/model.fs");
+    Shader skyboxShader("assets/shaders/skybox.vs", "assets/shaders/skybox.fs");
+    Shader groundShader("assets/shaders/ground.vs", "assets/shaders/ground.fs");
+    Shader modelShader("assets/shaders/model.vs", "assets/shaders/model.fs");
 
     Skybox skybox;
     Ground ground(100.0f);
     
     // 使用 Assimp 加载书本模型
     std::cout << "正在加载模型..." << std::endl;
-    Model island("D:/zlearning/project/Fireworks_OpenGL/Fireworks_OpenGL/assets/model/book/source/TEST2.fbx");
+    Model island("assets/model/book/source/TEST2.fbx");
     std::cout << "模型加载成功！" << std::endl;
 
     std::cout << "正在加载天空盒..." << std::endl;
-    skybox.LoadCubemapSeparateFaces("D:/zlearning/project/Fireworks_OpenGL/Fireworks_OpenGL/assets/skybox/NightSkyHDRI007_4K");
-
+    skybox.LoadCubemapSeparateFaces("assets/skybox/NightSkyHDRI007_4K");
     std::cout << "正在加载地面纹理..." << std::endl;
-    ground.LoadTexture("D:/zlearning/project/Fireworks_OpenGL/Fireworks_OpenGL/assets/ground/sea.png");
+    ground.LoadTexture("assets/ground/sea.png");
 
     // 添加场景永久光源
     // 光源围绕书本模型放置
