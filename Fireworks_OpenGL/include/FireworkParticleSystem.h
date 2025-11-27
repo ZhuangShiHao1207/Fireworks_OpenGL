@@ -17,7 +17,7 @@ public:
     ~FireworkParticleSystem();
 
     // 发射一个烟花（上升弹）
-    void launch(const glm::vec3& position, const glm::vec3& velocity, FireworkType type);
+    void launch(const glm::vec3& position, FireworkType type, float life, const glm::vec4& color, float size);
 
     // 更新粒子系统（每帧调用，deltaTime 单位：秒）
     void update(float deltaTime);
@@ -44,7 +44,7 @@ public:
     // 尺寸和物理参数
     float launcherSize = 0.02f; // 上升弹粒子大小（原来0.01f，现为2倍）
     float childSize = 0.02f;    // 爆炸子粒子大小（原来0.015f，现为2倍）
-    float gravity = -0.8f;      // 重力加速度（负Y方向）
+    float gravity = -5.0f;      // 重力加速度（负Y方向）
     float alphaDecayFactor = 0.5f; // 透明度衰减因子（越大衰减越慢）
     float timeScale = 0.3f;     // 时间缩放（1.0=正常，0.5=慢动作）
 
