@@ -1,5 +1,4 @@
 ﻿#include <glad/glad.h>
-#include <glad/glad.h>
 #include <GLFW/glfw3.h>
 #include <glm/glm.hpp>
 #include <glm/gtc/matrix_transform.hpp>
@@ -139,18 +138,15 @@ int main()
 
     while (!glfwWindowShouldClose(window))
     {
+        //不要把具体逻辑放在这里（如矩阵计算/设置大量参数属性），这里尽量调用函数
         float currentFrame = static_cast<float>(glfwGetTime());
         deltaTime = currentFrame - lastFrame;
         lastFrame = currentFrame;
-
+		//处理输入
         processInput(window);
 
         // 更新光源管理器（移除过期的临时光源）
         lightManager.Update(deltaTime);
-
-        // 更新烟花粒子系统
-        fireworkSystem.update(deltaTime);
-
         camera.UpdateOrbitMode(deltaTime);
 
         glClearColor(0.05f, 0.05f, 0.1f, 1.0f);
@@ -242,6 +238,8 @@ int main()
         
         island.Draw(modelShader);
 
+        // 更新烟花粒子系统
+        fireworkSystem.update(deltaTime);
         // 设置烟花粒子系统的视图和投影矩阵
         fireworkSystem.setViewProj(view, projection);
         
