@@ -306,14 +306,6 @@ assimp-vc143-mt.lib
 
 Assimp 需要 DLL 才能运行，需要将 DLL 复制到可执行文件目录：
 
-**方法 1：手动复制（每次编译后）**
-```
-从：[vcpkg路径]\installed\x64-windows\bin\assimp-vc143-mt.dll
-到：  x64\Debug\   或   x64\Release\
-```
-
-**方法 2：自动复制（推荐）**
-
 在 Visual Studio 中，项目 → 属性 → 生成事件 → 生成后事件 → 命令行，添加：
 
 ```cmd
@@ -345,22 +337,24 @@ xcopy /y /d "$(VcpkgRoot)\installed\x64-windows\bin\assimp-vc143-mt.dll" "$(OutD
 
 ------
 
-## ⚙️ 四、配置 Visual Studio（完整版）
+## ⚙️ 四、配置 Visual Studio（完整版，可用于检查）
 
 右键项目 → 属性 → 配置：Release / Debug、平台：x64
+
+请注意：不要使用绝对路径，这会影响到其他同学，用$()这种宏的方式配置
 
 ------
 
 ### 📌 1. C/C++ → General → Additional Include Directories
 
-**完整配置**（替换 `[vcpkg路径]` 为你的实际路径）：
+**完整配置**：
 
 ```
 $(ProjectDir)include
 $(ProjectDir)external\glfw\glfw-3.4\include
 $(ProjectDir)external\glad\include
 $(ProjectDir)external\glm
-[vcpkg路径]\installed\x64-windows\include
+$(VcpkgRoot)installed\x64-windows\include
 ```
 
 ------
@@ -370,13 +364,13 @@ $(ProjectDir)external\glm
 **Debug 配置**：
 ```
 $(ProjectDir)external\glfw\glfw-3.4\build\src\Release
-[vcpkg路径]\installed\x64-windows\debug\lib
+$(VcpkgRoot)installed\x64-windows\debug\lib
 ```
 
 **Release 配置**：
 ```
 $(ProjectDir)external\glfw\glfw-3.4\build\src\Release
-[vcpkg路径]\installed\x64-windows\lib
+$(VcpkgRoot)installed\x64-windows\lib
 ```
 
 ------
