@@ -24,6 +24,12 @@
     <ClCompile Include="stb_image_impl.cpp">
       <Filter>源文件</Filter>
     </ClCompile>
+    <ClCompile Include="src\InputHandler.cpp">
+      <Filter>源文件</Filter>
+    </ClCompile>
+    <ClCompile Include="src\FireworkParticleSystem.cpp">
+      <Filter>源文件</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="include\Shader.h">
@@ -51,6 +57,12 @@
       <Filter>头文件</Filter>
     </ClInclude>
     <ClInclude Include="include\PointLight.h">
+      <Filter>头文件</Filter>
+    </ClInclude>
+    <ClInclude Include="include\FireworkParticleSystem.h">
+      <Filter>头文件</Filter>
+    </ClInclude>
+    <ClInclude Include="include\InputHandler.h">
       <Filter>头文件</Filter>
     </ClInclude>
   </ItemGroup>
