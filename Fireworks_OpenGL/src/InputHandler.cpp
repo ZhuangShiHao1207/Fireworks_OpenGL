@@ -93,7 +93,10 @@ void processInput(GLFWwindow* window)
     {
         glm::vec3 launchPos = glm::vec3(0.0f, 0.5f, 0.0f); // 场景中心稍上方
         glm::vec3 launchVel = glm::vec3(0.0f, 22.0f, 0.0f); // 竖直向上
-        fireworkSystem.launch(launchPos, launchVel, FireworkParticleSystem::FireworkType::Sphere);
+        fireworkSystem.launch(
+            launchPos,
+            FireworkParticleSystem::FireworkType::Sphere,
+            1.5f, glm::vec4(1.0f, 1.0f, 0.5f, 1.0f), 0.02f);
         key1Pressed = true;
         std::cout << "[烟花] 发射球形烟花！" << std::endl;
     }
@@ -105,7 +108,10 @@ void processInput(GLFWwindow* window)
     {
         glm::vec3 launchPos = glm::vec3(0.0f, 0.5f, 0.0f);
         glm::vec3 launchVel = glm::vec3(0.0f, 22.0f, 0.0f);
-        fireworkSystem.launch(launchPos, launchVel, FireworkParticleSystem::FireworkType::Ring);
+        fireworkSystem.launch(
+            launchPos,
+            FireworkParticleSystem::FireworkType::Ring,
+            1.5f, glm::vec4(0.5f, 1.0f, 1.0f, 1.0f), 0.02f);
         key2Pressed = true;
         std::cout << "[烟花] 发射环形烟花！" << std::endl;
     }
@@ -117,7 +123,10 @@ void processInput(GLFWwindow* window)
     {
         glm::vec3 launchPos = glm::vec3(0.0f, 0.5f, 0.0f);
         glm::vec3 launchVel = glm::vec3(0.0f, 22.0f, 0.0f);
-        fireworkSystem.launch(launchPos, launchVel, FireworkParticleSystem::FireworkType::Heart);
+        fireworkSystem.launch(
+            launchPos,
+            FireworkParticleSystem::FireworkType::Heart,
+            1.5f, glm::vec4(1.0f, 0.5f, 1.0f, 1.0f), 0.02f);
         key3Pressed = true;
         std::cout << "[烟花] 发射心形烟花！" << std::endl;
     }
@@ -129,7 +138,10 @@ void processInput(GLFWwindow* window)
     {
         glm::vec3 launchPos = glm::vec3(0.0f, 0.5f, 0.0f);
         glm::vec3 launchVel = glm::vec3(0.0f, 22.0f, 0.0f);
-        fireworkSystem.launch(launchPos, launchVel, FireworkParticleSystem::FireworkType::Star);
+        fireworkSystem.launch(
+            launchPos,
+            FireworkParticleSystem::FireworkType::Star,
+            1.5f, glm::vec4(1.0f, 1.0f, 1.0f, 1.0f), 0.02f);
         key4Pressed = true;
         std::cout << "[烟花] 发射星形烟花！" << std::endl;
     }

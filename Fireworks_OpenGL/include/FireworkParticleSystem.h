@@ -17,7 +17,7 @@ public:
     ~FireworkParticleSystem();
 
     // 发射一个烟花（上升弹）
-    void launch(const glm::vec3& position, const glm::vec3& velocity, FireworkType type);
+    void launch(const glm::vec3& position, FireworkType type, float life, const glm::vec4& color, float size);
 
     // 更新粒子系统（每帧调用，deltaTime 单位：秒）
     void update(float deltaTime);
@@ -28,38 +28,42 @@ public:
     // 设置视图和投影矩阵
     void setViewProj(const glm::mat4& view, const glm::mat4& proj);
 
-    // === Configurable parameters (tweak at runtime) ===
-    // Tail (trail) parameters for moving particles
-    int tailCount = 3;              // number of tail particles generated per active particle per frame
-    float tailStep = 0.03f;         // distance multiplier for tail placement along reverse velocity
-    float tailLife = 0.1f;         // lifetime (seconds) of generated tail particles (reduced to prevent lingering after explosion)
-    float tailBrightFactor = 1.0f;  // per-step brightness multiplier increment for tail particles (increased for brightness)
+    // === 可调参数（运行时可修改） ===
+    // 拖尾参数
+    int tailCount = 2;              // 每个活动粒子每帧生成的拖尾粒子数
+    float tailStep = 0.3f;         // 拖尾粒子沿反向速度的距离系数
+    float tailLife = 0.1f;         // 拖尾粒子的寿命（秒）
+    float tailBrightFactor = 1.0f;  // 拖尾粒子的亮度系数
 
-    // Initial tails generated for explosion particles
-    int initTailCount = 3;
-    float initTailStep = 0.03f;
-    float initTailLife = 1.0f;       // reduced to prevent lingering
-    float initTailBrightFactor = 0.18f;
+    // 爆炸粒子的初始拖尾参数
+    int initTailCount = 3;          // 爆炸粒子初始拖尾数量
+    float initTailStep = 0.03f;     // 爆炸粒子初始拖尾步长
+    float initTailLife = 1.0f;      // 爆炸粒子初始拖尾寿命
+    float initTailBrightFactor = 0.18f; // 爆炸粒子初始拖尾亮度系数
 
-    // Sizes and physics
-    float launcherSize = 0.04f; // size of the launcher (ascending shell)
-    float childSize = 0.015f;   // default size for explosion child particles
-    float gravity = -0.8f;      // gravity acceleration (negative Y)
-    float alphaDecayFactor = 0.5f; // divisor for alpha decay (larger -> slower decay)
-    float timeScale = 0.3f;     // time scale for slow motion (1.0 = normal, 0.5 = half speed)
+    // 尺寸和物理参数
+    float launcherSize = 0.02f; // 上升弹粒子大小（原来0.01f，现为2倍）
+    float childSize = 0.02f;    // 爆炸子粒子大小（原来0.015f，现为2倍）
+    float gravity = -5.0f;      // 重力加速度（负Y方向）
+    float alphaDecayFactor = 0.5f; // 透明度衰减因子（越大衰减越慢）
+    float timeScale = 0.3f;     // 时间缩放（1.0=正常，0.5=慢动作）
 
 private:
     struct Particle {
-        glm::vec3 position;
-        glm::vec3 velocity;
-        glm::vec4 color;   // rgba
-        float life;        // 剩余寿命（秒）
-        float size;        // 规格化尺寸（0..1），在顶点着色器中转换为像素大小
-        FireworkType type;
-        bool isTail = false; // 标记为拖尾粒子，防止递归产生尾迹
+        glm::vec3 position;      // 位置
+        glm::vec3 velocity;      // 速度
+        glm::vec4 color;         // 颜色（RGBA）
+        float life;              // 剩余寿命（秒）
+        float size;              // 规格化尺寸（0..1），在顶点着色器中转换为像素大小
+        FireworkType type;       // 烟花类型
+        bool isTail = false;     // 是否为拖尾粒子，防止递归产生尾迹
     };
 
-    std::vector<Particle> particles;
+    std::vector<Particle> launcherParticles; // 上升粒子
+    std::vector<Particle> explosionParticles; // 爆炸粒子
+    std::vector<Particle> tailParticles; // 拖尾粒子
+
+    std::vector<Particle> particles; // 渲染时合并所有粒子的容器
     glm::mat4 viewMatrix;
     glm::mat4 projMatrix;
     Shader* shader = nullptr;

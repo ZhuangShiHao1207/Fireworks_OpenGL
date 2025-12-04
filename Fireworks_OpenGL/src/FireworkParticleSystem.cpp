@@ -46,202 +46,156 @@ void FireworkParticleSystem::initGL() {
 }
 
 // 发射一个主烟花粒子（上升弹）
-void FireworkParticleSystem::launch(const glm::vec3& position, const glm::vec3& velocity, FireworkType type) {
+void FireworkParticleSystem::launch(const glm::vec3& position, FireworkType type, float life, const glm::vec4& color, float size) {
+    // 发射一个主烟花粒子（上升弹）
+    // 参数说明：
+    //   position: 初始位置
+    //   type: 烟花类型
+    //   life: 上升寿命
+    //   color: 主粒子颜色
+    //   size: 主粒子大小
+
+    // 固定上升速度（如：向上 8.0f）
+    glm::vec3 fixedVelocity(0.0f, 12.0f, 0.0f);
+
     Particle p;
-    p.position = position;
-    p.velocity = velocity;
-    p.color = glm::vec4(1, 1, 0.5, 1);
-    p.life = 1.2f;
-    // 减小升空主粒子大小，使后续尾迹更协调
-    p.size = launcherSize;
-    p.type = type;
-    particles.push_back(p);
+    p.position = position; // 初始位置
+    p.velocity = fixedVelocity; // 固定上升速度
+    p.color = color; // 指定颜色
+    p.life = life; // 指定寿命
+    p.size = size; // 指定大小
+    p.type = type; // 烟花类型
+    p.isTail = false;
+    launcherParticles.push_back(p);
 }
 
-// 更新所有粒子状态，并在主粒子生命结束时生成爆炸粒子
+
 void FireworkParticleSystem::update(float deltaTime) {
     float dt = deltaTime * timeScale; // apply time scale for slow motion
-    // 预先标记即将爆炸的粒子，避免为它们生成尾迹
-    std::vector<bool> willExplode(particles.size(), false);
-    for (size_t i = 0; i < particles.size(); ++i) {
-        const auto& p = particles[i];
-        if (p.size > (launcherSize * 0.6f) && (p.velocity.y <= 0.0f || p.life <= 0.0f)) {
-            willExplode[i] = true;
-        }
-    }
 
-    // 1. 物理更新：位置、速度、寿命、颜色
-    std::vector<Particle> tailParticles;
-    // History-sampled tail: for each non-tail particle spawn one short-lived tail at
-    // the particle's previous position. This produces a clean trailing effect
-    // without generating many new tails per frame and avoids tails generating tails.
-    for (size_t i = 0; i < particles.size(); ++i) {
-        auto& p = particles[i];
-        // capture previous position (sample history)
+    // 1. 更新上升粒子（主粒子）
+    // 每帧：
+    //   - 更新主粒子物理状态（位置、速度、寿命、颜色）
+    //   - 生成一个拖尾粒子，位置为主粒子的上一帧位置，属性与主粒子类似但寿命短
+    //   - 检查主粒子是否到达爆炸条件，若满足则生成爆炸粒子
+    std::vector<Particle> toExplode; // 保存要爆炸的主粒子
+    std::vector<size_t> launcherToRemove;
+    for (size_t i = 0; i < launcherParticles.size(); ++i) {
+        auto& p = launcherParticles[i];
         glm::vec3 prevPos = p.position;
 
-        // 物理更新（对所有粒子生效，包括尾迹）
+        // 物理更新
         if (p.life > 0.0f) {
-            // 位置更新
             p.position += p.velocity * dt;
-            // 重力影响
             p.velocity += glm::vec3(0, gravity, 0) * dt;
-            // 寿命递减
             p.life -= dt;
-            // 拖尾/淡出：alpha随life递减，RGB颜色保持
-            float alpha = std::max(0.0f, p.life / alphaDecayFactor);
-            p.color = glm::vec4(p.color.r, p.color.g, p.color.b, alpha);
+            // 保持粒子不透明，直到life耗尽
+            p.color = glm::vec4(p.color.r, p.color.g, p.color.b, 1.0f);
         }
 
-        // 仅对非尾粒子且非即将爆炸的粒子生成单帧历史采样尾（避免尾迹再生成尾迹）
-            if (!p.isTail && p.life > 0.0f && !willExplode[i]) {
-                Particle tail = p;
-                // place tail at previous position (history sample)
-                tail.position = prevPos;
-                // ascending particle tail: much smaller and always white
-                tail.size = std::max(0.001f, p.size * 0.25f);
-                // alpha fades out quickly for tail
-                float tailAlpha = std::max(0.0f, p.life / (tailLife * 1.2f));
-                tail.color = glm::vec4(1.0f, 1.0f, 1.0f, tailAlpha);
-                tail.isTail = true;
-                tail.life = tailLife * 0.4f; // even shorter for ascending
-                tail.velocity = glm::vec3(0.0f); // tail does not move
-                tailParticles.push_back(tail);
-        }
-    }
-
-    std::vector<Particle> newParticles;
-    std::vector<size_t> toRemove;
-    for (size_t i = 0; i < particles.size(); ++i) {
-        auto& p = particles[i];
-        // 2. 爆炸：主粒子在到达顶点（垂直速度接近或小于 0）时爆炸，
-        //    或者在寿命耗尽时爆炸。使用可配置的 launcherSize 作为判断阈值
-        //    这样可以避免发射过程中（仍在上升）就提前分散的问题。
-        if (p.size > (launcherSize * 0.6f) && (p.velocity.y <= 0.0f || p.life <= 0.0f)) {
-            int count = 120; // 爆炸粒子数，提升饱满度
-            // 单次爆炸统一颜色
-            float colorType = (float)rand() / RAND_MAX;
-            glm::vec3 baseColor;
-            if (colorType < 0.33f) baseColor = glm::vec3(1, 0.3f + 0.2f * ((float)rand() / RAND_MAX), 0.1f + 0.1f * ((float)rand() / RAND_MAX)); // 红
-            else if (colorType < 0.66f) baseColor = glm::vec3(1, 1, 0.3f + 0.2f * ((float)rand() / RAND_MAX)); // 黄
-            else baseColor = glm::vec3(0.2f + 0.3f * ((float)rand() / RAND_MAX), 0.4f + 0.3f * ((float)rand() / RAND_MAX), 1); // 蓝
-            switch (p.type) {
-                case FireworkType::Sphere:
-                    // 球面分布，单次爆炸统一色
-                    for (int i = 0; i < count; ++i) {
-                        float phi = acos(1.0f - 2.0f * (i + 0.5f) / count);
-                        float theta = 3.1415926f * (1 + sqrt(5.0f)) * i;
-                        Particle child;
-                        child.position = p.position;
-                        child.velocity = glm::vec3(
-                            sin(phi) * cos(theta),
-                            -glm::abs(sin(phi) * sin(theta)),  // 向下
-                            cos(phi)
-                        ) * (2.5f + 1.5f * ((float)rand() / RAND_MAX));
-                        child.color = glm::vec4(baseColor, 1);
-                        child.life = 1.2f + 0.5f * ((float)rand() / RAND_MAX);
-                        child.size = 0.015f;
-                        child.type = p.type;
-                        newParticles.push_back(child);
-                    }
-                    break;
-
-                case FireworkType::Ring:
-                    // 环形分布，单次爆炸统一色
-                    for (int i = 0; i < count; ++i) {
-                        float angle = (float)i / count * 2.0f * 3.14159f;
-                        Particle child;
-                        child.position = p.position;
-                        child.velocity = glm::vec3(
-                            cos(angle),
-                            -(0.2f + 0.8f * ((float)rand() / RAND_MAX)),  // 向下
-                            sin(angle)
-                        ) * (3.0f + 1.0f * ((float)rand() / RAND_MAX));
-                        child.color = glm::vec4(baseColor, 1);
-                        child.life = 1.5f + 0.3f * ((float)rand() / RAND_MAX);
-                        child.size = 0.015f;
-                        child.type = p.type;
-                        newParticles.push_back(child);
-                    }
-                    break;
-
-                case FireworkType::Heart:
-                    // 心形分布，单次爆炸统一色
-                    for (int i = 0; i < count; ++i) {
-                        float t = (float)i / count * 2.0f * 3.14159f;
-                        float x = 16 * sin(t) * sin(t) * sin(t);
-                        float y = 13 * cos(t) - 5 * cos(2*t) - 2 * cos(3*t) - cos(4*t);
-                        y = -glm::abs(y);  // 向下
-                        Particle child;
-                        child.position = p.position;
-                        child.velocity = glm::vec3(x, y, 0) * 0.1f + glm::vec3(
-                            ((float)rand() / RAND_MAX - 0.5f) * 0.5f,
-                            ((float)rand() / RAND_MAX - 0.5f) * 0.5f,
-                            ((float)rand() / RAND_MAX - 0.5f) * 0.5f
-                        );
-                        child.color = glm::vec4(baseColor, 1);
-                        child.life = 1.8f + 0.4f * ((float)rand() / RAND_MAX);
-                        child.size = 0.015f;
-                        child.type = p.type;
-                        newParticles.push_back(child);
-                    }
-                    break;
-
-                case FireworkType::Star:
-                    // 星形分布，单次爆炸统一色
-                    for (int i = 0; i < count; ++i) {
-                        float angle = (float)i / count * 2.0f * 3.14159f;
-                        float radius = (i % 2 == 0) ? 3.5f : 2.0f;
-                        Particle child;
-                        child.position = p.position;
-                        child.velocity = glm::vec3(
-                            cos(angle) * radius,
-                            -(1.0f + 0.5f * ((float)rand() / RAND_MAX)),  // 向下
-                            sin(angle) * radius
-                        );
-                        child.color = glm::vec4(baseColor, 1);
-                        child.life = 1.6f + 0.4f * ((float)rand() / RAND_MAX);
-                        child.size = 0.015f;
-                        child.type = p.type;
-                        newParticles.push_back(child);
-                    }
-                    break;
-            }
-            toRemove.push_back(i);
-        }
-    }
-    // 删除爆炸的上升粒子
-    for (auto it = toRemove.rbegin(); it != toRemove.rend(); ++it) {
-        particles.erase(particles.begin() + *it);
-    }
-    // 为新生成的爆炸粒子添加初始拖尾（让爆炸瞬间也带上拖尾）
-    std::vector<Particle> initialTails;
-    for (const auto& child : newParticles) {
-        for (int t = 1; t <= initTailCount; ++t) {
-            Particle tail = child;
-            tail.position = child.position - child.velocity * (float)t * initTailStep;
-            tail.size = std::max(0.004f, child.size * (1.0f - 0.2f * t));
-            // 初始尾全白，alpha 衰减
-            tail.color = glm::vec4(1.0f, 1.0f, 1.0f, child.color.a * (1.0f - 0.20f * t));
+        // 拖尾生成：每帧为主粒子生成一个短寿命拖尾，拖尾生成后在原地，逐渐变小、变亮，每次只生成一个
+        if (!p.isTail && p.life > 0.0f) {
+            Particle tail = p;
+            tail.position = prevPos; // 拖尾固定在上一帧主粒子位置
+            // 拖尾初始属性与主粒子完全一致
+            // 颜色、大小、透明度都与主粒子相同
             tail.isTail = true;
-            tail.life = initTailLife;
-            initialTails.push_back(tail);
+            tail.life = 0.05f;
+            tail.velocity = glm::vec3(0.0f); // 拖尾静止
+            tailParticles.push_back(tail);
+        }
+
+        // 爆炸条件：主粒子尺寸大于阈值且速度y<=0或寿命耗尽
+        if (p.size > (launcherSize * 0.6f) && (p.velocity.y <= 0.0f || p.life <= 0.0f)) {
+            toExplode.push_back(p); // 保存要爆炸的主粒子
+            launcherToRemove.push_back(i);
+        }
+    }
+    // 先移除爆炸的上升粒子
+    for (auto it = launcherToRemove.rbegin(); it != launcherToRemove.rend(); ++it) {
+        launcherParticles.erase(launcherParticles.begin() + *it);
+    }
+    // 再生成爆炸粒子
+    std::vector<Particle> newExplosionParticles;
+    for (const auto& p : toExplode) {
+        // 生成爆炸粒子，形状由type决定
+        int count = 120;
+        // 使用主粒子的颜色作为爆炸粒子颜色
+        glm::vec4 explosionColor = p.color;
+        // 所有类型都用立体均匀球面爆炸
+        for (int j = 0; j < count; ++j) {
+            float u = (float)j / (float)count;
+            float v = (float)rand() / (float)RAND_MAX;
+            float theta = u * 2.0f * 3.1415926f; // azimuth
+            float phi = acos(2.0f * v - 1.0f);    // inclination
+            float r = 2.5f + 1.5f * ((float)rand() / RAND_MAX);
+            Particle child;
+            child.position = p.position;
+            child.velocity = glm::vec3(
+                sin(phi) * cos(theta),
+                glm::abs(sin(phi) * sin(theta)),  // 确保向上
+                cos(phi)
+            ) * r;
+            child.color = explosionColor; // 使用主粒子的颜色
+            child.life = 1.2f + 0.5f * ((float)rand() / RAND_MAX);
+            child.size = childSize;
+            child.type = p.type;
+            child.isTail = false;
+            newExplosionParticles.push_back(child);
+        }
+    }
+    // 添加新爆炸粒子
+    explosionParticles.insert(explosionParticles.end(), newExplosionParticles.begin(), newExplosionParticles.end());
+
+
+    // 2. 更新爆炸粒子
+    for (auto& p : explosionParticles) {
+        if (p.life > 0.0f) {
+            glm::vec3 prevPos = p.position;
+            p.position += p.velocity * dt;
+            p.velocity += glm::vec3(0, gravity, 0) * dt;
+            p.life -= dt;
+            // 保持粒子不透明，直到life耗尽
+            p.color = glm::vec4(p.color.r, p.color.g, p.color.b, 1.0f);
+
+            // 爆炸粒子动态拖尾：每帧生成一个短寿命拖尾，固定在上一帧位置
+            Particle tail = p;
+            tail.position = prevPos;
+            tail.isTail = true;
+            tail.life = 0.05f;
+            tail.velocity = glm::vec3(0.0f);
+            tailParticles.push_back(tail);
         }
     }
 
-    // 合并拖尾粒子和新粒子
-    particles.insert(particles.end(), tailParticles.begin(), tailParticles.end());
-    particles.insert(particles.end(), initialTails.begin(), initialTails.end());
-    particles.insert(particles.end(), newParticles.begin(), newParticles.end());
-
-    // 粒子消失条件：生命耗尽或落地
-    particles.erase(std::remove_if(particles.begin(), particles.end(), [](const Particle& p) {
+    // 拖尾粒子更新：逐渐变小、变白色
+    for (auto& tail : tailParticles) {
+        if (tail.life > 0.0f) {
+            float t = 1.0f - (tail.life / 0.1f); // 0~1
+            tail.size = std::max(0.004f, tail.size * (1.0f - t * 0.7f)); // 逐渐变小
+            tail.life -= dt;
+        }
+    }
+    launcherParticles.erase(std::remove_if(launcherParticles.begin(), launcherParticles.end(), [](const Particle& p) {
         return (p.life <= 0.0f) || (p.position.y < 0.0f);
-    }), particles.end());
+    }), launcherParticles.end());
+    explosionParticles.erase(std::remove_if(explosionParticles.begin(), explosionParticles.end(), [](const Particle& p) {
+        return (p.life <= 0.0f) || (p.position.y < 0.0f);
+    }), explosionParticles.end());
+    tailParticles.erase(std::remove_if(tailParticles.begin(), tailParticles.end(), [](const Particle& p) {
+        return (p.life <= 0.0f) || (p.position.y < 0.0f);
+    }), tailParticles.end());
 }
 
 void FireworkParticleSystem::render() {
     if (!glInited) initGL();
+
+    // 合并所有粒子到 particles 用于渲染
+    particles.clear();
+    particles.insert(particles.end(), launcherParticles.begin(), launcherParticles.end());
+    particles.insert(particles.end(), explosionParticles.begin(), explosionParticles.end());
+    particles.insert(particles.end(), tailParticles.begin(), tailParticles.end());
+
     if (particles.empty() || !shader) return;
 
     // 调试输出粒子数量
