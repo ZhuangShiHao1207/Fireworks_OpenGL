@@ -63,7 +63,7 @@ int main()
 
     glfwSetInputMode(window, GLFW_CURSOR, GLFW_CURSOR_NORMAL);
 
-
+    // 后续不能重复调用
     if (!gladLoadGLLoader((GLADloadproc)glfwGetProcAddress))
     {
         std::cout << "初始化 GLAD 失败" << std::endl;
@@ -282,6 +282,8 @@ int main()
     delete groundShader;
     delete skyboxShader;
     delete modelShader;
+    fireworkSystem.cleanupGL();
+
     try {
         glfwTerminate();
     } catch (std::exception& e) {

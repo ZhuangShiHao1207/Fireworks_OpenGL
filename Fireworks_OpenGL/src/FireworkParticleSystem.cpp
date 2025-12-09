@@ -59,9 +59,12 @@ void FireworkParticleSystem::launch(const glm::vec3& position, FireworkType type
     glm::vec3 fixedVelocity(0.0f, 12.0f, 0.0f);
 
     Particle p;
+    // 不使用变量存储浮点数再用会报错 --> 默认是double，类型不匹配？
+    float scale = 2.0;
+
     p.position = position; // 初始位置
     p.velocity = fixedVelocity; // 固定上升速度
-    p.color = color; // 指定颜色
+	p.color = color * scale; // 指定颜色 --> 手动提高亮度（本身并没有变亮）
     p.life = life; // 指定寿命
     p.size = size; // 指定大小
     p.type = type; // 烟花类型
@@ -225,4 +228,28 @@ void FireworkParticleSystem::render() {
 void FireworkParticleSystem::setViewProj(const glm::mat4& view, const glm::mat4& proj) {
     viewMatrix = view;
     projMatrix = proj;
+}
+
+void FireworkParticleSystem::cleanupGL() {
+    if (!glInited) return; // 如果GL未初始化，直接返回
+
+    // 删除顶点缓冲对象
+    if (vbo) {
+        glDeleteBuffers(1, &vbo);
+        vbo = 0;
+    }
+
+    // 删除顶点数组对象
+    if (vao) {
+        glDeleteVertexArrays(1, &vao);
+        vao = 0;
+    }
+
+    // 删除 Shader 对象（假设你用 new Shader 创建）
+    if (shader) {
+        delete shader;
+        shader = nullptr;
+    }
+
+    glInited = false;
 }

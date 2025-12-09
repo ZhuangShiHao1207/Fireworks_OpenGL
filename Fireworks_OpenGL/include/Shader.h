@@ -19,7 +19,7 @@ class Shader {
 public:
     unsigned int ID;  // 着色器程序 ID
 
-	// 禁用拷贝构造和赋值，只允许移动语义 ???
+	// 禁用拷贝构造和赋值，只允许移动语义 --> 出现未知问题
     Shader(const Shader& other) {
         ID = other.ID;
     }

@@ -39,8 +39,10 @@ PostProcessor::~PostProcessor()
 	 if (RBO) glDeleteRenderbuffers(1, &RBO);
 	 if (FBO) glDeleteFramebuffers(1, &FBO);
 
-	 glDeleteFramebuffers(2, pingpongFBO);
-	 glDeleteTextures(2, pingpongColorBuffers);
+	 for (int i = 0; i < 2; ++i) {
+		 if (pingpongFBO[i]) glDeleteFramebuffers(1, &pingpongFBO[i]);
+		 if (pingpongColorBuffers[i]) glDeleteTextures(1, &pingpongColorBuffers[i]);
+	 }
 }
 
 void PostProcessor::initFramebuffer()
@@ -156,7 +158,7 @@ void PostProcessor::initBloomBuffers()
 
 void PostProcessor::Bind()
 {
-	std::cout << "Bind" << std::endl;
+	// std::cout << "Bind PostProcessor" << std::endl;
 	if (!glIsFramebuffer(FBO)) std::cerr << "[PostProcessor::Bind] Warning: FBO not valid!" << std::endl;
 	 glBindFramebuffer(GL_FRAMEBUFFER, FBO);
 	 glViewport(0,0, width, height);
@@ -164,7 +166,7 @@ void PostProcessor::Bind()
 
 void PostProcessor::Unbind()
 {
-	std::cout << "Unbind" << std::endl;
+	 // std::cout << "Unbind" << std::endl;
 	 glBindFramebuffer(GL_FRAMEBUFFER,0);
 	 // restore viewport to window size (assume same as width/height)
 	 glViewport(0,0, width, height);
@@ -172,7 +174,7 @@ void PostProcessor::Unbind()
 
 void PostProcessor::applyBloom()
 {
-	std::cout << "ApplyBloom" << std::endl;
+	// std::cout << "ApplyBloom" << std::endl;
 	// ------------------ Step 0: 检查 FBO/纹理 ------------------
 	if (!glIsFramebuffer(pingpongFBO[0]) || !glIsFramebuffer(pingpongFBO[1])) {
 		std::cerr << "[applyBloom] Pingpong FBO not properly initialized!" << std::endl;
@@ -244,7 +246,7 @@ void PostProcessor::applyBloom()
 // 绑定默认帧缓冲后渲染四边形
 void PostProcessor::Render()
 {
-	std::cout << "Render" << std::endl;
+	// std::cout << "Render" << std::endl;
 	 // Run bloom extraction + blur pass
 	 applyBloom();
 
