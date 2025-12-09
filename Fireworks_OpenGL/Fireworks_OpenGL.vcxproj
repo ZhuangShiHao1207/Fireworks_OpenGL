@@ -137,6 +137,7 @@
   <ItemGroup>
     <ClCompile Include="external\glad\src\glad.c" />
     <ClCompile Include="main.cpp" />
+    <ClCompile Include="PostProcessor.cpp" />
     <ClCompile Include="src\InputHandler.cpp" />
     <ClCompile Include="src\FireworkParticleSystem.cpp" />
     <ClCompile Include="stb_image_impl.cpp" />
@@ -153,14 +154,17 @@
     <ClInclude Include="include\Skybox.h" />
     <ClInclude Include="include\InputHandler.h" />
     <ClInclude Include="include\stb_image.h" />
+    <ClInclude Include="PostProcessor.h" />
   </ItemGroup>
   <ItemGroup>
-    <None Include="assets\shaders\ground.fs" />
-    <None Include="assets\shaders\ground.vs" />
-    <None Include="assets\shaders\model.fs" />
+    <None Include="assets\shaders\*.fs" />
+    <None Include="assets\shaders\*.vs" />
+    <!-- <None Include="assets\shaders\model.fs" />
     <None Include="assets\shaders\model.vs" />
     <None Include="assets\shaders\skybox.fs" />
-    <None Include="assets\shaders\skybox.vs" />
+    <None Include="assets\shaders\skybox.vs" /> -->
+    <!-- <None Include="post.fs" />
+    <None Include="post.vs" /> -->
   </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
   <ImportGroup Label="ExtensionTargets">

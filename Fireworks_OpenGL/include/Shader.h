@@ -7,6 +7,8 @@
 #include <fstream>
 #include <sstream>
 #include <iostream>
+#include <stdexcept>
+#include <GLFW/glfw3.h>
 
 /**
  * Shader 类
@@ -17,6 +19,45 @@ class Shader {
 public:
     unsigned int ID;  // 着色器程序 ID
 
+	// 禁用拷贝构造和赋值，只允许移动语义 ???
+    Shader(const Shader& other) {
+        ID = other.ID;
+    }
+
+    Shader& operator=(const Shader& other) {
+        ID = other.ID;
+    }
+
+    Shader(Shader&& other) noexcept {
+        ID = other.ID;
+        other.ID = 0;
+    }
+
+    Shader& operator=(Shader&& other) noexcept {
+        if (this != &other) {
+            glDeleteProgram(ID);
+            ID = other.ID;
+            other.ID = 0;
+        }
+        return *this;
+    }
+
+    ~Shader() {
+        std::cout << "~Shader(), ID=" << ID
+            << ", context=" << glfwGetCurrentContext() << std::endl;
+        if (ID) {
+            try {
+                glDeleteProgram(ID);
+            }
+            catch (std::exception& e) {
+                std::cerr << "Exception during Shader destructor for ID " << ID
+					<< ": " << e.what() << std::endl;
+            }
+            
+        }
+    }
+
+	// 只实现了有参构造函数
     // 构造函数：读取并编译着色器
     Shader(const char* vertexPath, const char* fragmentPath) {
         // 1. 从文件路径读取顶点/片段着色器源码
@@ -51,6 +92,8 @@ public:
             std::cout << "错误::着色器::文件读取失败: " << e.what() << std::endl;
         }
 
+        /*std::cout << "Fragment shader source:\n" << fragmentCode << std::endl << std::endl;*/
+
         const char* vShaderCode = vertexCode.c_str();
         const char* fShaderCode = fragmentCode.c_str();
 
@@ -71,6 +114,7 @@ public:
 
         // 着色器程序
         ID = glCreateProgram();
+        std::cout << "Load shader, vertex path: " << vertexPath << ", fragment path: " << fragmentPath << ", ID = " << ID << std::endl << std::endl;
         glAttachShader(ID, vertex);
         glAttachShader(ID, fragment);
         glLinkProgram(ID);

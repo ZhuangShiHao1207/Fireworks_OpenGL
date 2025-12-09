@@ -30,6 +30,9 @@
     <ClCompile Include="src\FireworkParticleSystem.cpp">
       <Filter>源文件</Filter>
     </ClCompile>
+    <ClCompile Include="PostProcessor.cpp">
+      <Filter>源文件</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="include\Shader.h">
@@ -65,6 +68,9 @@
     <ClInclude Include="include\InputHandler.h">
       <Filter>头文件</Filter>
     </ClInclude>
+    <ClInclude Include="PostProcessor.h">
+      <Filter>头文件</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <None Include="assets\shaders\ground.fs">
@@ -81,5 +87,7 @@
     </None>
     <None Include="assets\shaders\model.vs" />
     <None Include="assets\shaders\model.fs" />
+    <None Include="post.vs" />
+    <None Include="post.fs" />
   </ItemGroup>
 </Project>

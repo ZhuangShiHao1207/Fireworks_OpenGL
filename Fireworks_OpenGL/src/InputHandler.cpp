@@ -87,7 +87,7 @@ void processInput(GLFWwindow* window)
     if (glfwGetKey(window, GLFW_KEY_T) == GLFW_RELEASE)
         tKeyPressed = false;
 
-    // 发射烟花
+    // 发射烟花 --> 通过三个通道控制颜色
     static bool key1Pressed = false;
     if (glfwGetKey(window, GLFW_KEY_1) == GLFW_PRESS && !key1Pressed)
     {
