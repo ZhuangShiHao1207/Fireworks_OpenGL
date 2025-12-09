@@ -10,15 +10,16 @@ static const char* blurFragmentSrc = "assets/shaders/blur.fs";
 
 PostProcessor::PostProcessor(unsigned int w, unsigned int h)
  : FBO(0), RBO(0), textureColorBuffer(0), quadVAO(0), quadVBO(0),
- width(w), height(h),
- postShader(defaultVertexSrc, defaultFragmentSrc),
- bloomShader(bloomVertexSrc, bloomFragmentSrc),
- blurShader(blurVertexSrc, blurFragmentSrc)
+ width(w), height(h)
 {
-	std::cout << "PostProcessor initializer" << std::endl;
+	 std::cout << "PostProcessor initialized" << std::endl;
 	 if (!glIsEnabled(GL_BLEND)) {
 		 std::cerr << "OpenGL context not ready!" << std::endl;
 	 }
+
+	 postShader  = new Shader(defaultVertexSrc, defaultFragmentSrc);
+	 bloomShader = new Shader(bloomVertexSrc, bloomFragmentSrc);
+	 blurShader  = new Shader(blurVertexSrc, blurFragmentSrc);
 
 	 // 初始化帧缓冲、渲染数据、Bloom缓冲
 	 try {
@@ -43,6 +44,10 @@ PostProcessor::~PostProcessor()
 		 if (pingpongFBO[i]) glDeleteFramebuffers(1, &pingpongFBO[i]);
 		 if (pingpongColorBuffers[i]) glDeleteTextures(1, &pingpongColorBuffers[i]);
 	 }
+
+	 delete bloomShader;
+	 delete blurShader;
+	 delete postShader;
 }
 
 void PostProcessor::initFramebuffer()
@@ -54,7 +59,7 @@ void PostProcessor::initFramebuffer()
 	 // 创建颜色纹理附件
 	 glGenTextures(1, &textureColorBuffer);
 	 glBindTexture(GL_TEXTURE_2D, textureColorBuffer);
-	 std::cout << "textureColorbuffer: " << textureColorBuffer << std::endl;
+	 // std::cout << "textureColorbuffer: " << textureColorBuffer << std::endl;
 
 	 // Use HDR (float) render target so bright values are preserved for bloom
 	 glTexImage2D(GL_TEXTURE_2D,0, GL_RGBA16F, width, height,0, GL_RGBA, GL_FLOAT, NULL);
@@ -86,9 +91,9 @@ void PostProcessor::initFramebuffer()
 
 void PostProcessor::initRenderData()
 {
-	 postShader.use();
-	 postShader.setBool("useBloom", true);
-	 postShader.setFloat("exposure", 1.0f);
+	 postShader->use();
+	 postShader->setBool("useBloom", true);
+	 postShader->setFloat("exposure", 1.0f);
 	 // 定义屏幕四边形顶点数据
 	 float quadVertices[] = {
 	 // positions // texCoords
@@ -101,9 +106,9 @@ void PostProcessor::initRenderData()
 	1.0f,1.0f,1.0f,1.0f
 	 };
 	 glGenVertexArrays(1, &quadVAO);
-	 std::cout << "Generated VAO ID: " << quadVAO << std::endl;
+	 // std::cout << "Generated VAO ID: " << quadVAO << std::endl;
 	 glGenBuffers(1, &quadVBO);
-	 std::cout << "Generated VBO ID: " << quadVBO << std::endl;
+	 // std::cout << "Generated VBO ID: " << quadVBO << std::endl;
 	
 	 // 只有bind之后才能识别到对象？
 	 //if (!glIsVertexArray(quadVAO) || !glIsBuffer(quadVBO)) {
@@ -195,8 +200,8 @@ void PostProcessor::applyBloom()
 	// ------------------ Step 1: 提取亮部 ------------------
 	glBindFramebuffer(GL_FRAMEBUFFER, pingpongFBO[0]);
 	glViewport(0, 0, width, height);
-	bloomShader.use();
-	bloomShader.setInt("scene", 0);
+	bloomShader->use();
+	bloomShader->setInt("scene", 0);
 	glActiveTexture(GL_TEXTURE0);
 	glBindTexture(GL_TEXTURE_2D, textureColorBuffer);
 
@@ -224,9 +229,9 @@ void PostProcessor::applyBloom()
 		glBindFramebuffer(GL_FRAMEBUFFER, pingpongFBO[writeFBO]);
 		glViewport(0, 0, width, height);
 
-		blurShader.use();
-		blurShader.setInt("horizontal", horizontal);
-		blurShader.setInt("image", 0);
+		blurShader->use();
+		blurShader->setInt("horizontal", horizontal);
+		blurShader->setInt("image", 0);
 		glActiveTexture(GL_TEXTURE0);
 		glBindTexture(GL_TEXTURE_2D, pingpongColorBuffers[readTex]);
 
@@ -256,9 +261,9 @@ void PostProcessor::Render()
 	 glDisable(GL_DEPTH_TEST);
 
 	 // 设置最终输出的片段着色器的uniform
-	 postShader.use();
-	 postShader.setInt("scene",0);
-	 postShader.setInt("bloomBlur",1); // 读取辉光纹理
+	 postShader->use();
+	 postShader->setInt("scene",0);
+	 postShader->setInt("bloomBlur",1); // 读取辉光纹理
 
 	 // 原场景纹理绑定到纹理单元0
 	 glActiveTexture(GL_TEXTURE0);

@@ -138,7 +138,7 @@ int main()
     std::cout << "  ESC - 退出" << std::endl;
     std::cout << "\n[信息] 鼠标默认为自由模式。按 M 锁定/解锁鼠标以控制摄像机。\n" << std::endl;
 
-    std::cout << "Current Context: " << glfwGetCurrentContext() << std::endl;
+    // std::cout << "Current Context: " << glfwGetCurrentContext() << std::endl;
     PostProcessor* postProcessor = new PostProcessor(SCR_WIDTH, SCR_HEIGHT);
 
     while (!glfwWindowShouldClose(window))

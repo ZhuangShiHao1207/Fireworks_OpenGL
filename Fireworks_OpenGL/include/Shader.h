@@ -19,14 +19,10 @@ class Shader {
 public:
     unsigned int ID;  // 着色器程序 ID
 
-	// 禁用拷贝构造和赋值，只允许移动语义 --> 出现未知问题
-    Shader(const Shader& other) {
-        ID = other.ID;
-    }
+	// 禁用拷贝构造和赋值，只允许移动语义 --> 否则由于浅拷贝的存在，会出现重复释放的问题
 
-    Shader& operator=(const Shader& other) {
-        ID = other.ID;
-    }
+    Shader(const Shader&) = delete;
+    Shader& operator=(const Shader&) = delete;
 
     Shader(Shader&& other) noexcept {
         ID = other.ID;

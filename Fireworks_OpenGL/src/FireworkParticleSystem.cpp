@@ -60,7 +60,7 @@ void FireworkParticleSystem::launch(const glm::vec3& position, FireworkType type
 
     Particle p;
     // 不使用变量存储浮点数再用会报错 --> 默认是double，类型不匹配？
-    float scale = 2.0;
+    float scale = 5.0;
 
     p.position = position; // 初始位置
     p.velocity = fixedVelocity; // 固定上升速度

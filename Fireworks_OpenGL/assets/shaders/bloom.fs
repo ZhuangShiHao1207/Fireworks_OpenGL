@@ -6,7 +6,7 @@ in vec2 TexCoords;
 uniform sampler2D scene;
 
 // 亮度阈值，超过这个值的像素会被认为是亮部 --> 若不是HDR，则整个屏幕都会被过滤掉 --> 全黑
-const float threshold = 1.5;
+const float threshold = 3;
 
 void main()
 {
@@ -18,5 +18,6 @@ void main()
     if(brightness > threshold)
         FragColor = vec4(color, 1.0);
     else
+        // 置为黑色
         FragColor = vec4(0.0, 0.0, 0.0, 1.0);
 }
