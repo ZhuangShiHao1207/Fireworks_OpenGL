@@ -28,9 +28,6 @@ public:
     // 设置视图和投影矩阵
     void setViewProj(const glm::mat4& view, const glm::mat4& proj);
 
-	// 清理OpenGL资源
-    void cleanupGL();
-
     // === 可调参数（运行时可修改） ===
     // 拖尾参数
     int tailCount = 2;              // 每个活动粒子每帧生成的拖尾粒子数
@@ -76,5 +73,7 @@ private:
     GLuint vbo = 0;
 
     void initGL();
+    // 清理OpenGL资源
+    void cleanupGL();
     bool glInited = false;
 };

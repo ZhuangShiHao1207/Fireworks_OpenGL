@@ -268,10 +268,10 @@ int main()
 		
 		// 将离屏场景处理（辉光、高斯模糊）后渲染到屏幕上
         // 渲染烟花的时候使用alpha混合 --> 制造透明效果
-        glEnable(GL_BLEND);
-        glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
+        // glEnable(GL_BLEND);
+        // glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
         postProcessor->Render();
-        glDisable(GL_BLEND);
+        // glDisable(GL_BLEND);
 
         glfwSwapBuffers(window);
         glfwPollEvents();
@@ -282,7 +282,6 @@ int main()
     delete groundShader;
     delete skyboxShader;
     delete modelShader;
-    fireworkSystem.cleanupGL();
 
     try {
         glfwTerminate();

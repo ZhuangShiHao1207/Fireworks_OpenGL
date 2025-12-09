@@ -17,6 +17,9 @@ PostProcessor::PostProcessor(unsigned int w, unsigned int h)
 		 std::cerr << "OpenGL context not ready!" << std::endl;
 	 }
 
+	 pingpongFBO[0] = pingpongFBO[1] = 0;
+	 pingpongColorBuffers[0] = pingpongColorBuffers[1] = 0;
+
 	 postShader  = new Shader(defaultVertexSrc, defaultFragmentSrc);
 	 bloomShader = new Shader(bloomVertexSrc, bloomFragmentSrc);
 	 blurShader  = new Shader(blurVertexSrc, blurFragmentSrc);
@@ -251,7 +254,7 @@ void PostProcessor::applyBloom()
 // °ó¶¨Ä¬ÈÏÖ¡»º³åºóäÖÈ¾ËÄ±ßÐÎ
 void PostProcessor::Render()
 {
-	// std::cout << "Render" << std::endl;
+	 // std::cout << "Render" << std::endl;
 	 // Run bloom extraction + blur pass
 	 applyBloom();
 

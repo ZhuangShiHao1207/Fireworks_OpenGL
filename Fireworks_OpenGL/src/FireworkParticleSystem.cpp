@@ -12,14 +12,8 @@ FireworkParticleSystem::FireworkParticleSystem() {
 }
 
 FireworkParticleSystem::~FireworkParticleSystem() {
-    if (shader) {
-        delete shader;
-        shader = nullptr;
-    }
-    if (glInited) {
-        glDeleteBuffers(1, &vbo);
-        glDeleteVertexArrays(1, &vao);
-    }
+    // 清理OpenGL资源
+    void cleanupGL();
 }
 
 void FireworkParticleSystem::initGL() {
