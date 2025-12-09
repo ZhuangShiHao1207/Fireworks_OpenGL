@@ -214,7 +214,7 @@ void PostProcessor::applyBloom()
 
 	// ------------------ Step 2: 高斯模糊（ping-pong） ------------------
 	bool horizontal = true;
-	int blurPasses = 10;
+	int blurPasses = 20;
 	int readTex = 0; // 初始读取 pingpongColorBuffers[0]
 
 	for (int i = 0; i < blurPasses; ++i) {

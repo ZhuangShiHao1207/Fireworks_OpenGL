@@ -12,6 +12,7 @@ extern float deltaTime;
 extern bool mouseEnabled;
 extern float lastX, lastY;
 extern bool firstMouse;
+extern bool sceneLightsEnabled;
 extern PointLightManager lightManager;
 extern FireworkParticleSystem fireworkSystem;
 
@@ -70,6 +71,17 @@ void processInput(GLFWwindow* window)
     if (glfwGetKey(window, GLFW_KEY_M) == GLFW_RELEASE)
         mKeyPressed = false;
 
+    // 切换场景灯光
+    static bool lKeyPressed = false;
+    if (glfwGetKey(window, GLFW_KEY_L) == GLFW_PRESS && !lKeyPressed)
+    {
+        sceneLightsEnabled = !sceneLightsEnabled;
+        lKeyPressed = true;
+        std::cout << "[Lights] Scene lights: " << (sceneLightsEnabled ? "ON" : "OFF") << std::endl;
+    }
+    if (glfwGetKey(window, GLFW_KEY_L) == GLFW_RELEASE)
+        lKeyPressed = false;
+
     // 测试：添加临时烟花光源
     static bool tKeyPressed = false;
     if (glfwGetKey(window, GLFW_KEY_T) == GLFW_PRESS && !tKeyPressed)
@@ -82,7 +94,7 @@ void processInput(GLFWwindow* window)
             5.0f                              // 生命周期：5 秒
         );
         tKeyPressed = true;
-        std::cout << "[测试] 已添加临时烟花光源！" << std::endl;
+        std::cout << "[Test] Added temporary light!" << std::endl;
     }
     if (glfwGetKey(window, GLFW_KEY_T) == GLFW_RELEASE)
         tKeyPressed = false;
@@ -91,14 +103,13 @@ void processInput(GLFWwindow* window)
     static bool key1Pressed = false;
     if (glfwGetKey(window, GLFW_KEY_1) == GLFW_PRESS && !key1Pressed)
     {
-        glm::vec3 launchPos = glm::vec3(0.0f, 0.5f, 0.0f); // 场景中心稍上方
-        glm::vec3 launchVel = glm::vec3(0.0f, 22.0f, 0.0f); // 竖直向上
+        glm::vec3 launchPos = glm::vec3(0.0f, 0.5f, 0.0f);
         fireworkSystem.launch(
             launchPos,
             FireworkParticleSystem::FireworkType::Sphere,
-            1.5f, glm::vec4(1.0f, 1.0f, 0.5f, 1.0f), 0.02f);
+            1.5f, glm::vec4(1.0f, 1.0f, 0.5f, 1.0f), fireworkSystem.launcherSize);
         key1Pressed = true;
-        std::cout << "[烟花] 发射球形烟花！" << std::endl;
+        std::cout << "[Firework] Launch Sphere!" << std::endl;
     }
     if (glfwGetKey(window, GLFW_KEY_1) == GLFW_RELEASE)
         key1Pressed = false;
@@ -107,13 +118,12 @@ void processInput(GLFWwindow* window)
     if (glfwGetKey(window, GLFW_KEY_2) == GLFW_PRESS && !key2Pressed)
     {
         glm::vec3 launchPos = glm::vec3(0.0f, 0.5f, 0.0f);
-        glm::vec3 launchVel = glm::vec3(0.0f, 22.0f, 0.0f);
         fireworkSystem.launch(
             launchPos,
             FireworkParticleSystem::FireworkType::Ring,
-            1.5f, glm::vec4(0.5f, 1.0f, 1.0f, 1.0f), 0.02f);
+            1.5f, glm::vec4(0.5f, 1.0f, 1.0f, 1.0f), fireworkSystem.launcherSize);
         key2Pressed = true;
-        std::cout << "[烟花] 发射环形烟花！" << std::endl;
+        std::cout << "[Firework] Launch Ring!" << std::endl;
     }
     if (glfwGetKey(window, GLFW_KEY_2) == GLFW_RELEASE)
         key2Pressed = false;
@@ -122,13 +132,12 @@ void processInput(GLFWwindow* window)
     if (glfwGetKey(window, GLFW_KEY_3) == GLFW_PRESS && !key3Pressed)
     {
         glm::vec3 launchPos = glm::vec3(0.0f, 0.5f, 0.0f);
-        glm::vec3 launchVel = glm::vec3(0.0f, 22.0f, 0.0f);
         fireworkSystem.launch(
             launchPos,
             FireworkParticleSystem::FireworkType::Heart,
-            1.5f, glm::vec4(1.0f, 0.5f, 1.0f, 1.0f), 0.02f);
+            1.5f, glm::vec4(1.0f, 0.5f, 1.0f, 1.0f), fireworkSystem.launcherSize);
         key3Pressed = true;
-        std::cout << "[烟花] 发射心形烟花！" << std::endl;
+        std::cout << "[Firework] Launch Heart!" << std::endl;
     }
     if (glfwGetKey(window, GLFW_KEY_3) == GLFW_RELEASE)
         key3Pressed = false;
@@ -137,16 +146,53 @@ void processInput(GLFWwindow* window)
     if (glfwGetKey(window, GLFW_KEY_4) == GLFW_PRESS && !key4Pressed)
     {
         glm::vec3 launchPos = glm::vec3(0.0f, 0.5f, 0.0f);
-        glm::vec3 launchVel = glm::vec3(0.0f, 22.0f, 0.0f);
         fireworkSystem.launch(
             launchPos,
-            FireworkParticleSystem::FireworkType::Star,
-            1.5f, glm::vec4(1.0f, 1.0f, 1.0f, 1.0f), 0.02f);
+            FireworkParticleSystem::FireworkType::MultiLayer,
+            1.5f, glm::vec4(0.3f, 0.8f, 1.0f, 1.0f), fireworkSystem.launcherSize);
         key4Pressed = true;
-        std::cout << "[烟花] 发射星形烟花！" << std::endl;
+        std::cout << "[Firework] Launch MultiLayer!" << std::endl;
     }
     if (glfwGetKey(window, GLFW_KEY_4) == GLFW_RELEASE)
         key4Pressed = false;
+
+    static bool key5Pressed = false;
+    if (glfwGetKey(window, GLFW_KEY_5) == GLFW_PRESS && !key5Pressed)
+    {
+        glm::vec3 launchPos = glm::vec3(0.0f, 0.5f, 0.0f);
+        fireworkSystem.launch(
+            launchPos,
+            FireworkParticleSystem::FireworkType::Spiral,
+            1.5f, glm::vec4(1.0f, 0.8f, 0.2f, 1.0f), fireworkSystem.launcherSize);
+        key5Pressed = true;
+        std::cout << "[Firework] Launch Spiral!" << std::endl;
+    }
+    if (glfwGetKey(window, GLFW_KEY_5) == GLFW_RELEASE)
+        key5Pressed = false;
+
+    static bool key6Pressed = false;
+    if (glfwGetKey(window, GLFW_KEY_6) == GLFW_PRESS && !key6Pressed)
+    {
+        glm::vec3 launchPos = glm::vec3(0.0f, 0.5f, 0.0f);
+        fireworkSystem.launch(
+            launchPos,
+            FireworkParticleSystem::FireworkType::DoubleExplosion,
+            1.5f, glm::vec4(0.8f, 0.3f, 1.0f, 1.0f), fireworkSystem.launcherSize);
+        key6Pressed = true;
+        std::cout << "[Firework] Launch DoubleExplosion!" << std::endl;
+    }
+    if (glfwGetKey(window, GLFW_KEY_6) == GLFW_RELEASE)
+        key6Pressed = false;
+
+    // 运行测试序列
+    static bool key0Pressed = false;
+    if (glfwGetKey(window, GLFW_KEY_0) == GLFW_PRESS && !key0Pressed)
+    {
+        std::cout << "[Test] Start firework test sequence (auto-launch every 3s)" << std::endl;
+        key0Pressed = true;
+    }
+    if (glfwGetKey(window, GLFW_KEY_0) == GLFW_RELEASE)
+        key0Pressed = false;
 }
 
 // glfw: 窗口大小改变时调用此回调函数

@@ -15,7 +15,7 @@ void main()
     vec3 bloom = texture(bloomBlur, TexCoords).rgb;
 
     vec3 color = hdr;
-    if (useBloom) color += bloom; 
+    if (useBloom) color += bloom * 2; 
 
     vec3 mapped = vec3(1.0) - exp(-color * exposure);
     mapped = pow(mapped, vec3(1.0 / 2.2));

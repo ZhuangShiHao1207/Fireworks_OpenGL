@@ -10,8 +10,13 @@ uniform mat4 projection;
 
 void main()
 {
-    gl_Position = projection * view * vec4(aPos, 1.0);
+    vec4 viewPos = view * vec4(aPos, 1.0);
+    gl_Position = projection * viewPos;
     particleColor = aColor;
-    // 使用传入的粒子大小；乘以缩放因子以匹配像素级尺寸
-    gl_PointSize = max(1.0, aSize * 200.0);
+    
+    // 粒子大小基于距离：靠近时变大（透视效果）
+    // 使用viewPos.z的绝对值作为距离
+    float distance = length(viewPos.xyz);
+    float sizeScale = 200.0 / max(distance, 1.0); // 距离越近，比例越大
+    gl_PointSize = max(1.0, aSize * sizeScale);
 }
