@@ -34,6 +34,9 @@ float lastFrame = 0.0f;
 // 鼠标控制
 bool mouseEnabled = false;
 
+// 场景灯光控制
+bool sceneLightsEnabled = true;  // 默认开启，使用微弱环境光
+
 // 光源管理器（全局变量，以便在 processInput 中访问）
 PointLightManager lightManager;
 
@@ -91,50 +94,63 @@ int main()
     std::cout << "正在加载地面纹理..." << std::endl;
     ground.LoadTexture("assets/ground/sea.png");
 
-    // 添加场景永久光源
-    // 光源围绕书本模型放置
-    // 前左光源 - 柔和暖色
+    // 添加场景永久光源 - 微弱环境光，既能看到建筑色彩，又不影响烟花效果
+    // 主光源 - 柔和白色，从上方照亮场景
     lightManager.AddPermanentLight(
-        glm::vec3(-3.0f, 3.0f, 3.0f),      // 位置：前左，上方
+        glm::vec3(0.0f, 8.0f, 5.0f),       // 位置：上方偏前
+        glm::vec3(0.9f, 0.9f, 1.0f),       // 颜色：淡蓝白色
+        1.5f                                // 强度：较弱（原来3.0）
+    );
+    
+    // 辅助光源 - 补光，照亮书本侧面
+    lightManager.AddPermanentLight(
+        glm::vec3(-5.0f, 5.0f, 0.0f),      // 位置：左侧
         glm::vec3(1.0f, 0.95f, 0.9f),      // 颜色：暖白色
-        3.0f                                // 强度：温和
+        1.2f                                // 强度：微弱
     );
     
-    // 前右光源 - 冷白色
+    // 背景光源 - 填充阴影
     lightManager.AddPermanentLight(
-        glm::vec3(3.0f, 3.0f, 3.0f),       // 位置：前右，上方
-        glm::vec3(0.9f, 0.95f, 1.0f),      // 颜色：冷白色/蓝色
-        3.0f                                // 强度：温和
+        glm::vec3(5.0f, 5.0f, -5.0f),      // 位置：右后方
+        glm::vec3(0.85f, 0.9f, 1.0f),      // 颜色：冷白色
+        1.0f                                // 强度：很弱
     );
     
-    // 后中光源 - 中性白色
+    // 地面补光 - 照亮地面
     lightManager.AddPermanentLight(
-        glm::vec3(0.0f, 4.0f, -3.0f),      // 位置：后中，上方
-        glm::vec3(1.0f, 1.0f, 1.0f),       // 颜色：纯白色
-        3.0f                               // 强度：稍强
-    );
-    
-    // 顶部光源 - 环境补光
-    lightManager.AddPermanentLight(
-        glm::vec3(0.0f, 5.0f, 0.0f),       // 位置：正上方
-        glm::vec3(0.95f, 0.95f, 1.0f),     // 颜色：淡蓝色
-        3.0f                                // 强度：微弱
+        glm::vec3(0.0f, 2.0f, 0.0f),       // 位置：较低位置
+        glm::vec3(0.8f, 0.85f, 0.9f),      // 颜色：淡蓝色
+        0.8f                                // 强度：极弱
     );
 
-    std::cout << "\n=== 烟花 OpenGL ===" << std::endl;
-    std::cout << "模型: 书本模型 (使用 Assimp 加载)" << std::endl;
-    std::cout << "场景光源: 已添加 4 个永久光源" << std::endl;
-    std::cout << "控制说明:" << std::endl;
-    std::cout << "  WASD - 移动摄像机" << std::endl;
-    std::cout << "  Space/Shift - 上升/下降" << std::endl;
-    std::cout << "  鼠标 - 环顾四周（启用后）" << std::endl;
-    std::cout << "  R - 切换轨道模式" << std::endl;
-    std::cout << "  F - 聚焦中心" << std::endl;
-    std::cout << "  M - 切换鼠标控制（重要：按 M 启用摄像机旋转）" << std::endl;
-    std::cout << "  T - 测试：添加临时烟花光源（持续 5 秒）" << std::endl;
-    std::cout << "  1-4 - 发射烟花（球形、环形、心形、星形）" << std::endl;
-    std::cout << "  ESC - 退出" << std::endl;
-    std::cout << "\n[信息] 鼠标默认为自由模式。按 M 锁定/解锁鼠标以控制摄像机。\n" << std::endl;
+    std::cout << "\n=== Fireworks OpenGL ===" << std::endl;
+    std::cout << "Model: Book model (loaded with Assimp)" << std::endl;
+    std::cout << "Scene lights: 4 permanent lights added" << std::endl;
+    std::cout << "Note: Fireworks create temporary lights that illuminate the scene" << std::endl;
+    std::cout << "Controls:" << std::endl;
+    std::cout << "  WASD - Move camera" << std::endl;
+    std::cout << "  Space/Shift - Up/Down" << std::endl;
+    std::cout << "  Mouse - Look around (after enabled)" << std::endl;
+    std::cout << "  R - Toggle orbit mode" << std::endl;
+    std::cout << "  F - Focus center" << std::endl;
+    std::cout << "  M - Toggle mouse control (Press M to enable camera rotation)" << std::endl;
+    std::cout << "  L - Toggle scene lights (default ON - weak ambient)" << std::endl;
+    std::cout << "  T - Test: Add temporary light (5s)" << std::endl;
+    std::cout << "  1 - Launch Sphere firework (Red/Yellow)" << std::endl;
+    std::cout << "  2 - Launch Ring firework (Cyan)" << std::endl;
+    std::cout << "  3 - Launch Heart firework (Pink)" << std::endl;
+    std::cout << "  4 - Launch MultiLayer firework (Blue)" << std::endl;
+    std::cout << "  5 - Launch Spiral firework (Gold)" << std::endl;
+    std::cout << "  6 - Launch DoubleExplosion firework (Purple)" << std::endl;
+    std::cout << "  0 - Run auto test sequence" << std::endl;
+    std::cout << "  ESC - Exit" << std::endl;
+    std::cout << "\n[Info] Mouse is free by default. Press M to lock/unlock mouse.\n" << std::endl;
+
+    // 连接烟花系统与光源管理器
+    fireworkSystem.setLightManager(&lightManager);
+
+    // 测试模式标志
+    bool autoTestMode = false;
 
     while (!glfwWindowShouldClose(window))
     {
@@ -144,6 +160,20 @@ int main()
         lastFrame = currentFrame;
 		//处理输入
         processInput(window);
+
+        // 检查是否按下0键启动测试
+        static bool wasKey0Pressed = false;
+        bool isKey0Pressed = (glfwGetKey(window, GLFW_KEY_0) == GLFW_PRESS);
+        if (isKey0Pressed && !wasKey0Pressed) {
+            autoTestMode = !autoTestMode;
+            std::cout << "[Test] Auto test mode: " << (autoTestMode ? "ON" : "OFF") << std::endl;
+        }
+        wasKey0Pressed = isKey0Pressed;
+
+        // 如果测试模式开启，运行测试
+        if (autoTestMode) {
+            fireworkSystem.runTest(currentFrame);
+        }
 
         // 更新光源管理器（移除过期的临时光源）
         lightManager.Update(deltaTime);
@@ -157,10 +187,18 @@ int main()
         glm::mat4 view = camera.GetViewMatrix();
 
         // 从管理器获取光源数据
+        // 如果场景灯光关闭，只使用烟花产生的临时光源
         int numLights = lightManager.GetLightCount();
         auto lightPositions = lightManager.GetPositions();
         auto lightColors = lightManager.GetColors();
         auto lightIntensities = lightManager.GetIntensities();
+        
+        // 如果场景灯光关闭，将前4个永久光源的强度设为0
+        if (!sceneLightsEnabled && numLights >= 4) {
+            for (int i = 0; i < 4; i++) {
+                lightIntensities[i] = 0.0f;
+            }
+        }
 
         // 绘制地面（带 Blinn-Phong 光照和雾效）
         groundShader.use();
@@ -243,17 +281,18 @@ int main()
         // 设置烟花粒子系统的视图和投影矩阵
         fireworkSystem.setViewProj(view, projection);
         
-        // 渲染烟花粒子系统
-        fireworkSystem.render();
-
-        // 绘制天空盒（最后渲染以优化）
+        // 绘制天空盒（先渲染，使用深度测试确保在最远处）
+        glDepthFunc(GL_LEQUAL);
         skyboxShader.use();
         glm::mat4 skyboxView = glm::mat4(glm::mat3(view));
         skyboxShader.setMat4("view", skyboxView);
         skyboxShader.setMat4("projection", projection);
         skyboxShader.setInt("skybox", 0);
-        
         skybox.Draw();
+        glDepthFunc(GL_LESS);
+
+        // 渲染烟花粒子系统（在天空盒之后，会正确显示在前面）
+        fireworkSystem.render();
 
         glfwSwapBuffers(window);
         glfwPollEvents();
