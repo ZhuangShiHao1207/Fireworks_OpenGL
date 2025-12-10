@@ -40,6 +40,7 @@ bool mouseEnabled = false;
 bool sceneLightsEnabled = true;  // 默认开启，使用微弱环境光
 
 // 光源管理器（全局变量，以便在 processInput 中访问）
+// 应当不需要清理，不涉及到OpenGL的对象
 PointLightManager lightManager;
 
 // 烟花粒子系统（全局变量，以便在 processInput 中访问）
@@ -79,10 +80,12 @@ int main()
     glEnable(GL_BLEND);
     glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
 
-    Shader skyboxShader("assets/shaders/skybox.vs", "assets/shaders/skybox.fs");
-    Shader groundShader("assets/shaders/ground.vs", "assets/shaders/ground.fs");
-    Shader modelShader("assets/shaders/model.vs", "assets/shaders/model.fs");
+    // 需要清理
+    Shader *skyboxShader = new Shader("assets/shaders/skybox.vs", "assets/shaders/skybox.fs");
+    Shader *groundShader = new Shader("assets/shaders/ground.vs", "assets/shaders/ground.fs");
+    Shader *modelShader  = new Shader("assets/shaders/model.vs", "assets/shaders/model.fs");
 
+    // 需要清理？
     Skybox skybox;
     Ground ground(100.0f);
     
@@ -209,42 +212,42 @@ int main()
         }
 
         // 绘制地面（带 Blinn-Phong 光照和雾效）
-        groundShader.use();
-        groundShader.setMat4("projection", projection);
-        groundShader.setMat4("view", view);
-        groundShader.setMat4("model", ground.GetModelMatrix());
-        groundShader.setVec3("viewPos", camera.Position);
-        groundShader.setVec3("groundColor", glm::vec3(0.2f, 0.25f, 0.3f));
-        groundShader.setBool("useTexture", ground.hasTexture);
+        groundShader->use();
+        groundShader->setMat4("projection", projection);
+        groundShader->setMat4("view", view);
+        groundShader->setMat4("model", ground.GetModelMatrix());
+        groundShader->setVec3("viewPos", camera.Position);
+        groundShader->setVec3("groundColor", glm::vec3(0.2f, 0.25f, 0.3f));
+        groundShader->setBool("useTexture", ground.hasTexture);
         
         // 地面材质属性
-        groundShader.setFloat("groundShininess", 32.0f);        // 地面较低光泽度
-        groundShader.setFloat("groundSpecularStrength", 0.3f);  // 水面适度镜面反射
+        groundShader->setFloat("groundShininess", 32.0f);        // 地面较低光泽度
+        groundShader->setFloat("groundSpecularStrength", 0.3f);  // 水面适度镜面反射
         
-        groundShader.setVec3("fogColor", glm::vec3(0.05f, 0.05f, 0.1f));
-        groundShader.setFloat("fogDensity", 0.02f);
-        groundShader.setFloat("fogStart", 30.0f);
+        groundShader->setVec3("fogColor", glm::vec3(0.05f, 0.05f, 0.1f));
+        groundShader->setFloat("fogDensity", 0.02f);
+        groundShader->setFloat("fogStart", 30.0f);
         
         if (ground.hasTexture) {
-            groundShader.setInt("groundTexture", 0);
+            groundShader->setInt("groundTexture", 0);
         }
         
         // 设置地面光源
-        groundShader.setInt("numLights", numLights);
+        groundShader->setInt("numLights", numLights);
         for (int i = 0; i < numLights && i < 16; i++)
         {
             std::string index = std::to_string(i);
-            groundShader.setVec3("lightPositions[" + index + "]", lightPositions[i]);
-            groundShader.setVec3("lightColors[" + index + "]", lightColors[i]);
-            groundShader.setFloat("lightIntensities[" + index + "]", lightIntensities[i]);
+            groundShader->setVec3("lightPositions[" + index + "]", lightPositions[i]);
+            groundShader->setVec3("lightColors[" + index + "]", lightColors[i]);
+            groundShader->setFloat("lightIntensities[" + index + "]", lightIntensities[i]);
         }
         
         ground.Draw();
 
         // 绘制书本模型
-        modelShader.use();
-        modelShader.setMat4("projection", projection);
-        modelShader.setMat4("view", view);
+        modelShader->use();
+        modelShader->setMat4("projection", projection);
+        modelShader->setMat4("view", view);
         
         glm::mat4 modelMatrix = glm::mat4(1.0f);
         
@@ -258,39 +261,40 @@ int main()
         // 缩放书本
         modelMatrix = glm::scale(modelMatrix, glm::vec3(0.25f, 0.25f, 0.25f));
         
-        modelShader.setMat4("model", modelMatrix);
-        modelShader.setVec3("viewPos", camera.Position);
+        modelShader->setMat4("model", modelMatrix);
+        modelShader->setVec3("viewPos", camera.Position);
         
         // 检查模型是否实际加载了纹理
-        modelShader.setBool("hasTexture", island.HasTextures());
+        modelShader->setBool("hasTexture", island.HasTextures());
         
         // 材质属性（用于镜面反射）
-        modelShader.setFloat("materialShininess", 64.0f);   // 镜面高光锐度（32-128 典型值）
-        modelShader.setFloat("specularStrength", 0.5f);     // 镜面高光强度（0.0-1.0）
+        modelShader->setFloat("materialShininess", 64.0f);   // 镜面高光锐度（32-128 典型值）
+        modelShader->setFloat("specularStrength", 0.5f);     // 镜面高光强度（0.0-1.0）
         
-        modelShader.setVec3("fogColor", glm::vec3(0.05f, 0.05f, 0.1f));
-        modelShader.setFloat("fogDensity", 0.02f);
-        modelShader.setFloat("fogStart", 30.0f);
+        modelShader->setVec3("fogColor", glm::vec3(0.05f, 0.05f, 0.1f));
+        modelShader->setFloat("fogDensity", 0.02f);
+        modelShader->setFloat("fogStart", 30.0f);
         
         // 设置模型光源（与地面相同）
-        modelShader.setInt("numLights", numLights);
+        modelShader->setInt("numLights", numLights);
         for (int i = 0; i < numLights && i < 16; i++)
         {
             std::string index = std::to_string(i);
-            modelShader.setVec3("lightPositions[" + index + "]", lightPositions[i]);
-            modelShader.setVec3("lightColors[" + index + "]", lightColors[i]);
-            modelShader.setFloat("lightIntensities[" + index + "]", lightIntensities[i]);
+            modelShader->setVec3("lightPositions[" + index + "]", lightPositions[i]);
+            modelShader->setVec3("lightColors[" + index + "]", lightColors[i]);
+            modelShader->setFloat("lightIntensities[" + index + "]", lightIntensities[i]);
         }
         
-        island.Draw(modelShader);
+        // 传引用，不会发生拷贝
+        island.Draw(*modelShader);
 
         // 绘制天空盒（先渲染，使用深度测试确保在最远处）
         glDepthFunc(GL_LEQUAL);
-        skyboxShader.use();
+        skyboxShader->use();
         glm::mat4 skyboxView = glm::mat4(glm::mat3(view));
-        skyboxShader.setMat4("view", skyboxView);
-        skyboxShader.setMat4("projection", projection);
-        skyboxShader.setInt("skybox", 0);
+        skyboxShader->setMat4("view", skyboxView);
+        skyboxShader->setMat4("projection", projection);
+        skyboxShader->setInt("skybox", 0);
         glDepthFunc(GL_LESS);
         
 		// 此时绘制完之后FBO中已经存在完整的场景内容
@@ -312,8 +316,19 @@ int main()
     }
 
 	// 必须在上下文被销毁前清理 OpenGL 资源
-	delete postProcessor;
+    try {
+        delete postProcessor;
+        delete skyboxShader;
+        delete groundShader;
+        delete modelShader;
+        fireworkSystem.cleanupGL();
+        skybox.cleanup();
+        ground.cleanup();
+    } catch (std::exception& e) {
+        std::cout << "Clear opengl resources" << std::endl;
+    }
 
+    // 现在渲染循环中的三个shader都是在上下文被销毁之后再跟着销毁，可能产生问题
     try {
         glfwTerminate();
     } catch (std::exception& e) {

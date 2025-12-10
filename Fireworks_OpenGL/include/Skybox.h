@@ -117,6 +117,10 @@ public:
 
 	// 删除内部的VAO和VBO
     ~Skybox() {
+        cleanup();
+    }
+
+    void cleanup() {
         glDeleteVertexArrays(1, &VAO);
         glDeleteBuffers(1, &VBO);
     }

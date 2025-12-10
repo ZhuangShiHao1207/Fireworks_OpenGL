@@ -9,8 +9,11 @@ static const char* blurVertexSrc = "assets/shaders/blur.vs";
 static const char* blurFragmentSrc = "assets/shaders/blur.fs";
 
 PostProcessor::PostProcessor(unsigned int w, unsigned int h)
- : FBO(0), RBO(0), textureColorBuffer(0), quadVAO(0), quadVBO(0),
- width(w), height(h)
+: FBO(0), RBO(0), textureColorBuffer(0), quadVAO(0), quadVBO(0),
+width(w), height(h)
+//postShader(defaultVertexSrc, defaultFragmentSrc), 
+//bloomShader(bloomVertexSrc, bloomFragmentSrc), 
+//blurShader(blurVertexSrc, blurFragmentSrc)
 {
 	 std::cout << "PostProcessor initialized" << std::endl;
 	 if (!glIsEnabled(GL_BLEND)) {
@@ -20,6 +23,7 @@ PostProcessor::PostProcessor(unsigned int w, unsigned int h)
 	 pingpongFBO[0] = pingpongFBO[1] = 0;
 	 pingpongColorBuffers[0] = pingpongColorBuffers[1] = 0;
 
+	 // 不new应当也没有问题
 	 postShader  = new Shader(defaultVertexSrc, defaultFragmentSrc);
 	 bloomShader = new Shader(bloomVertexSrc, bloomFragmentSrc);
 	 blurShader  = new Shader(blurVertexSrc, blurFragmentSrc);
@@ -29,24 +33,42 @@ PostProcessor::PostProcessor(unsigned int w, unsigned int h)
 		 initFramebuffer();
 		 initRenderData();
 		 initBloomBuffers();
-	 }
-	 catch (const std::exception& e) {
+	 } catch (const std::exception& e) {
 		 std::cerr << "[PostProcessor] Exception during initialization: " << e.what() << std::endl;
 	 }
 }
 
 PostProcessor::~PostProcessor()
 {
-	 if (quadVBO) glDeleteBuffers(1, &quadVBO);
-	 if (quadVAO) glDeleteVertexArrays(1, &quadVAO);
-	 if (textureColorBuffer) glDeleteTextures(1, &textureColorBuffer);
-	 if (RBO) glDeleteRenderbuffers(1, &RBO);
-	 if (FBO) glDeleteFramebuffers(1, &FBO);
+	std::cout << "~PostProcessor --> quadVAO = " << quadVAO << ", quadVBO = " << quadVBO
+		<< ", texttureColorBuffer = " << textureColorBuffer << ", RBO = " << RBO << ", FBO = " << FBO << std::endl;
+	if (quadVBO) {
+		glDeleteBuffers(1, &quadVBO);
+		std::cout << "Delete VBO" << std::endl;
+	 }
+	if (quadVAO) {
+		glDeleteVertexArrays(1, &quadVAO);
+		std::cout << "Delete VAO" << std::endl;
+	 }
+	if (textureColorBuffer) {
+		glDeleteTextures(1, &textureColorBuffer);
+		std::cout << "Delete textureColorBuffer" << std::endl;
+	 }
+	if (RBO) {
+		glDeleteRenderbuffers(1, &RBO);
+		std::cout << "Delete RBO" << std::endl;
+	 }
+	if (FBO) {
+		glDeleteFramebuffers(1, &FBO);
+		std::cout << "Delete FBO" << std::endl;
+	 }
 
 	 for (int i = 0; i < 2; ++i) {
 		 if (pingpongFBO[i]) glDeleteFramebuffers(1, &pingpongFBO[i]);
 		 if (pingpongColorBuffers[i]) glDeleteTextures(1, &pingpongColorBuffers[i]);
 	 }
+
+	 std::cout << "Delete pingpong and pingpongColorBuffer" << std::endl;
 
 	 delete bloomShader;
 	 delete blurShader;
@@ -138,7 +160,7 @@ void PostProcessor::initBloomBuffers()
 	 glGenFramebuffers(2, pingpongFBO);
 	 glGenTextures(2, pingpongColorBuffers);
 
-	 for (int i =0; i <2; i++) {
+	 for (int i =0; i < 2; i++) {
 		 // 初始化FBO + color attachment
 		 glBindFramebuffer(GL_FRAMEBUFFER, pingpongFBO[i]);
 		 glBindTexture(GL_TEXTURE_2D, pingpongColorBuffers[i]);

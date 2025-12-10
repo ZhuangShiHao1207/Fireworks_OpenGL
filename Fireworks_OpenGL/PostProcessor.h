@@ -5,6 +5,8 @@
 class PostProcessor {
 public:
     PostProcessor(unsigned int width, unsigned int height);
+    PostProcessor(const PostProcessor&) = delete;
+    PostProcessor(PostProcessor&&) = delete;
     ~PostProcessor();
 
     // 在渲染场景前调用（绑定 FBO）
@@ -34,9 +36,9 @@ private:
     // 两个颜色纹理
     unsigned int pingpongColorBuffers[2];
 
-    Shader *postShader  = nullptr;
+    Shader *postShader = nullptr;
     Shader *bloomShader = nullptr; // 提取亮部
-    Shader *blurShader  = nullptr;  // 高斯模糊
+    Shader *blurShader = nullptr;  // 高斯模糊
 
     // 最终模糊结果所在的 pingpong纹理索引（0 或1）
     int lastBlurTextureIndex = -1; // -1 表示尚未生成模糊结果
