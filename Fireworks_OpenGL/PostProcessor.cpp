@@ -10,148 +10,180 @@ static const char* blurFragmentSrc = "assets/shaders/blur.fs";
 
 PostProcessor::PostProcessor(unsigned int w, unsigned int h)
 : FBO(0), RBO(0), textureColorBuffer(0), quadVAO(0), quadVBO(0),
-width(w), height(h)
-//postShader(defaultVertexSrc, defaultFragmentSrc), 
-//bloomShader(bloomVertexSrc, bloomFragmentSrc), 
-//blurShader(blurVertexSrc, blurFragmentSrc)
+  width(w), height(h),
+  postShader(nullptr),
+  bloomShader(nullptr),
+  blurShader(nullptr),
+  lastBlurTextureIndex(-1)
 {
-	 std::cout << "PostProcessor initialized" << std::endl;
-	 if (!glIsEnabled(GL_BLEND)) {
-		 std::cerr << "OpenGL context not ready!" << std::endl;
-	 }
+    std::cout << "PostProcessor initialized" << std::endl;
+    if (!glIsEnabled(GL_BLEND)) {
+        std::cerr << "OpenGL context not ready!" << std::endl;
+    }
 
-	 pingpongFBO[0] = pingpongFBO[1] = 0;
-	 pingpongColorBuffers[0] = pingpongColorBuffers[1] = 0;
+    pingpongFBO[0] = pingpongFBO[1] = 0;
+    pingpongColorBuffers[0] = pingpongColorBuffers[1] = 0;
 
-	 // 不new应当也没有问题
-	 postShader  = new Shader(defaultVertexSrc, defaultFragmentSrc);
-	 bloomShader = new Shader(bloomVertexSrc, bloomFragmentSrc);
-	 blurShader  = new Shader(blurVertexSrc, blurFragmentSrc);
-
-	 // 初始化帧缓冲、渲染数据、Bloom缓冲
-	 try {
-		 initFramebuffer();
-		 initRenderData();
-		 initBloomBuffers();
-	 } catch (const std::exception& e) {
-		 std::cerr << "[PostProcessor] Exception during initialization: " << e.what() << std::endl;
-	 }
+    try {
+        // 创建 Shader 对象
+        postShader  = new Shader(defaultVertexSrc, defaultFragmentSrc);
+        bloomShader = new Shader(bloomVertexSrc, bloomFragmentSrc);
+        blurShader  = new Shader(blurVertexSrc, blurFragmentSrc);
+        
+        // 初始化帧缓冲、渲染数据、Bloom缓冲
+        initFramebuffer();
+        initRenderData();
+        initBloomBuffers();
+    } catch (const std::exception& e) {
+        std::cerr << "[PostProcessor] Exception during initialization: " << e.what() << std::endl;
+        // 如果初始化失败，清理已创建的资源
+        if (postShader) { delete postShader; postShader = nullptr; }
+        if (bloomShader) { delete bloomShader; bloomShader = nullptr; }
+        if (blurShader) { delete blurShader; blurShader = nullptr; }
+        throw;
+    }
 }
 
 PostProcessor::~PostProcessor()
 {
-	std::cout << "~PostProcessor --> quadVAO = " << quadVAO << ", quadVBO = " << quadVBO
-		<< ", texttureColorBuffer = " << textureColorBuffer << ", RBO = " << RBO << ", FBO = " << FBO << std::endl;
-	if (quadVBO) {
-		glDeleteBuffers(1, &quadVBO);
-		std::cout << "Delete VBO" << std::endl;
-	 }
-	if (quadVAO) {
-		glDeleteVertexArrays(1, &quadVAO);
-		std::cout << "Delete VAO" << std::endl;
-	 }
-	if (textureColorBuffer) {
-		glDeleteTextures(1, &textureColorBuffer);
-		std::cout << "Delete textureColorBuffer" << std::endl;
-	 }
-	if (RBO) {
-		glDeleteRenderbuffers(1, &RBO);
-		std::cout << "Delete RBO" << std::endl;
-	 }
-	if (FBO) {
-		glDeleteFramebuffers(1, &FBO);
-		std::cout << "Delete FBO" << std::endl;
-	 }
+    std::cout << "~PostProcessor --> quadVAO = " << quadVAO << ", quadVBO = " << quadVBO
+        << ", textureColorBuffer = " << textureColorBuffer << ", RBO = " << RBO << ", FBO = " << FBO << std::endl;
+    
+    // 先删除 Shader（在删除 OpenGL 资源之前）
+    if (postShader) {
+        delete postShader;
+        postShader = nullptr;
+        std::cout << "Delete postShader" << std::endl;
+    }
+    if (bloomShader) {
+        delete bloomShader;
+        bloomShader = nullptr;
+        std::cout << "Delete bloomShader" << std::endl;
+    }
+    if (blurShader) {
+        delete blurShader;
+        blurShader = nullptr;
+        std::cout << "Delete blurShader" << std::endl;
+    }
+    
+    // 然后删除 OpenGL 资源
+    if (quadVBO) {
+        glDeleteBuffers(1, &quadVBO);
+        quadVBO = 0;
+        std::cout << "Delete VBO" << std::endl;
+    }
+    if (quadVAO) {
+        glDeleteVertexArrays(1, &quadVAO);
+        quadVAO = 0;
+        std::cout << "Delete VAO" << std::endl;
+    }
+    if (textureColorBuffer) {
+        glDeleteTextures(1, &textureColorBuffer);
+        textureColorBuffer = 0;
+        std::cout << "Delete textureColorBuffer" << std::endl;
+    }
+    if (RBO) {
+        glDeleteRenderbuffers(1, &RBO);
+        RBO = 0;
+        std::cout << "Delete RBO" << std::endl;
+    }
+    if (FBO) {
+        glDeleteFramebuffers(1, &FBO);
+        FBO = 0;
+        std::cout << "Delete FBO" << std::endl;
+    }
 
-	 for (int i = 0; i < 2; ++i) {
-		 if (pingpongFBO[i]) glDeleteFramebuffers(1, &pingpongFBO[i]);
-		 if (pingpongColorBuffers[i]) glDeleteTextures(1, &pingpongColorBuffers[i]);
-	 }
+    for (int i = 0; i < 2; ++i) {
+        if (pingpongFBO[i]) {
+            glDeleteFramebuffers(1, &pingpongFBO[i]);
+            pingpongFBO[i] = 0;
+        }
+        if (pingpongColorBuffers[i]) {
+            glDeleteTextures(1, &pingpongColorBuffers[i]);
+            pingpongColorBuffers[i] = 0;
+        }
+    }
 
-	 std::cout << "Delete pingpong and pingpongColorBuffer" << std::endl;
-
-	 delete bloomShader;
-	 delete blurShader;
-	 delete postShader;
+    std::cout << "Delete pingpong and pingpongColorBuffer" << std::endl;
 }
 
 void PostProcessor::initFramebuffer()
 {
-	 // 创建帧缓冲
-	 glGenFramebuffers(1, &FBO);
-	 glBindFramebuffer(GL_FRAMEBUFFER, FBO);
+    // 创建帧缓冲
+    glGenFramebuffers(1, &FBO);
+    glBindFramebuffer(GL_FRAMEBUFFER, FBO);
 
-	 // 创建颜色纹理附件
-	 glGenTextures(1, &textureColorBuffer);
-	 glBindTexture(GL_TEXTURE_2D, textureColorBuffer);
-	 // std::cout << "textureColorbuffer: " << textureColorBuffer << std::endl;
+    // 创建颜色纹理附件
+    glGenTextures(1, &textureColorBuffer);
+    glBindTexture(GL_TEXTURE_2D, textureColorBuffer);
+    // std::cout << "textureColorbuffer: " << textureColorBuffer << std::endl;
 
-	 // Use HDR (float) render target so bright values are preserved for bloom
-	 glTexImage2D(GL_TEXTURE_2D,0, GL_RGBA16F, width, height,0, GL_RGBA, GL_FLOAT, NULL);
-	 glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_LINEAR);
-	 glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_LINEAR);
+    // Use HDR (float) render target so bright values are preserved for bloom
+    glTexImage2D(GL_TEXTURE_2D,0, GL_RGBA16F, width, height,0, GL_RGBA, GL_FLOAT, NULL);
+    glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_LINEAR);
+    glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_LINEAR);
 
-	 // clamp to edge so sampling near borders during blur doesn't introduce artifacts
-	 glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_S, GL_CLAMP_TO_EDGE);
-	 glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_T, GL_CLAMP_TO_EDGE);
-	 glFramebufferTexture2D(GL_FRAMEBUFFER, GL_COLOR_ATTACHMENT0, GL_TEXTURE_2D, textureColorBuffer,0);
+    // clamp to edge so sampling near borders during blur doesn't introduce artifacts
+    glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_S, GL_CLAMP_TO_EDGE);
+    glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_T, GL_CLAMP_TO_EDGE);
+    glFramebufferTexture2D(GL_FRAMEBUFFER, GL_COLOR_ATTACHMENT0, GL_TEXTURE_2D, textureColorBuffer,0);
 
-	 // Tell OpenGL we will draw into color attachment0 for this FBO
-	 GLenum drawBuffers[1] = {GL_COLOR_ATTACHMENT0};
-	 glDrawBuffers(1, drawBuffers);
+    // Tell OpenGL we will draw into color attachment0 for this FBO
+    GLenum drawBuffers[1] = {GL_COLOR_ATTACHMENT0};
+    glDrawBuffers(1, drawBuffers);
 
-	 // 创建渲染缓冲对象（深度 + 模板）
-	 glGenRenderbuffers(1, &RBO);
-	 glBindRenderbuffer(GL_RENDERBUFFER, RBO);
-	 glRenderbufferStorage(GL_RENDERBUFFER, GL_DEPTH24_STENCIL8, width, height);
-	 glFramebufferRenderbuffer(GL_FRAMEBUFFER, GL_DEPTH_STENCIL_ATTACHMENT, GL_RENDERBUFFER, RBO);
+    // 创建渲染缓冲对象（深度 + 模板）
+    glGenRenderbuffers(1, &RBO);
+    glBindRenderbuffer(GL_RENDERBUFFER, RBO);
+    glRenderbufferStorage(GL_RENDERBUFFER, GL_DEPTH24_STENCIL8, width, height);
+    glFramebufferRenderbuffer(GL_FRAMEBUFFER, GL_DEPTH_STENCIL_ATTACHMENT, GL_RENDERBUFFER, RBO);
 
-	 // 检查FBO完整性
-	 if (glCheckFramebufferStatus(GL_FRAMEBUFFER) != GL_FRAMEBUFFER_COMPLETE)
-	 std::cerr << "[PostProcessor] Framebuffer not complete!" << std::endl;
+    // 检查FBO完整性
+    if (glCheckFramebufferStatus(GL_FRAMEBUFFER) != GL_FRAMEBUFFER_COMPLETE)
+    std::cerr << "[PostProcessor] Framebuffer not complete!" << std::endl;
 
-	 //重新绑定默认帧缓冲
-	 glBindFramebuffer(GL_FRAMEBUFFER,0);
+    //重新绑定默认帧缓冲
+    glBindFramebuffer(GL_FRAMEBUFFER,0);
 }
 
 void PostProcessor::initRenderData()
 {
-	 postShader->use();
-	 postShader->setBool("useBloom", true);
-	 postShader->setFloat("exposure", 1.0f);
-	 // 定义屏幕四边形顶点数据
-	 float quadVertices[] = {
-	 // positions // texCoords
-	 -1.0f,1.0f,0.0f,1.0f,
-	 -1.0f, -1.0f,0.0f,0.0f,
-	1.0f, -1.0f,1.0f,0.0f,
+    postShader->use();
+    postShader->setBool("useBloom", true);
+    postShader->setFloat("exposure", 0.8f);  // ? 降低曝光值从 1.0 到 0.8，减少过曝
+    // 定义屏幕四边形顶点数据
+    float quadVertices[] = {
+    // positions // texCoords
+    -1.0f,1.0f,0.0f,1.0f,
+    -1.0f, -1.0f,0.0f,0.0f,
+    1.0f, -1.0f,1.0f,0.0f,
 
-	 -1.0f,1.0f,0.0f,1.0f,
-	1.0f, -1.0f,1.0f,0.0f,
-	1.0f,1.0f,1.0f,1.0f
-	 };
-	 glGenVertexArrays(1, &quadVAO);
-	 // std::cout << "Generated VAO ID: " << quadVAO << std::endl;
-	 glGenBuffers(1, &quadVBO);
-	 // std::cout << "Generated VBO ID: " << quadVBO << std::endl;
-	
-	 // 只有bind之后才能识别到对象？
-	 //if (!glIsVertexArray(quadVAO) || !glIsBuffer(quadVBO)) {
-		// std::cerr << "[PostProcessor] Error: Failed to generate VAO/VBO!" << std::endl;
-	 //}
+    -1.0f,1.0f,0.0f,1.0f,
+    1.0f, -1.0f,1.0f,0.0f,
+    1.0f,1.0f,1.0f,1.0f
+     };
+     glGenVertexArrays(1, &quadVAO);
+     // std::cout << "Generated VAO ID: " << quadVAO << std::endl;
+     glGenBuffers(1, &quadVBO);
+     // std::cout << "Generated VBO ID: " << quadVBO << std::endl;
+    
+     // 只有bind之后才能识别到对象？
+     //if (!glIsVertexArray(quadVAO) || !glIsBuffer(quadVBO)) {
+        // std::cerr << "[PostProcessor] Error: Failed to generate VAO/VBO!" << std::endl;
+     //}
 
-	 if (quadVAO == 0 || quadVBO == 0) {
-		 std::cerr << "[PostProcessor] Error: Failed to generate VAO/VBO!" << std::endl;
-	 }
+     if (quadVAO == 0 || quadVBO == 0) {
+         std::cerr << "[PostProcessor] Error: Failed to generate VAO/VBO!" << std::endl;
+     }
 
-	 glBindVertexArray(quadVAO);
-	 glBindBuffer(GL_ARRAY_BUFFER, quadVBO);
-	 glBufferData(GL_ARRAY_BUFFER, sizeof(quadVertices), quadVertices, GL_STATIC_DRAW);
-	 glEnableVertexAttribArray(0);
-	 glVertexAttribPointer(0,2, GL_FLOAT, GL_FALSE,4 * sizeof(float), (void*)0);
-	 glEnableVertexAttribArray(1);
-	 glVertexAttribPointer(1,2, GL_FLOAT, GL_FALSE,4 * sizeof(float), (void*)(2 * sizeof(float)));
-	 glBindVertexArray(0);
+     glBindVertexArray(quadVAO);
+     glBindBuffer(GL_ARRAY_BUFFER, quadVBO);
+     glBufferData(GL_ARRAY_BUFFER, sizeof(quadVertices), quadVertices, GL_STATIC_DRAW);
+     glEnableVertexAttribArray(0);
+     glVertexAttribPointer(0,2, GL_FLOAT, GL_FALSE,4 * sizeof(float), (void*)0);
+     glEnableVertexAttribArray(1);
+     glVertexAttribPointer(1,2, GL_FLOAT, GL_FALSE,4 * sizeof(float), (void*)(2 * sizeof(float)));
+     glBindVertexArray(0);
 }
 
 void PostProcessor::initBloomBuffers()
@@ -236,7 +268,7 @@ void PostProcessor::applyBloom()
 
 	// ------------------ Step 2: 高斯模糊（ping-pong） ------------------
 	bool horizontal = true;
-	int blurPasses = 20;
+	int blurPasses = 10;  // ? 减少模糊次数从 20 到 10，减少模糊效果
 	int readTex = 0; // 初始读取 pingpongColorBuffers[0]
 
 	for (int i = 0; i < blurPasses; ++i) {

@@ -46,6 +46,9 @@ PointLightManager lightManager;
 // 烟花粒子系统（全局变量，以便在 processInput 中访问）
 FireworkParticleSystem fireworkSystem;
 
+// PostProcessor 全局指针（用于窗口缩放时更新）
+PostProcessor* postProcessor = nullptr;
+
 int main()
 {
     glfwInit();
@@ -158,7 +161,7 @@ int main()
     bool autoTestMode = false;
 
     // std::cout << "Current Context: " << glfwGetCurrentContext() << std::endl;
-    PostProcessor* postProcessor = new PostProcessor(SCR_WIDTH, SCR_HEIGHT);
+    postProcessor = new PostProcessor(SCR_WIDTH, SCR_HEIGHT);
 
     while (!glfwWindowShouldClose(window))
     {
@@ -315,24 +318,44 @@ int main()
         glfwPollEvents();
     }
 
-	// 必须在上下文被销毁前清理 OpenGL 资源
+    // 必须在上下文被销毁前清理 OpenGL 资源
     try {
-        delete postProcessor;
-        delete skyboxShader;
-        delete groundShader;
-        delete modelShader;
+        // 先清理 PostProcessor（包含 Shader）
+        if (postProcessor) {
+            delete postProcessor;
+            postProcessor = nullptr;
+        }
+        
+        // 清理其他 Shader
+        if (skyboxShader) {
+            delete skyboxShader;
+            skyboxShader = nullptr;
+        }
+        if (groundShader) {
+            delete groundShader;
+            groundShader = nullptr;
+        }
+        if (modelShader) {
+            delete modelShader;
+            modelShader = nullptr;
+        }
+        
+        // 清理其他 OpenGL 资源
         fireworkSystem.cleanupGL();
         skybox.cleanup();
         ground.cleanup();
+        
+        std::cout << "OpenGL resources cleaned successfully" << std::endl;
     } catch (std::exception& e) {
-        std::cout << "Clear opengl resources" << std::endl;
+        std::cerr << "Exception during OpenGL cleanup: " << e.what() << std::endl;
     }
 
-    // 现在渲染循环中的三个shader都是在上下文被销毁之后再跟着销毁，可能产生问题
+    // 最后销毁 GLFW（这会销毁 OpenGL 上下文）
     try {
         glfwTerminate();
+        std::cout << "GLFW terminated successfully" << std::endl;
     } catch (std::exception& e) {
-		std::cerr << "Exception during GLFW termination: " << e.what() << std::endl;
+        std::cerr << "Exception during GLFW termination: " << e.what() << std::endl;
     }
     return 0;
 }

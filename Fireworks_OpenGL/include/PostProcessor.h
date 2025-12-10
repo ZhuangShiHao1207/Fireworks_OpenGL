@@ -1,6 +1,6 @@
 #pragma once
 #include <glad/glad.h>
-#include "include/Shader.h"
+#include "Shader.h"
 
 class PostProcessor {
 public:
@@ -19,6 +19,8 @@ public:
 private:
     void initFramebuffer();
     void initRenderData();
+    void initBloomBuffers();
+    void applyBloom();
 
     unsigned int FBO;
     unsigned int RBO;
@@ -27,5 +29,16 @@ private:
     unsigned int quadVAO, quadVBO;
     unsigned int width, height;
 
-    Shader postShader;
+    // Ping-pong 模糊 FBO
+    unsigned int pingpongFBO[2];
+    // 两个颜色缓冲
+    unsigned int pingpongColorBuffers[2];
+
+    // 着色器指针（初始化为 nullptr）
+    Shader* postShader = nullptr;
+    Shader* bloomShader = nullptr;
+    Shader* blurShader = nullptr;
+
+    // 记录模糊后结果所在的 pingpong 缓冲索引（0 或 1）
+    int lastBlurTextureIndex = -1;
 };
