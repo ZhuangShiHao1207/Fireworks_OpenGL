@@ -20,14 +20,8 @@ FireworkParticleSystem::FireworkParticleSystem() {
 }
 
 FireworkParticleSystem::~FireworkParticleSystem() {
-    if (shader) {
-        delete shader;
-        shader = nullptr;
-    }
-    if (glInited) {
-        glDeleteBuffers(1, &vbo);
-        glDeleteVertexArrays(1, &vao);
-    }
+    // 清理OpenGL资源
+    cleanupGL();
 }
 
 void FireworkParticleSystem::initGL() {
@@ -60,9 +54,11 @@ void FireworkParticleSystem::launch(const glm::vec3& position, FireworkType type
     glm::vec3 fixedVelocity(0.0f, 12.0f, 0.0f);
 
     Particle p;
+    float scale = 10.0;
+
     p.position = position;
     p.velocity = fixedVelocity;
-    p.color = color;
+    p.color = color * scale;
     p.initialColor = color;
     p.life = life;
     p.maxLife = life;
@@ -458,4 +454,28 @@ void FireworkParticleSystem::runTest(float currentTime) {
     } else {
         testPhase = 0; // Loop test
     }
+}
+
+void FireworkParticleSystem::cleanupGL() {
+    if (!glInited) return; // 如果GL未初始化，直接返回
+
+    // 删除顶点缓冲对象
+    if (vbo) {
+        glDeleteBuffers(1, &vbo);
+        vbo = 0;
+    }
+
+    // 删除顶点数组对象
+    if (vao) {
+        glDeleteVertexArrays(1, &vao);
+        vao = 0;
+    }
+
+    // 删除 Shader 对象（假设你用 new Shader 创建）
+    if (shader) {
+        delete shader;
+        shader = nullptr;
+    }
+
+    glInited = false;
 }

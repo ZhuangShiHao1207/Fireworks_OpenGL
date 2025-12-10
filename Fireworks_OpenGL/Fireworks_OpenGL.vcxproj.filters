@@ -24,6 +24,15 @@
     <ClCompile Include="stb_image_impl.cpp">
       <Filter>源文件</Filter>
     </ClCompile>
+    <ClCompile Include="src\InputHandler.cpp">
+      <Filter>源文件</Filter>
+    </ClCompile>
+    <ClCompile Include="src\FireworkParticleSystem.cpp">
+      <Filter>源文件</Filter>
+    </ClCompile>
+    <ClCompile Include="PostProcessor.cpp">
+      <Filter>源文件</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="include\Shader.h">
@@ -53,21 +62,30 @@
     <ClInclude Include="include\PointLight.h">
       <Filter>头文件</Filter>
     </ClInclude>
+    <ClInclude Include="include\FireworkParticleSystem.h">
+      <Filter>头文件</Filter>
+    </ClInclude>
+    <ClInclude Include="include\InputHandler.h">
+      <Filter>头文件</Filter>
+    </ClInclude>
+    <ClInclude Include="PostProcessor.h">
+      <Filter>头文件</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
-    <None Include="assets\shaders\ground.fs">
-      <Filter>资源文件</Filter>
-    </None>
-    <None Include="assets\shaders\ground.vs">
-      <Filter>资源文件</Filter>
-    </None>
-    <None Include="assets\shaders\skybox.fs">
-      <Filter>资源文件</Filter>
-    </None>
-    <None Include="assets\shaders\skybox.vs">
-      <Filter>资源文件</Filter>
-    </None>
-    <None Include="assets\shaders\model.vs" />
-    <None Include="assets\shaders\model.fs" />
+    <None Include="assets\shaders\*.fs" />
+    <None Include="assets\shaders\*.fs" />
+    <None Include="assets\shaders\*.fs" />
+    <None Include="assets\shaders\*.fs" />
+    <None Include="assets\shaders\*.fs" />
+    <None Include="assets\shaders\*.fs" />
+    <None Include="assets\shaders\*.fs" />
+    <None Include="assets\shaders\*.vs" />
+    <None Include="assets\shaders\*.vs" />
+    <None Include="assets\shaders\*.vs" />
+    <None Include="assets\shaders\*.vs" />
+    <None Include="assets\shaders\*.vs" />
+    <None Include="assets\shaders\*.vs" />
+    <None Include="assets\shaders\*.vs" />
   </ItemGroup>
 </Project>

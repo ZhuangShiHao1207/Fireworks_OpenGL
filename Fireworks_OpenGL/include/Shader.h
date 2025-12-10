@@ -7,6 +7,8 @@
 #include <fstream>
 #include <sstream>
 #include <iostream>
+#include <stdexcept>
+#include <GLFW/glfw3.h>
 
 /**
  * Shader 类
@@ -17,8 +19,34 @@ class Shader {
 public:
     unsigned int ID;  // 着色器程序 ID
 
+	// 禁用拷贝构造和赋值，以及移动构造
+
+    Shader(const Shader&) = delete;
+    Shader& operator=(const Shader&) = delete;
+    Shader(Shader&&) = delete;
+    Shader& operator=(Shader&&) = delete;
+
+    ~Shader() {
+        std::cout << "~Shader(), ID=" << ID
+            << ", context=" << glfwGetCurrentContext() << std::endl;
+        if (ID) {
+            try {
+                // 这里出问题 --> Program的位置损坏？ 
+                glDeleteProgram(ID);
+            } catch (std::exception& e) {
+                std::cerr << "Exception during Shader destructor for ID " << ID
+					<< ": " << e.what() << std::endl;
+            }
+        }
+        std::cout << "~Shader() succeeds" << std::endl;
+    }
+
+	// 只实现了有参构造函数
     // 构造函数：读取并编译着色器
     Shader(const char* vertexPath, const char* fragmentPath) {
+        // 默认初始值
+        ID = 0;
+
         // 1. 从文件路径读取顶点/片段着色器源码
         std::string vertexCode;
         std::string fragmentCode;
@@ -35,6 +63,8 @@ public:
             fShaderFile.open(fragmentPath);
             std::stringstream vShaderStream, fShaderStream;
 
+            std::cout << "Shader() --> Open " << vertexPath << " and " << fragmentPath << std::endl;
+
             // 读取文件缓冲内容到流
             vShaderStream << vShaderFile.rdbuf();
             fShaderStream << fShaderFile.rdbuf();
@@ -50,6 +80,8 @@ public:
         catch (std::ifstream::failure& e) {
             std::cout << "错误::着色器::文件读取失败: " << e.what() << std::endl;
         }
+
+        /*std::cout << "Fragment shader source:\n" << fragmentCode << std::endl << std::endl;*/
 
         const char* vShaderCode = vertexCode.c_str();
         const char* fShaderCode = fragmentCode.c_str();
@@ -71,14 +103,21 @@ public:
 
         // 着色器程序
         ID = glCreateProgram();
+        std::cout << "Create Shader Program, ID = " << ID << std::endl;
         glAttachShader(ID, vertex);
+        std::cout << "After attach vertex shader, Program ID = " << ID << std::endl;
         glAttachShader(ID, fragment);
+        std::cout << "Before link, Program ID = " << ID << std::endl;
         glLinkProgram(ID);
+        std::cout << "After link, Program ID = " << ID << std::endl;
         checkCompileErrors(ID, "PROGRAM");
+        std::cout << "After check, Program ID = " << ID << std::endl;
 
         // 删除着色器，它们已经链接到程序中，不再需要
         glDeleteShader(vertex);
         glDeleteShader(fragment);
+
+        std::cout << "Load shader successfully, vertex path: " << vertexPath << ", fragment path: " << fragmentPath << ", ID = " << ID << std::endl << std::endl;
     }
 
     // 激活着色器
@@ -140,6 +179,7 @@ private:
     void checkCompileErrors(GLuint shader, std::string type) {
         GLint success;
         GLchar infoLog[1024];
+        std::cout << "checkCompileErrors, type = " << type << std::endl;
         if (type != "PROGRAM") {
             glGetShaderiv(shader, GL_COMPILE_STATUS, &success);
             if (!success) {

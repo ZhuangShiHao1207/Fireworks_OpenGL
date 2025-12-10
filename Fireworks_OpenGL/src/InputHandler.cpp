@@ -2,6 +2,7 @@
 #include "Camera.h"
 #include "PointLight.h"
 #include "FireworkParticleSystem.h"
+#include "PostProcessor.h"
 #include <iostream>
 
 
@@ -15,6 +16,7 @@ extern bool firstMouse;
 extern bool sceneLightsEnabled;
 extern PointLightManager lightManager;
 extern FireworkParticleSystem fireworkSystem;
+extern PostProcessor* postProcessor;
 
 // 处理所有输入
 void processInput(GLFWwindow* window)
@@ -99,7 +101,7 @@ void processInput(GLFWwindow* window)
     if (glfwGetKey(window, GLFW_KEY_T) == GLFW_RELEASE)
         tKeyPressed = false;
 
-    // 发射烟花
+    // 发射烟花 --> 通过三个通道控制颜色
     static bool key1Pressed = false;
     if (glfwGetKey(window, GLFW_KEY_1) == GLFW_PRESS && !key1Pressed)
     {
@@ -199,6 +201,13 @@ void processInput(GLFWwindow* window)
 void framebuffer_size_callback(GLFWwindow* window, int width, int height)
 {
     glViewport(0, 0, width, height);
+    
+    // 如果 PostProcessor 存在，重新创建以匹配新的窗口大小
+    if (postProcessor) {
+        delete postProcessor;
+        postProcessor = new PostProcessor(width, height);
+        std::cout << "[Resize] PostProcessor recreated with size: " << width << "x" << height << std::endl;
+    }
 }
 
 // glfw: 鼠标移动时调用此回调函数

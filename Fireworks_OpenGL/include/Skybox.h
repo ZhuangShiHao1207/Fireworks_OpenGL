@@ -104,6 +104,7 @@ public:
         glTexParameteri(GL_TEXTURE_CUBE_MAP, GL_TEXTURE_WRAP_R, GL_CLAMP_TO_EDGE);
     }
 
+    // 使用自己的VAO和纹理单元 --> 绘制到后处理的FBO之中
     void Draw() {
         glDepthFunc(GL_LEQUAL);  // 改变深度函数，使深度测试在值等于深度缓冲内容时通过
         glBindVertexArray(VAO);
@@ -114,7 +115,12 @@ public:
         glDepthFunc(GL_LESS); // 将深度函数设置回默认值
     }
 
+	// 删除内部的VAO和VBO
     ~Skybox() {
+        cleanup();
+    }
+
+    void cleanup() {
         glDeleteVertexArrays(1, &VAO);
         glDeleteBuffers(1, &VBO);
     }

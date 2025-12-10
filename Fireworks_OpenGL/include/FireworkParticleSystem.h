@@ -41,6 +41,9 @@ public:
     // 测试方法：依次发射各种类型烟花
     void runTest(float currentTime);
 
+    // 清理OpenGL资源
+    void cleanupGL();
+
     // 拖尾参数
     float tailLife = 0.02f;         // 拖尾粒子的寿命（秒）
     float tailInterval = 0.016f;    // 拖尾生成间隔（秒）
@@ -83,7 +86,6 @@ private:
     GLuint vbo = 0;
 
     void initGL();
-    void cleanupGL();
     bool glInited = false;
 
     // 辅助方法
