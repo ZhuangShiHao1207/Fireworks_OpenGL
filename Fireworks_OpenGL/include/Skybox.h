@@ -33,15 +33,26 @@ public:
         for (unsigned int i = 0; i < faces.size(); i++) {
             unsigned char* data = stbi_load(faces[i].c_str(), &width, &height, &nrChannels, 0);
             if (data) {
-                GLenum format = GL_RGB;
-                if (nrChannels == 1) format = GL_RED;
-                else if (nrChannels == 3) format = GL_RGB;
-                else if (nrChannels == 4) format = GL_RGBA;
+                GLenum internalFormat = GL_RGB;
+                GLenum dataFormat = GL_RGB;
+                
+                if (nrChannels == 1) {
+                    internalFormat = GL_RED;
+                    dataFormat = GL_RED;
+                }
+                else if (nrChannels == 3) {
+                    internalFormat = GL_SRGB;  // 使用 sRGB 内部格式进行 Gamma 校正
+                    dataFormat = GL_RGB;
+                }
+                else if (nrChannels == 4) {
+                    internalFormat = GL_SRGB_ALPHA;  // 使用 sRGB Alpha 内部格式
+                    dataFormat = GL_RGBA;
+                }
 
                 glTexImage2D(GL_TEXTURE_CUBE_MAP_POSITIVE_X + i,
-                    0, format, width, height, 0, format, GL_UNSIGNED_BYTE, data);
+                    0, internalFormat, width, height, 0, dataFormat, GL_UNSIGNED_BYTE, data);
                 stbi_image_free(data);
-                std::cout << "加载天空盒面 " << i << ": " << faces[i] << std::endl;
+                std::cout << "加载天空盒面 " << i << ": " << faces[i] << " (" << nrChannels << " channels)" << std::endl;
             }
             else {
                 std::cout << "立方体贴图纹理加载失败: " << faces[i] << std::endl;
@@ -58,6 +69,12 @@ public:
 
     // 从标准命名的6个独立面加载立方体贴图 (px, nx, py, ny, pz, nz)
     void LoadCubemapSeparateFaces(const std::string& directory) {
+        // 删除旧的立方体贴图（如果存在）
+        if (cubemapTexture != 0) {
+            glDeleteTextures(1, &cubemapTexture);
+            cubemapTexture = 0;
+        }
+        
         std::vector<std::string> faces = {
             directory + "/px.png",  // 右侧  (+X)
             directory + "/nx.png",  // 左侧  (-X)
@@ -66,7 +83,10 @@ public:
             directory + "/pz.png",  // 前方  (+Z)
             directory + "/nz.png"   // 后方  (-Z)
         };
+        
+        std::cout << "Loading cubemap from: " << directory << std::endl;
         LoadCubemap(faces);
+        std::cout << "Cubemap loaded successfully!" << std::endl;
     }
 
     // 从单个等距柱状图加载立方体贴图（如 StandardCubeMap.png）

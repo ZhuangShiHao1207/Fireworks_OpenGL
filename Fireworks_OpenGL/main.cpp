@@ -90,7 +90,7 @@ int main()
 
     // 需要清理？
     Skybox skybox;
-    Ground ground(100.0f);
+    Ground ground(150.0f);
     
     // 使用 Assimp 加载书本模型
     std::cout << "正在加载模型..." << std::endl;
@@ -98,7 +98,7 @@ int main()
     std::cout << "模型加载成功！" << std::endl;
 
     std::cout << "正在加载天空盒..." << std::endl;
-    skybox.LoadCubemapSeparateFaces("assets/skybox/NightSkyHDRI007_4K");
+    skybox.LoadCubemapSeparateFaces("assets/skybox/nightsky");
     std::cout << "正在加载地面纹理..." << std::endl;
     ground.LoadTexture("assets/ground/sea.png");
 
@@ -107,21 +107,21 @@ int main()
     lightManager.AddPermanentLight(
         glm::vec3(0.0f, 8.0f, 5.0f),       // 位置：上方偏前
         glm::vec3(0.9f, 0.9f, 1.0f),       // 颜色：淡蓝白色
-        1.5f                                // 强度：较弱（原来3.0）
+        0.5f                                // 强度：较弱
     );
     
     // 辅助光源 - 补光，照亮书本侧面
     lightManager.AddPermanentLight(
         glm::vec3(-5.0f, 5.0f, 0.0f),      // 位置：左侧
         glm::vec3(1.0f, 0.95f, 0.9f),      // 颜色：暖白色
-        1.2f                                // 强度：微弱
+        0.2f                                // 强度：微弱
     );
     
     // 背景光源 - 填充阴影
     lightManager.AddPermanentLight(
         glm::vec3(5.0f, 5.0f, -5.0f),      // 位置：右后方
         glm::vec3(0.85f, 0.9f, 1.0f),      // 颜色：冷白色
-        1.0f                                // 强度：很弱
+        0.5f                                // 强度：很弱
     );
     
     // 地面补光 - 照亮地面
@@ -140,6 +140,7 @@ int main()
     std::cout << "  Space/Shift - Up/Down" << std::endl;
     std::cout << "  Mouse - Look around (after enabled)" << std::endl;
     std::cout << "  R - Toggle orbit mode" << std::endl;
+    std::cout << "  9 - Toggle cinematic trajectory mode (8s showcase)" << std::endl;
     std::cout << "  F - Focus center" << std::endl;
     std::cout << "  M - Toggle mouse control (Press M to enable camera rotation)" << std::endl;
     std::cout << "  L - Toggle scene lights (default ON - weak ambient)" << std::endl;
@@ -192,6 +193,7 @@ int main()
         // 更新光源管理器（移除过期的临时光源）
         lightManager.Update(deltaTime);
         camera.UpdateOrbitMode(deltaTime);
+        camera.UpdateCinematicMode(deltaTime);
 
         glClearColor(0.05f, 0.05f, 0.1f, 1.0f);
         glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
@@ -227,9 +229,10 @@ int main()
         groundShader->setFloat("groundShininess", 32.0f);        // 地面较低光泽度
         groundShader->setFloat("groundSpecularStrength", 0.3f);  // 水面适度镜面反射
         
-        groundShader->setVec3("fogColor", glm::vec3(0.05f, 0.05f, 0.1f));
-        groundShader->setFloat("fogDensity", 0.02f);
-        groundShader->setFloat("fogStart", 30.0f);
+        // ✅ 优化雾效参数以匹配星空天空盒
+        groundShader->setVec3("fogColor", glm::vec3(0.02f, 0.04f, 0.12f));  // 深蓝偏黑，匹配夜空
+        groundShader->setFloat("fogDensity", 0.030f);  // 降低密度，使过渡更柔和
+        groundShader->setFloat("fogStart", 15.0f);      // 提前开始雾效
         
         if (ground.hasTexture) {
             groundShader->setInt("groundTexture", 0);
@@ -274,10 +277,11 @@ int main()
         modelShader->setFloat("materialShininess", 64.0f);   // 镜面高光锐度（32-128 典型值）
         modelShader->setFloat("specularStrength", 0.5f);     // 镜面高光强度（0.0-1.0）
         
-        modelShader->setVec3("fogColor", glm::vec3(0.05f, 0.05f, 0.1f));
-        modelShader->setFloat("fogDensity", 0.02f);
-        modelShader->setFloat("fogStart", 30.0f);
-        
+        // ✅ 优化雾效参数以匹配星空天空盒
+        modelShader->setVec3("fogColor", glm::vec3(0.02f, 0.04f, 0.12f));  // 深蓝偏黑，匹配夜空
+        modelShader->setFloat("fogDensity", 0.015f);  // 降低密度，使过渡更柔和
+        modelShader->setFloat("fogStart", 20.0f);      // 提前开始雾效
+
         // 设置模型光源（与地面相同）
         modelShader->setInt("numLights", numLights);
         for (int i = 0; i < numLights && i < 16; i++)
@@ -312,6 +316,10 @@ int main()
         fireworkSystem.render();
 
 		postProcessor->Unbind();
+		
+		// 获取电影模式的淡入淡出透明度并应用
+		float fadeAlpha = camera.GetCinematicFadeAlpha();
+		postProcessor->SetFadeAlpha(fadeAlpha);
 		postProcessor->Render();
 
         glfwSwapBuffers(window);

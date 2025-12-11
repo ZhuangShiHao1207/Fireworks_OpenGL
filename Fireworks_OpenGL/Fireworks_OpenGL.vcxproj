@@ -150,7 +150,6 @@
     <ClInclude Include="include\Model.h" />
     <ClInclude Include="include\PointLight.h" />
     <ClInclude Include="include\Shader.h" />
-    <ClInclude Include="include\SimpleModel.h" />
     <ClInclude Include="include\Skybox.h" />
     <ClInclude Include="include\InputHandler.h" />
     <ClInclude Include="include\stb_image.h" />

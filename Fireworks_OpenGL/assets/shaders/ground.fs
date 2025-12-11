@@ -83,19 +83,40 @@ void main()
         result = mix(result, result * 1.2, grid * 0.3);
     }
     
-    // Calculate fog effect for infinite ground illusion
+    // ? 改进的雾效计算 - 更平滑的地平线过渡
     float distance = length(viewPos - FragPos);
-    float fogFactor = 0.0;
     
-    // Exponential fog with smooth transition
+    // 计算视角高度因子（越接近地平线，雾效越强）
+    vec3 viewToFrag = FragPos - viewPos;
+    float heightFactor = 1.0 - abs(normalize(viewToFrag).y);  // 接近水平视角时接近1
+    heightFactor = pow(heightFactor, 2.0);  // 增强地平线效果
+    
+    // 混合距离雾和高度雾
+    float distanceFog = 0.0;
     if (distance > fogStart) {
         float fogDistance = distance - fogStart;
-        fogFactor = 1.0 - exp(-fogDensity * fogDistance);
-        fogFactor = clamp(fogFactor, 0.0, 1.0);
+        distanceFog = 1.0 - exp(-fogDensity * fogDistance);
+    }
+    
+    // 添加额外的地平线雾效
+    float horizonFog = smoothstep(20.0, 60.0, distance) * heightFactor * 0.7;
+    
+    // 组合雾效
+    float fogFactor = clamp(distanceFog + horizonFog, 0.0, 1.0);
+    
+    // 使用更柔和的雾色混合
+    vec3 finalFogColor = fogColor;
+    
+    // 在远处添加一点天空盒颜色的过渡（假设天空是深蓝色）
+    if (distance > 40.0) {
+        float skyMix = smoothstep(40.0, 80.0, distance);
+        // 天空盒底部的颜色（根据你的星空天空盒调整）
+        vec3 skyHorizonColor = vec3(0.02, 0.05, 0.15);  // 深蓝偏黑
+        finalFogColor = mix(fogColor, skyHorizonColor, skyMix * 0.5);
     }
     
     // Mix result with fog color based on distance
-    result = mix(result, fogColor, fogFactor);
+    result = mix(result, finalFogColor, fogFactor);
     
     FragColor = vec4(result, 1.0);
 }

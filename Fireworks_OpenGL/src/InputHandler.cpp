@@ -49,6 +49,17 @@ void processInput(GLFWwindow* window)
     if (glfwGetKey(window, GLFW_KEY_R) == GLFW_RELEASE)
         rKeyPressed = false;
 
+    // 切换电影轨迹模式 (Cinematic Trajectory Mode)
+    static bool key9Pressed = false;
+    if (glfwGetKey(window, GLFW_KEY_9) == GLFW_PRESS && !key9Pressed)
+    {
+        camera.ToggleCinematicMode();
+        key9Pressed = true;
+        std::cout << "[Camera] 电影轨迹模式: " << (camera.CinematicMode ? "开启" : "关闭") << std::endl;
+    }
+    if (glfwGetKey(window, GLFW_KEY_9) == GLFW_RELEASE)
+        key9Pressed = false;
+
     // 聚焦中心
     static bool fKeyPressed = false;
     if (glfwGetKey(window, GLFW_KEY_F) == GLFW_PRESS && !fKeyPressed)
