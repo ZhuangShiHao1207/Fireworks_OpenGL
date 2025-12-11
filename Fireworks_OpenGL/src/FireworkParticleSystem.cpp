@@ -65,11 +65,10 @@ void FireworkParticleSystem::launch(const glm::vec3& position, FireworkType type
     p.size = size;
     p.type = type;
     p.isTail = false;
-    p.canExplodeAgain = (type == FireworkType::DoubleExplosion);
+    p.canExplodeAgain = false; // 所有类型现在都自动有二次爆炸
     p.rotationAngle = 0.0f;
     launcherParticles.push_back(p);
 }
-
 
 void FireworkParticleSystem::update(float deltaTime) {
     float dt = deltaTime * timeScale;
@@ -129,20 +128,44 @@ void FireworkParticleSystem::update(float deltaTime) {
             p.color = calculateColorGradient(p);
             
             createTail(p, prevPos);
-
-            // 二次爆炸检测
-            if (p.canExplodeAgain && p.life < p.maxLife * 0.5f && p.life > p.maxLife * 0.4f) {
-                toExplodeAgain.push_back(p);
-                p.canExplodeAgain = false;
-            }
         }
     }
 
-    for (const auto& p : toExplodeAgain) {
-        createExplosion(p, true);
+    // 3. 更新延迟爆炸事件
+    for (auto& delayed : delayedExplosions) {
+        delayed.timer -= dt;
+        if (delayed.timer <= 0.0f) {
+            // 触发第二次爆炸，根据类型生成相同形状但范围更大的爆炸
+            int count = 150; // 第二次爆炸粒子数
+            switch (delayed.type) {
+            case FireworkType::Sphere:
+                generateSphereParticles(delayed.position, delayed.color, count, delayed.radius, false);
+                break;
+            case FireworkType::Ring:
+                generateRingParticles(delayed.position, delayed.color, count, delayed.radius);
+                break;
+            case FireworkType::MultiLayer:
+                generateMultiLayerParticles(delayed.position, delayed.color, count, delayed.radius);
+                break;
+            case FireworkType::Spiral:
+                generateSpiralParticles(delayed.position, delayed.color, count, delayed.radius);
+                break;
+            case FireworkType::Heart:
+                generateHeartParticles(delayed.position, delayed.color, count, delayed.radius);
+                break;
+            }
+            // 第二次爆炸不添加光源
+        }
     }
+    
+    // 移除已触发的延迟爆炸
+    delayedExplosions.erase(
+        std::remove_if(delayedExplosions.begin(), delayedExplosions.end(),
+            [](const DelayedExplosion& d) { return d.timer <= 0.0f; }),
+        delayedExplosions.end()
+    );
 
-    // 3. 更新拖尾粒子
+    // 4. 更新拖尾粒子
     for (auto& tail : tailParticles) {
         if (tail.life > 0.0f) {
             float t = 1.0f - (tail.life / tail.maxLife);
@@ -230,10 +253,33 @@ glm::vec4 FireworkParticleSystem::calculateColorGradient(const Particle& p) cons
 
 // 创建爆炸粒子
 void FireworkParticleSystem::createExplosion(const Particle& source, bool isSecondary) {
-    // Particles are self-illuminating, no scene lights needed
-    int count = isSecondary ? 60 : 120; // 二次爆炸粒子数较少
+    int count = isSecondary ? 150 : 240; // 第一次爆炸粒子翻倍，第二次更多
+
+    // 仅第一次爆炸添加光源，持续0.1秒
+    if (lightManager && !isSecondary) {
+        // 使用烟花的初始颜色（鲜艳）
+        glm::vec3 lightColor(source.initialColor.r, source.initialColor.g, source.initialColor.b);
+        
+        // 主光源：0.1秒持续时间
+        lightManager->AddTemporaryLight(source.position, lightColor, 25.0f, 0.1f);
+        
+        // 中心光球效果：更强的光，0.1秒
+        lightManager->AddTemporaryLight(source.position, lightColor * 1.5f, 40.0f, 0.1f);
+    }
 
     // Use initialColor instead of current color to keep explosions bright
+    // 所有类型都在第一次爆炸时添加延迟爆炸
+    if (!isSecondary) {
+        // 添加延迟0.1秒的第二次爆炸
+        DelayedExplosion delayed;
+        delayed.position = source.position;
+        delayed.color = source.initialColor;
+        delayed.type = source.type;
+        delayed.timer = 0.1f;
+        delayed.radius = 5.0f; // 第二次爆炸范围更大
+        delayedExplosions.push_back(delayed);
+    }
+    
     switch (source.type) {
     case FireworkType::Sphere:
         generateSphereParticles(source.position, source.initialColor, count);
@@ -250,20 +296,17 @@ void FireworkParticleSystem::createExplosion(const Particle& source, bool isSeco
     case FireworkType::Heart:
         generateHeartParticles(source.position, source.initialColor, count);
         break;
-    case FireworkType::DoubleExplosion:
-        generateSphereParticles(source.position, source.initialColor, count);
-        break;
     }
 }
 
 // 球形烟花
-void FireworkParticleSystem::generateSphereParticles(const glm::vec3& center, const glm::vec4& color, int count) {
+void FireworkParticleSystem::generateSphereParticles(const glm::vec3& center, const glm::vec4& color, int count, float radius, bool canExplode) {
     for (int i = 0; i < count; ++i) {
         float u = dis(gen);
         float v = dis(gen);
         float theta = u * 2.0f * 3.14159265f;
         float phi = acos(2.0f * v - 1.0f);
-        float r = 2.5f + 1.5f * dis(gen);
+        float r = radius * (0.8f + 0.4f * dis(gen)); // 半径有一定随机性
 
         Particle p;
         p.position = center;
@@ -279,16 +322,16 @@ void FireworkParticleSystem::generateSphereParticles(const glm::vec3& center, co
         p.size = childSize;
         p.type = FireworkType::Sphere;
         p.isTail = false;
-        p.canExplodeAgain = false;
+        p.canExplodeAgain = canExplode;
         explosionParticles.push_back(p);
     }
 }
 
 // 环形烟花
-void FireworkParticleSystem::generateRingParticles(const glm::vec3& center, const glm::vec4& color, int count) {
+void FireworkParticleSystem::generateRingParticles(const glm::vec3& center, const glm::vec4& color, int count, float radiusScale) {
     for (int i = 0; i < count; ++i) {
         float angle = (float)i / count * 2.0f * 3.14159265f;
-        float r = 3.0f + 0.5f * dis(gen);
+        float r = radiusScale * (0.9f + 0.2f * dis(gen));
 
         Particle p;
         p.position = center;
@@ -310,12 +353,13 @@ void FireworkParticleSystem::generateRingParticles(const glm::vec3& center, cons
 }
 
 // 多层烟花
-void FireworkParticleSystem::generateMultiLayerParticles(const glm::vec3& center, const glm::vec4& color, int count) {
+void FireworkParticleSystem::generateMultiLayerParticles(const glm::vec3& center, const glm::vec4& color, int count, float radiusScale) {
     int layers = 3;
     int particlesPerLayer = count / layers;
+    float baseRadius = radiusScale * 0.5f;
 
     for (int layer = 0; layer < layers; ++layer) {
-        float layerRadius = 2.0f + layer * 1.0f;
+        float layerRadius = baseRadius + layer * (radiusScale * 0.3f);
         glm::vec4 layerColor = color;
         
         // 每层不同颜色变化
@@ -353,7 +397,7 @@ void FireworkParticleSystem::generateMultiLayerParticles(const glm::vec3& center
 }
 
 // 螺旋烟花
-void FireworkParticleSystem::generateSpiralParticles(const glm::vec3& center, const glm::vec4& color, int count) {
+void FireworkParticleSystem::generateSpiralParticles(const glm::vec3& center, const glm::vec4& color, int count, float radiusScale) {
     int spirals = 3; // 3条螺旋线
     for (int i = 0; i < count; ++i) {
         int spiralIdx = i % spirals;
@@ -361,7 +405,7 @@ void FireworkParticleSystem::generateSpiralParticles(const glm::vec3& center, co
         float angleOffset = (float)i / count * 4.0f * 3.14159265f; // 多圈螺旋
         float angle = baseAngle + angleOffset;
         
-        float r = 2.0f + (float)i / count * 2.0f; // 半径逐渐增大
+        float r = radiusScale * (0.4f + (float)i / count * 0.8f); // 半径逐渐增大
 
         Particle p;
         p.position = center;
@@ -384,7 +428,7 @@ void FireworkParticleSystem::generateSpiralParticles(const glm::vec3& center, co
 }
 
 // 心形烟花
-void FireworkParticleSystem::generateHeartParticles(const glm::vec3& center, const glm::vec4& color, int count) {
+void FireworkParticleSystem::generateHeartParticles(const glm::vec3& center, const glm::vec4& color, int count, float radiusScale) {
     for (int i = 0; i < count; ++i) {
         float t = (float)i / count * 2.0f * 3.14159265f;
         
@@ -393,7 +437,7 @@ void FireworkParticleSystem::generateHeartParticles(const glm::vec3& center, con
         float y = 13.0f * cos(t) - 5.0f * cos(2.0f * t) - 2.0f * cos(3.0f * t) - cos(4.0f * t);
         
         // 缩放和添加随机性
-        float scale = 0.15f;
+        float scale = 0.15f * (radiusScale / 3.0f);
         x *= scale;
         y *= scale;
 
@@ -440,7 +484,7 @@ void FireworkParticleSystem::runTest(float currentTime) {
         { FireworkType::MultiLayer, glm::vec3(0.0f, 0.0f, 0.0f), glm::vec4(0.2f, 0.5f, 1.0f, 1.0f), 0.025f, "MultiLayer (Blue)" },
         { FireworkType::Spiral, glm::vec3(3.0f, 0.0f, 0.0f), glm::vec4(1.0f, 0.8f, 0.2f, 1.0f), 0.025f, "Spiral (Gold)" },
         { FireworkType::Heart, glm::vec3(6.0f, 0.0f, 0.0f), glm::vec4(1.0f, 0.3f, 0.6f, 1.0f), 0.03f, "Heart (Pink)" },
-        { FireworkType::DoubleExplosion, glm::vec3(-4.5f, 0.0f, -3.0f), glm::vec4(0.8f, 0.3f, 1.0f, 1.0f), 0.035f, "DoubleExplosion (Purple)" },
+        { FireworkType::Sphere, glm::vec3(-4.5f, 0.0f, -3.0f), glm::vec4(0.8f, 0.3f, 1.0f, 1.0f), 0.035f, "Sphere (Purple)" },
     };
     
     int numTests = sizeof(tests) / sizeof(tests[0]);
