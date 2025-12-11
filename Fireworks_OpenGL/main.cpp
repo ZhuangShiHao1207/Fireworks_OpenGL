@@ -150,7 +150,7 @@ int main()
     std::cout << "  3 - Launch Heart firework (Pink)" << std::endl;
     std::cout << "  4 - Launch MultiLayer firework (Blue)" << std::endl;
     std::cout << "  5 - Launch Spiral firework (Gold)" << std::endl;
-    std::cout << "  6 - Launch DoubleExplosion firework (Purple)" << std::endl;
+    std::cout << "  6 - Launch Sphere firework (Purple) - All types have double explosion" << std::endl;
     std::cout << "  0 - Run auto test sequence" << std::endl;
     std::cout << "  ESC - Exit" << std::endl;
     std::cout << "\n[Info] Mouse is free by default. Press M to lock/unlock mouse.\n" << std::endl;

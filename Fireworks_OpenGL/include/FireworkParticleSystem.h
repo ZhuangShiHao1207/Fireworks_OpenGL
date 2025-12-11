@@ -10,14 +10,13 @@
 // 支持多种烟花类型、颜色渐变、二次爆炸、拖尾效果
 class FireworkParticleSystem {
 public:
-    // 支持的烟花类型
+    // 支持的烟花类型（所有类型都支持二次爆炸）
     enum class FireworkType {
         Sphere,          // 球形烟花
         Ring,            // 环形烟花
         MultiLayer,      // 多层烟花
         Spiral,          // 螺旋烟花
-        Heart,           // 心形烟花
-        DoubleExplosion  // 二次爆炸烟花
+        Heart            // 心形烟花
     };
 
     FireworkParticleSystem();
@@ -71,9 +70,19 @@ private:
         float tailTimer = 0.0f;       // 拖尾生成计时器
     };
 
+    // 延迟爆炸事件结构
+    struct DelayedExplosion {
+        glm::vec3 position;      // 爆炸位置
+        glm::vec4 color;         // 爆炸颜色
+        FireworkType type;       // 烟花类型
+        float timer;             // 倒计时（秒）
+        float radius;            // 爆炸半径
+    };
+
     std::vector<Particle> launcherParticles; // 上升粒子
     std::vector<Particle> explosionParticles; // 爆炸粒子
     std::vector<Particle> tailParticles; // 拖尾粒子
+    std::vector<DelayedExplosion> delayedExplosions; // 延迟二次爆炸事件
 
     std::vector<Particle> particles; // 渲染时合并所有粒子的容器
     glm::mat4 viewMatrix;
@@ -91,9 +100,9 @@ private:
     // 辅助方法
     void createExplosion(const Particle& source, bool isSecondary = false);
     glm::vec4 calculateColorGradient(const Particle& p) const;
-    void generateSphereParticles(const glm::vec3& center, const glm::vec4& color, int count);
-    void generateRingParticles(const glm::vec3& center, const glm::vec4& color, int count);
-    void generateMultiLayerParticles(const glm::vec3& center, const glm::vec4& color, int count);
-    void generateSpiralParticles(const glm::vec3& center, const glm::vec4& color, int count);
-    void generateHeartParticles(const glm::vec3& center, const glm::vec4& color, int count);
+    void generateSphereParticles(const glm::vec3& center, const glm::vec4& color, int count, float radius = 4.0f, bool canExplode = false);
+    void generateRingParticles(const glm::vec3& center, const glm::vec4& color, int count, float radiusScale = 3.5f);
+    void generateMultiLayerParticles(const glm::vec3& center, const glm::vec4& color, int count, float radiusScale = 3.0f);
+    void generateSpiralParticles(const glm::vec3& center, const glm::vec4& color, int count, float radiusScale = 4.0f);
+    void generateHeartParticles(const glm::vec3& center, const glm::vec4& color, int count, float radiusScale = 3.0f);
 };

@@ -189,10 +189,10 @@ void processInput(GLFWwindow* window)
         glm::vec3 launchPos = glm::vec3(0.0f, 0.5f, 0.0f);
         fireworkSystem.launch(
             launchPos,
-            FireworkParticleSystem::FireworkType::DoubleExplosion,
+            FireworkParticleSystem::FireworkType::Sphere,
             1.5f, glm::vec4(0.8f, 0.3f, 1.0f, 1.0f), fireworkSystem.launcherSize);
         key6Pressed = true;
-        std::cout << "[Firework] Launch DoubleExplosion!" << std::endl;
+        std::cout << "[Firework] Launch Sphere (Purple)!" << std::endl;
     }
     if (glfwGetKey(window, GLFW_KEY_6) == GLFW_RELEASE)
         key6Pressed = false;
