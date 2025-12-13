@@ -301,8 +301,130 @@ void mouse_callback(GLFWwindow* window, double xposIn, double yposIn)
     camera.ProcessMouseMovement(xoffset, yoffset);
 }
 
+// glfw: 鼠标点击时调用此回调函数
+void mouse_button_callback(GLFWwindow* window, int button, int action, int mods)
+{
+    // 只在鼠标锁定模式下发射烟花
+    if (!mouseEnabled) return;
+
+    // 检查是否是左键按下
+    if (button == GLFW_MOUSE_BUTTON_LEFT && action == GLFW_PRESS)
+    {
+        // 获取当前鼠标位置（在锁定模式下，鼠标位置可能为0,0，我们需要使用摄像机方向）
+        double xpos, ypos;
+        glfwGetCursorPos(window, &xpos, &ypos);
+
+        // 将屏幕坐标转换为世界坐标（需要深度缓冲信息，这里简化处理）
+        // 使用摄像机前方的位置作为发射基准点
+
+        // 从摄像机位置向前发射烟花
+        glm::vec3 launchPosition = camera.Position + camera.Front * 5.0f; // 摄像机前方5个单位
+        launchPosition.y = 0.5f; // 设置在地面上方一点
+
+        // 根据当前选择的烟花类型发射
+        static int currentFireworkType = 1; // 默认球形烟花
+
+        // 更新UI中的烟花计数
+        if (uiManager) {
+            uiManager->IncrementFireworkCount();
+        }
+
+        // 发射烟花
+        switch (currentFireworkType) {
+        case 1:
+            fireworkSystem.launch(
+                launchPosition,
+                FireworkParticleSystem::FireworkType::Sphere,
+                1.5f,
+                glm::vec4(1.0f, 1.0f, 0.5f, 1.0f),
+                fireworkSystem.launcherSize
+            );
+            std::cout << "[Mouse] Launch Sphere firework at ("
+                << launchPosition.x << ", " << launchPosition.y << ", " << launchPosition.z << ")" << std::endl;
+            break;
+
+        case 2:
+            fireworkSystem.launch(
+                launchPosition,
+                FireworkParticleSystem::FireworkType::Ring,
+                1.5f,
+                glm::vec4(0.5f, 1.0f, 1.0f, 1.0f),
+                fireworkSystem.launcherSize
+            );
+            std::cout << "[Mouse] Launch Ring firework" << std::endl;
+            break;
+
+        case 3:
+            fireworkSystem.launch(
+                launchPosition,
+                FireworkParticleSystem::FireworkType::Heart,
+                1.5f,
+                glm::vec4(1.0f, 0.5f, 1.0f, 1.0f),
+                fireworkSystem.launcherSize
+            );
+            std::cout << "[Mouse] Launch Heart firework" << std::endl;
+            break;
+
+        case 4:
+            fireworkSystem.launch(
+                launchPosition,
+                FireworkParticleSystem::FireworkType::MultiLayer,
+                1.5f,
+                glm::vec4(0.3f, 0.8f, 1.0f, 1.0f),
+                fireworkSystem.launcherSize
+            );
+            std::cout << "[Mouse] Launch MultiLayer firework" << std::endl;
+            break;
+
+        case 5:
+            fireworkSystem.launch(
+                launchPosition,
+                FireworkParticleSystem::FireworkType::Spiral,
+                1.5f,
+                glm::vec4(1.0f, 0.8f, 0.2f, 1.0f),
+                fireworkSystem.launcherSize
+            );
+            std::cout << "[Mouse] Launch Spiral firework" << std::endl;
+            break;
+
+        case 6:
+            fireworkSystem.launch(
+                launchPosition,
+                FireworkParticleSystem::FireworkType::DoubleExplosion,
+                1.5f,
+                glm::vec4(0.8f, 0.3f, 1.0f, 1.0f),
+                fireworkSystem.launcherSize
+            );
+            std::cout << "[Mouse] Launch DoubleExplosion firework" << std::endl;
+            break;
+        }
+    }
+}
+
 // glfw: 鼠标滚轮滚动时调用此回调函数
 void scroll_callback(GLFWwindow* window, double xoffset, double yoffset)
 {
     camera.ProcessMouseScroll(static_cast<float>(yoffset));
+}
+
+// 鼠标位置辅助函数
+glm::vec3 GetMouseWorldPosition(GLFWwindow* window, Camera& camera, float distance = 10.0f)
+{
+    // 获取鼠标位置
+    double xpos, ypos;
+    glfwGetCursorPos(window, &xpos, &ypos);
+
+    // 将屏幕坐标转换为归一化设备坐标
+    int width, height;
+    glfwGetWindowSize(window, &width, &height);
+
+    float x = (2.0f * xpos) / width - 1.0f;
+    float y = 1.0f - (2.0f * ypos) / height;
+
+    // 创建射线
+    glm::vec4 rayClip = glm::vec4(x, y, -1.0f, 1.0f);
+
+    // 需要投影矩阵和视图矩阵来转换到世界空间
+    // 这里简化：使用摄像机方向作为发射方向
+    return camera.Position + camera.Front * distance;
 }

@@ -230,6 +230,8 @@ void UIManager::CreateDefaultUI() {
     // ¿ØÖÆËµÃ÷
     std::vector<std::string> controlHints = {
         "Mouse click: Launch firework",
+        "Mouse (locked): Left click = Launch",
+        "Mouse (locked): Right click = Change type",
         "M: Toggle mouse control",
         "L: Toggle scene lights",
         "R: Orbit mode",
