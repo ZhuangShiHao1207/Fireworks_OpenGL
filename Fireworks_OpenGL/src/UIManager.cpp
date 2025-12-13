@@ -107,34 +107,38 @@ bool UIManager::LoadFonts() {
 }
 
 void UIManager::CreateDefaultUI() {
-    // 标题
+    // 标题 - 顶部居中
     TextElement* title = new TextElement();
     title->SetText("Fireworks System");
-    title->SetPosition(15.0f, 20.0f);
+    title->SetPosition(screenWidth / 2.0f - 80.0f, 20.0f); // 粗略居中，后面会精确计算
     title->SetColor(glm::vec4(1.0f, 1.0f, 1.0f, 1.0f));
     title->SetScale(1.0f);
     AddElement("title", title);
 
+    // ============================================
+    // 左侧状态栏 - 左上角（原来标题的位置）
+    // ============================================
+
     // FPS显示
     TextElement* fps = new TextElement();
     fps->SetText("FPS: 0");
-    fps->SetPosition(15.0f, 60.0f);
+    fps->SetPosition(20.0f, 60.0f); // 从标题原来的位置开始
     fps->SetColor(glm::vec4(0.0f, 1.0f, 0.0f, 1.0f));
     fps->SetScale(0.8f);
     AddElement("fps", fps);
 
     // 烟花类型
     TextElement* fireworkType = new TextElement();
-    fireworkType->SetText("Current Type: Sphere");
-    fireworkType->SetPosition(15.0f, 90.0f);
+    fireworkType->SetText("Type: Sphere");
+    fireworkType->SetPosition(20.0f, 90.0f);
     fireworkType->SetColor(glm::vec4(1.0f, 0.5f, 0.5f, 1.0f));
     fireworkType->SetScale(0.8f);
     AddElement("firework_type", fireworkType);
 
     // 烟花计数
     TextElement* fireworkCount = new TextElement();
-    fireworkCount->SetText("Launch Count: 0");
-    fireworkCount->SetPosition(15.0f, 120.0f);
+    fireworkCount->SetText("Count: 0");
+    fireworkCount->SetPosition(20.0f, 120.0f);
     fireworkCount->SetColor(glm::vec4(0.8f, 0.8f, 1.0f, 1.0f));
     fireworkCount->SetScale(0.8f);
     AddElement("firework_count", fireworkCount);
@@ -142,7 +146,7 @@ void UIManager::CreateDefaultUI() {
     // 模式显示
     TextElement* mode = new TextElement();
     mode->SetText("Mode: Manual");
-    mode->SetPosition(15.0f, 150.0f);
+    mode->SetPosition(20.0f, 150.0f);
     mode->SetColor(glm::vec4(0.2f, 0.8f, 1.0f, 1.0f));
     mode->SetScale(0.8f);
     AddElement("mode", mode);
@@ -150,7 +154,7 @@ void UIManager::CreateDefaultUI() {
     // 鼠标状态
     TextElement* mouseState = new TextElement();
     mouseState->SetText("Mouse: Free");
-    mouseState->SetPosition(15.0f, 180.0f);
+    mouseState->SetPosition(20.0f, 180.0f);
     mouseState->SetColor(glm::vec4(1.0f, 1.0f, 0.3f, 1.0f));
     mouseState->SetScale(0.8f);
     AddElement("mouse_state", mouseState);
@@ -158,22 +162,73 @@ void UIManager::CreateDefaultUI() {
     // 灯光状态
     TextElement* lightsState = new TextElement();
     lightsState->SetText("Lights: ON");
-    lightsState->SetPosition(15.0f, 210.0f);
+    lightsState->SetPosition(20.0f, 210.0f);
     lightsState->SetColor(glm::vec4(0.3f, 1.0f, 0.3f, 1.0f));
     lightsState->SetScale(0.8f);
     AddElement("lights_state", lightsState);
 
-    // 控制提示标题
+    // ============================================
+    // 烟花类型说明 - 放在状态栏下方
+    // ============================================
+
+    // 烟花类型说明标题
+    TextElement* fireworkTypesTitle = new TextElement();
+    fireworkTypesTitle->SetText("--- Firework Types ---");
+    fireworkTypesTitle->SetPosition(20.0f, 250.0f);
+    fireworkTypesTitle->SetColor(glm::vec4(1.0f, 1.0f, 0.5f, 1.0f));
+    fireworkTypesTitle->SetScale(0.7f);
+    AddElement("firework_types_title", fireworkTypesTitle);
+
+    // 烟花类型说明
+    std::vector<std::string> fireworkTypeHints = {
+        "1: Sphere (Red/Yellow)",
+        "2: Ring (Cyan)",
+        "3: Heart (Pink)",
+        "4: MultiLayer (Blue)",
+        "5: Spiral (Gold)",
+        "6: Double (Purple)"
+    };
+
+    float fireworkHintY = 275.0f;
+    float fireworkHintLineHeight = 18.0f;
+
+    for (int i = 0; i < (int)fireworkTypeHints.size(); i++) {
+        std::string id = "firework_hint_" + std::to_string(i);
+        TextElement* hint = new TextElement();
+        hint->SetText(fireworkTypeHints[i]);
+        hint->SetPosition(30.0f, fireworkHintY + i * fireworkHintLineHeight);
+
+        // 根据烟花类型设置颜色
+        glm::vec4 color;
+        switch (i) {
+        case 0: color = glm::vec4(1.0f, 0.5f, 0.5f, 1.0f); break;    // 红/黄
+        case 1: color = glm::vec4(0.5f, 1.0f, 1.0f, 1.0f); break;    // 青
+        case 2: color = glm::vec4(1.0f, 0.5f, 1.0f, 1.0f); break;    // 粉
+        case 3: color = glm::vec4(0.3f, 0.8f, 1.0f, 1.0f); break;    // 蓝
+        case 4: color = glm::vec4(1.0f, 0.8f, 0.2f, 1.0f); break;    // 金
+        case 5: color = glm::vec4(0.8f, 0.3f, 1.0f, 1.0f); break;    // 紫
+        default: color = glm::vec4(0.9f, 0.9f, 0.9f, 1.0f);
+        }
+
+        hint->SetColor(color);
+        hint->SetScale(0.5f);
+        AddElement(id, hint);
+    }
+
+    // ============================================
+    // 控制说明 - 放在右上角
+    // ============================================
+
+    // 控制说明标题 - 右上角
     TextElement* controlsTitle = new TextElement();
     controlsTitle->SetText("--- Controls ---");
-    controlsTitle->SetPosition(15.0f, (float)screenHeight - 200.0f);
-    controlsTitle->SetColor(glm::vec4(0.9f, 0.9f, 0.9f, 0.8f));
-    controlsTitle->SetScale(0.6f);
+    controlsTitle->SetPosition(screenWidth - 200.0f, 60.0f); // 从右上角往下一点开始
+    controlsTitle->SetColor(glm::vec4(0.9f, 0.9f, 0.9f, 1.0f));
+    controlsTitle->SetScale(0.7f);
     AddElement("controls_title", controlsTitle);
 
-    // 控制提示行
+    // 控制说明
     std::vector<std::string> controlHints = {
-        "1-6: Select firework type",
         "Mouse click: Launch firework",
         "M: Toggle mouse control",
         "L: Toggle scene lights",
@@ -184,16 +239,17 @@ void UIManager::CreateDefaultUI() {
         "ESC: Exit"
     };
 
-    float yPos = screenHeight - 180.0f;
+    float controlHintY = 85.0f;
+    float controlHintLineHeight = 18.0f;
+
     for (int i = 0; i < (int)controlHints.size(); i++) {
         std::string id = "control_hint_" + std::to_string(i);
         TextElement* hint = new TextElement();
         hint->SetText(controlHints[i]);
-        hint->SetPosition(25.0f, yPos);
-        hint->SetColor(glm::vec4(0.9f, 0.9f, 0.9f, 0.8f));
+        hint->SetPosition(screenWidth - 200.0f, controlHintY + i * controlHintLineHeight);
+        hint->SetColor(glm::vec4(0.9f, 0.9f, 0.9f, 1.0f));
         hint->SetScale(0.5f);
         AddElement(id, hint);
-        yPos += 18.0f;
     }
 }
 
@@ -226,18 +282,34 @@ void UIManager::Render(float deltaTime) {
             TextElement* textElement = static_cast<TextElement*>(pair.second);
             glm::vec4 color = textElement->GetColor();
 
-            // 对主UI面板应用淡入效果
-            if (pair.first.find("control_hint_") != std::string::npos ||
-                pair.first == "controls_title") {
-                // 控制提示根据showControlHints决定
+            // 对状态面板应用淡入效果
+            if (pair.first == "fps" || pair.first == "firework_type" ||
+                pair.first == "firework_count" || pair.first == "mode" ||
+                pair.first == "mouse_state" || pair.first == "lights_state") {
+                color.a = fadeAlpha;
+                textElement->SetColor(color);
+            }
+
+            // 对烟花类型说明应用可见性控制
+            else if (pair.first.find("firework_hint_") != std::string::npos ||
+                pair.first == "firework_types_title") {
                 if (!showControlHints) {
                     textElement->SetVisible(false);
                     continue;
                 }
                 textElement->SetVisible(true);
+                color.a = fadeAlpha;
+                textElement->SetColor(color);
             }
-            else if (pair.first != "title") {
-                // 其他UI元素应用淡入效果
+
+            // 对控制说明应用可见性控制
+            else if (pair.first.find("control_hint_") != std::string::npos ||
+                pair.first == "controls_title") {
+                if (!showControlHints) {
+                    textElement->SetVisible(false);
+                    continue;
+                }
+                textElement->SetVisible(true);
                 color.a = fadeAlpha;
                 textElement->SetColor(color);
             }
@@ -283,19 +355,46 @@ void UIManager::UpdateScreenSize(unsigned int width, unsigned int height) {
 }
 
 void UIManager::UpdateElementPositions() {
-    // 更新控制提示位置
+    // 更新标题位置（顶部居中）
+    UIElement* title = GetElement("title");
+    if (title) {
+        // 粗略估算标题宽度："Fireworks System" 大约 17个字符 * 12像素 = 204像素
+        float titleWidth = 17.0f * 12.0f;
+        float titleX = (screenWidth - titleWidth) / 2.0f;
+        title->SetPosition(titleX, 20.0f);
+    }
+    
+    // 更新烟花类型说明位置
+    UIElement* fireworkTypesTitle = GetElement("firework_types_title");
+    if (fireworkTypesTitle) {
+        fireworkTypesTitle->SetPosition(20.0f, 250.0f);
+    }
+    
+    float fireworkHintY = 275.0f;
+    float fireworkHintLineHeight = 18.0f;
+    
+    for (int i = 0; i < 6; i++) {
+        std::string id = "firework_hint_" + std::to_string(i);
+        UIElement* hint = GetElement(id);
+        if (hint) {
+            hint->SetPosition(30.0f, fireworkHintY + i * fireworkHintLineHeight);
+        }
+    }
+    
+    // 更新控制说明位置（右上角）
     UIElement* controlsTitle = GetElement("controls_title");
     if (controlsTitle) {
-        controlsTitle->SetPosition(15.0f, (float)screenHeight - 200.0f);
+        controlsTitle->SetPosition(screenWidth - 200.0f, 60.0f);
     }
-
-    float yPos = screenHeight - 180.0f;
-    for (int i = 0; i < 9; i++) {
+    
+    float controlHintY = 85.0f;
+    float controlHintLineHeight = 18.0f;
+    
+    for (int i = 0; i < 8; i++) {
         std::string id = "control_hint_" + std::to_string(i);
         UIElement* hint = GetElement(id);
         if (hint) {
-            hint->SetPosition(25.0f, yPos);
-            yPos += 18.0f;
+            hint->SetPosition(screenWidth - 200.0f, controlHintY + i * controlHintLineHeight);
         }
     }
 }
@@ -470,8 +569,18 @@ void UIManager::SetAutoTestMode(bool enabled) {
 void UIManager::ToggleControlHints() {
     showControlHints = !showControlHints;
 
-    std::string status = showControlHints ? "Show" : "Hide";
-    std::string hint = "Control Hints: " + status;
+    // 更新所有烟花类型说明和控制说明的可见性
+    for (auto& pair : uiElements) {
+        if (pair.first.find("firework_hint_") != std::string::npos ||
+            pair.first == "firework_types_title" ||
+            pair.first.find("control_hint_") != std::string::npos ||
+            pair.first == "controls_title") {
+            pair.second->SetVisible(showControlHints);
+        }
+    }
+
+    std::string status = showControlHints ? "Shown" : "Hidden";
+    std::string hint = "Control hints " + status;
 
     ShowHint(hint, 1.0f);
 
