@@ -4,8 +4,7 @@
 #include "FireworkParticleSystem.h"
 #include "PostProcessor.h"
 #include <iostream>
-
-
+#include <UIManager.h>
 
 // 外部变量声明（在 main.cpp 中定义）
 extern Camera camera;
@@ -17,6 +16,8 @@ extern bool sceneLightsEnabled;
 extern PointLightManager lightManager;
 extern FireworkParticleSystem fireworkSystem;
 extern PostProcessor* postProcessor;
+extern int g_fireworkKeyPressCount;
+extern UIManager* uiManager;
 
 // 处理所有输入
 void processInput(GLFWwindow* window)
@@ -68,6 +69,9 @@ void processInput(GLFWwindow* window)
         glfwSetInputMode(window, GLFW_CURSOR, mouseEnabled ? GLFW_CURSOR_DISABLED : GLFW_CURSOR_NORMAL);
         firstMouse = true; // 重置首次鼠标以避免摄像机跳动
         mKeyPressed = true;
+        if (uiManager) {
+            uiManager->SetMouseEnabled(mouseEnabled);
+        }
         std::cout << "鼠标控制: " << (mouseEnabled ? "锁定（摄像机控制已启用）" : "自由（可移出窗口）") << std::endl;
     }
     if (glfwGetKey(window, GLFW_KEY_M) == GLFW_RELEASE)
@@ -79,10 +83,26 @@ void processInput(GLFWwindow* window)
     {
         sceneLightsEnabled = !sceneLightsEnabled;
         lKeyPressed = true;
+        if (uiManager) {
+            uiManager->SetSceneLightsEnabled(sceneLightsEnabled);
+        }
         std::cout << "[Lights] Scene lights: " << (sceneLightsEnabled ? "ON" : "OFF") << std::endl;
     }
     if (glfwGetKey(window, GLFW_KEY_L) == GLFW_RELEASE)
         lKeyPressed = false;
+
+    // 切换控制提示时
+    static bool hKeyPressed = false;
+    if (glfwGetKey(window, GLFW_KEY_H) == GLFW_PRESS && !hKeyPressed) {
+        if (uiManager) {
+            uiManager->ToggleControlHints();
+        }
+        hKeyPressed = true;
+        std::cout << "[UI] Toggled control hints" << std::endl;
+    }
+    if (glfwGetKey(window, GLFW_KEY_H) == GLFW_RELEASE) {
+        hKeyPressed = false;
+    }
 
     // 测试：添加临时烟花光源
     static bool tKeyPressed = false;
@@ -111,6 +131,13 @@ void processInput(GLFWwindow* window)
             FireworkParticleSystem::FireworkType::Sphere,
             1.5f, glm::vec4(1.0f, 1.0f, 0.5f, 1.0f), fireworkSystem.launcherSize);
         key1Pressed = true;
+
+        // 更新UI状态
+        if (uiManager) {
+            uiManager->SetFireworkType(1);
+            uiManager->IncrementFireworkCount();
+        }
+
         std::cout << "[Firework] Launch Sphere!" << std::endl;
     }
     if (glfwGetKey(window, GLFW_KEY_1) == GLFW_RELEASE)
@@ -125,6 +152,13 @@ void processInput(GLFWwindow* window)
             FireworkParticleSystem::FireworkType::Ring,
             1.5f, glm::vec4(0.5f, 1.0f, 1.0f, 1.0f), fireworkSystem.launcherSize);
         key2Pressed = true;
+
+        // 更新UI状态
+        if (uiManager) {
+            uiManager->SetFireworkType(2);
+            uiManager->IncrementFireworkCount();
+        }
+
         std::cout << "[Firework] Launch Ring!" << std::endl;
     }
     if (glfwGetKey(window, GLFW_KEY_2) == GLFW_RELEASE)
@@ -139,6 +173,13 @@ void processInput(GLFWwindow* window)
             FireworkParticleSystem::FireworkType::Heart,
             1.5f, glm::vec4(1.0f, 0.5f, 1.0f, 1.0f), fireworkSystem.launcherSize);
         key3Pressed = true;
+
+        // 更新UI状态
+        if (uiManager) {
+            uiManager->SetFireworkType(3);
+            uiManager->IncrementFireworkCount();
+        }
+
         std::cout << "[Firework] Launch Heart!" << std::endl;
     }
     if (glfwGetKey(window, GLFW_KEY_3) == GLFW_RELEASE)
@@ -153,6 +194,13 @@ void processInput(GLFWwindow* window)
             FireworkParticleSystem::FireworkType::MultiLayer,
             1.5f, glm::vec4(0.3f, 0.8f, 1.0f, 1.0f), fireworkSystem.launcherSize);
         key4Pressed = true;
+
+        // 更新UI状态
+        if (uiManager) {
+            uiManager->SetFireworkType(4);
+            uiManager->IncrementFireworkCount();
+        }
+
         std::cout << "[Firework] Launch MultiLayer!" << std::endl;
     }
     if (glfwGetKey(window, GLFW_KEY_4) == GLFW_RELEASE)
@@ -167,6 +215,13 @@ void processInput(GLFWwindow* window)
             FireworkParticleSystem::FireworkType::Spiral,
             1.5f, glm::vec4(1.0f, 0.8f, 0.2f, 1.0f), fireworkSystem.launcherSize);
         key5Pressed = true;
+
+        // 更新UI状态
+        if (uiManager) {
+            uiManager->SetFireworkType(5);
+            uiManager->IncrementFireworkCount();
+        }
+
         std::cout << "[Firework] Launch Spiral!" << std::endl;
     }
     if (glfwGetKey(window, GLFW_KEY_5) == GLFW_RELEASE)
@@ -181,6 +236,13 @@ void processInput(GLFWwindow* window)
             FireworkParticleSystem::FireworkType::DoubleExplosion,
             1.5f, glm::vec4(0.8f, 0.3f, 1.0f, 1.0f), fireworkSystem.launcherSize);
         key6Pressed = true;
+
+        // 更新UI状态
+        if (uiManager) {
+            uiManager->SetFireworkType(6);
+            uiManager->IncrementFireworkCount();
+        }
+
         std::cout << "[Firework] Launch DoubleExplosion!" << std::endl;
     }
     if (glfwGetKey(window, GLFW_KEY_6) == GLFW_RELEASE)
@@ -207,6 +269,11 @@ void framebuffer_size_callback(GLFWwindow* window, int width, int height)
         delete postProcessor;
         postProcessor = new PostProcessor(width, height);
         std::cout << "[Resize] PostProcessor recreated with size: " << width << "x" << height << std::endl;
+    }
+    // 如果 uiManager 存在，更新UI窗口以匹配新的窗口大小
+    if (uiManager) {
+        uiManager->UpdateScreenSize(width, height);
+        std::cout << "[Resize] UI updated with size: " << width << "x" << height << std::endl;
     }
 }
 

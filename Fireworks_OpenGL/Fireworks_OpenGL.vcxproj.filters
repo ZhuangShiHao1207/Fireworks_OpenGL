@@ -33,6 +33,12 @@
     <ClCompile Include="PostProcessor.cpp">
       <Filter>源文件</Filter>
     </ClCompile>
+    <ClCompile Include="src\TextRenderer.cpp">
+      <Filter>源文件</Filter>
+    </ClCompile>
+    <ClCompile Include="src\UIManager.cpp">
+      <Filter>源文件</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="include\Shader.h">
@@ -71,8 +77,28 @@
     <ClInclude Include="PostProcessor.h">
       <Filter>头文件</Filter>
     </ClInclude>
+    <ClInclude Include="include\TextRenderer.h">
+      <Filter>头文件</Filter>
+    </ClInclude>
+    <ClInclude Include="include\UIManager.h">
+      <Filter>头文件</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
+    <None Include="assets\shaders\*.fs" />
+    <None Include="assets\shaders\*.fs" />
+    <None Include="assets\shaders\*.fs" />
+    <None Include="assets\shaders\*.fs" />
+    <None Include="assets\shaders\*.fs" />
+    <None Include="assets\shaders\*.fs" />
+    <None Include="assets\shaders\*.fs" />
+    <None Include="assets\shaders\*.vs" />
+    <None Include="assets\shaders\*.vs" />
+    <None Include="assets\shaders\*.vs" />
+    <None Include="assets\shaders\*.vs" />
+    <None Include="assets\shaders\*.vs" />
+    <None Include="assets\shaders\*.vs" />
+    <None Include="assets\shaders\*.vs" />
     <None Include="assets\shaders\*.fs" />
     <None Include="assets\shaders\*.fs" />
     <None Include="assets\shaders\*.fs" />

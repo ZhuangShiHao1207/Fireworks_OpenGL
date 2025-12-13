@@ -15,6 +15,8 @@
 #include "include/PointLight.h"
 #include "include/FireworkParticleSystem.h"
 #include "include/PostProcessor.h"
+#include "include/TextRenderer.h"
+#include "include/UIManager.h"
 
 // 输入处理相关
 #include "include/InputHandler.h"
@@ -49,6 +51,12 @@ FireworkParticleSystem fireworkSystem;
 // PostProcessor 全局指针（用于窗口缩放时更新）
 PostProcessor* postProcessor = nullptr;
 
+// UI管理器
+UIManager* uiManager = nullptr;
+
+// 跟踪按键次数
+int g_fireworkKeyPressCount = 0;  // 记录发射按键按下的次数
+
 int main()
 {
     glfwInit();
@@ -82,6 +90,12 @@ int main()
     glEnable(GL_DEPTH_TEST);
     glEnable(GL_BLEND);
     glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
+
+    // 初始化UI管理器
+    uiManager = new UIManager();
+    if (!uiManager->Initialize(SCR_WIDTH, SCR_HEIGHT)) {
+        std::cerr << "[Warning] UIManager initialization failed, UI may not display." << std::endl;
+    }
 
     // 需要清理
     Shader *skyboxShader = new Shader("assets/shaders/skybox.vs", "assets/shaders/skybox.fs");
@@ -144,6 +158,7 @@ int main()
     std::cout << "  M - Toggle mouse control (Press M to enable camera rotation)" << std::endl;
     std::cout << "  L - Toggle scene lights (default ON - weak ambient)" << std::endl;
     std::cout << "  T - Test: Add temporary light (5s)" << std::endl;
+    std::cout << "  H - Toggle control hints (Hide/Show UI controls)" << std::endl;
     std::cout << "  1 - Launch Sphere firework (Red/Yellow)" << std::endl;
     std::cout << "  2 - Launch Ring firework (Cyan)" << std::endl;
     std::cout << "  3 - Launch Heart firework (Pink)" << std::endl;
@@ -181,6 +196,10 @@ int main()
         if (isKey0Pressed && !wasKey0Pressed) {
             autoTestMode = !autoTestMode;
             std::cout << "[Test] Auto test mode: " << (autoTestMode ? "ON" : "OFF") << std::endl;
+            // 更新UI中的自动测试模式状态
+            if (uiManager) {
+                uiManager->SetAutoTestMode(autoTestMode);
+            }
         }
         wasKey0Pressed = isKey0Pressed;
 
@@ -314,6 +333,12 @@ int main()
 		postProcessor->Unbind();
 		postProcessor->Render();
 
+        // 更新UI管理器
+        if (uiManager) {
+            uiManager->SetFPS(1.0f / deltaTime);
+            uiManager->Render(deltaTime);
+        }
+
         glfwSwapBuffers(window);
         glfwPollEvents();
     }
@@ -344,6 +369,13 @@ int main()
         fireworkSystem.cleanupGL();
         skybox.cleanup();
         ground.cleanup();
+
+        // 在程序退出时清理UI
+        if (uiManager) {
+            uiManager->Cleanup();
+            delete uiManager;
+            uiManager = nullptr;
+        }
         
         std::cout << "OpenGL resources cleaned successfully" << std::endl;
     } catch (std::exception& e) {
