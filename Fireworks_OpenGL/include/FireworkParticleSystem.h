@@ -23,7 +23,7 @@ public:
     ~FireworkParticleSystem();
 
     // 发射一个烟花（上升弹）
-    void launch(const glm::vec3& position, FireworkType type, float life, const glm::vec4& color, float size);
+    void launch(const glm::vec3& position, FireworkType type, float life, const glm::vec4& primaryColor, const glm::vec4& secondaryColor = glm::vec4(1.0f), float size = 0.05f);
 
     // 更新粒子系统（每帧调用，deltaTime 单位：秒）
     void update(float deltaTime);
@@ -60,14 +60,17 @@ private:
         glm::vec3 velocity;        // 速度
         glm::vec4 color;           // 颜色（RGBA）
         glm::vec4 initialColor;    // 初始颜色（用于颜色渐变）
+        glm::vec4 secondaryColor; // 第二次爆炸颜色（仅用于dual-color烟花）
         float life;                // 剩余寿命（秒）
         float maxLife;             // 最大寿命（用于计算生命周期比例）
         float size;                // 规格化尺寸（0..1），在顶点着色器中转换为像素大小
         FireworkType type;         // 烟花类型
+        bool isDualColor = false; // 是否为双色烟花
         bool isTail = false;       // 是否为拖尾粒子，防止递归产生尾迹
         bool canExplodeAgain = false; // 是否可以二次爆炸
         float rotationAngle = 0.0f;   // 旋转角度（用于螺旋烟花）
         float tailTimer = 0.0f;       // 拖尾生成计时器
+        float explodeAtHeight = 0.0f; // 随机爆炸高度
     };
 
     // 延迟爆炸事件结构

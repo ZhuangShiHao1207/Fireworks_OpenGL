@@ -6,11 +6,14 @@
 #include <glad/glad.h>
 #include <iostream>
 #include <cmath>
-
+#include <ctime>   // 用于time()函数
+#include <cstdlib> // 用于rand()和srand()函数
 // 随机数生成器
 static std::random_device rd;
 static std::mt19937 gen(rd());
 static std::uniform_real_distribution<float> dis(0.0f, 1.0f);
+
+extern glm::vec4 HSVtoRGB(float h, float s, float v);
 
 FireworkParticleSystem::FireworkParticleSystem() {
     vao = 0;
@@ -62,29 +65,42 @@ void FireworkParticleSystem::setLightManager(PointLightManager* manager) {
     lightManager = manager;
 }
 
-void FireworkParticleSystem::launch(const glm::vec3& position, FireworkType type, float life, const glm::vec4& color, float size) {
+void FireworkParticleSystem::launch(const glm::vec3& position, FireworkType type, float life,
+    const glm::vec4& primaryColor, const glm::vec4& secondaryColor, float size) {
     // 播放升空音效
     if (audioInitialized) {
         int index = static_cast<int>(dis(gen) * 2) % 2;
         std::string path = "assets/sounds/firework/rise/firework_rise_0" + std::to_string(index + 1) + ".wav";
         ma_engine_play_sound(&audioEngine, path.c_str(), NULL);
     }
-    glm::vec3 fixedVelocity(0.0f, 12.0f, 0.0f);
 
+    float randomExplosionHeight = 3.0f + dis(gen) * 4.0f;
+
+    glm::vec3 fixedVelocity(0.0f, 12.0f, 0.0f);
     Particle p;
     float scale = 10.0;
 
-    p.position = position;
+    // 随机位置（x在-8到8之间，z在-5到5之间）
+    glm::vec3 randomPos = position;
+    if (position == glm::vec3(0.0f, 0.5f, 0.0f)) {
+        randomPos.x = (dis(gen) * 16.0f) - 8.0f;  // -8到8
+        randomPos.z = (dis(gen) * 10.0f) - 5.0f;  // -5到5
+    }
+
+    p.position = randomPos;
     p.velocity = fixedVelocity;
-    p.color = color * scale;
-    p.initialColor = color;
-    p.life = life;
-    p.maxLife = life;
+    p.color = primaryColor * scale;
+    p.initialColor = primaryColor;
+    p.secondaryColor = secondaryColor;
+    p.life = life * (0.7f + dis(gen) * 0.4f);  // 随机寿命，让爆炸高度随机
+    p.maxLife = p.life;
     p.size = size;
     p.type = type;
     p.isTail = false;
-    p.canExplodeAgain = false; // 所有类型现在都自动有二次爆炸
+    p.canExplodeAgain = false;
+    p.isDualColor = (secondaryColor != glm::vec4(1.0f));  // 如果是默认值，则是单色
     p.rotationAngle = 0.0f;
+
     launcherParticles.push_back(p);
 }
 
@@ -293,11 +309,20 @@ void FireworkParticleSystem::createExplosion(const Particle& source, bool isSeco
 
     // Use initialColor instead of current color to keep explosions bright
     // 所有类型都在第一次爆炸时添加延迟爆炸
+    // 在 createExplosion 函数中修改延迟爆炸事件部分：
     if (!isSecondary) {
         // 添加延迟0.1秒的第二次爆炸
         DelayedExplosion delayed;
         delayed.position = source.position;
-        delayed.color = source.initialColor;
+
+        // 双色烟花使用secondaryColor，单色烟花使用initialColor
+        if (source.isDualColor) {
+            delayed.color = source.secondaryColor;
+        }
+        else {
+            delayed.color = source.initialColor;
+        }
+
         delayed.type = source.type;
         delayed.timer = 0.1f;
         delayed.radius = 5.0f; // 第二次爆炸范围更大
@@ -487,41 +512,67 @@ void FireworkParticleSystem::generateHeartParticles(const glm::vec3& center, con
 // 测试方法：依次发射各种类型烟花
 void FireworkParticleSystem::runTest(float currentTime) {
     static float lastTestTime = 0.0f;
-    static int testPhase = 0;
-    
-    if (currentTime - lastTestTime < 3.0f) return; // 每3秒发射一次
-    
+
+    // 每3秒发射一次
+    if (currentTime - lastTestTime < 3.0f) return;
+
     lastTestTime = currentTime;
-    
-    // 定义测试配置
-    struct TestConfig {
-        FireworkType type;
-        glm::vec3 position;
-        glm::vec4 color;
-        float size;
-        const char* name;
+
+    // 双色烟花类型数组（对应按键7,8,Z,X,C,V）
+    FireworkType dualColorTypes[] = {
+        FireworkType::Sphere,    // 7键
+        FireworkType::Ring,      // 8键
+        FireworkType::Heart,     // Z键
+        FireworkType::MultiLayer,// X键
+        FireworkType::Spiral,    // C键
+        FireworkType::Sphere     // V键（也是球形）
     };
-    
-    TestConfig tests[] = {
-        { FireworkType::Sphere, glm::vec3(-6.0f, 0.0f, 0.0f), glm::vec4(1.0f, 0.2f, 0.2f, 1.0f), 0.03f, "Sphere (Red)" },
-        { FireworkType::Ring, glm::vec3(-3.0f, 0.0f, 0.0f), glm::vec4(0.2f, 1.0f, 0.2f, 1.0f), 0.03f, "Ring (Green)" },
-        { FireworkType::MultiLayer, glm::vec3(0.0f, 0.0f, 0.0f), glm::vec4(0.2f, 0.5f, 1.0f, 1.0f), 0.025f, "MultiLayer (Blue)" },
-        { FireworkType::Spiral, glm::vec3(3.0f, 0.0f, 0.0f), glm::vec4(1.0f, 0.8f, 0.2f, 1.0f), 0.025f, "Spiral (Gold)" },
-        { FireworkType::Heart, glm::vec3(6.0f, 0.0f, 0.0f), glm::vec4(1.0f, 0.3f, 0.6f, 1.0f), 0.03f, "Heart (Pink)" },
-        { FireworkType::Sphere, glm::vec3(-4.5f, 0.0f, -3.0f), glm::vec4(0.8f, 0.3f, 1.0f, 1.0f), 0.035f, "Sphere (Purple)" },
-    };
-    
-    int numTests = sizeof(tests) / sizeof(tests[0]);
-    
-    if (testPhase < numTests) {
-        TestConfig& config = tests[testPhase];
-        launch(config.position, config.type, 1.5f, config.color, config.size);
-        std::cout << "[Test] Launch " << config.name << " at (" 
-                  << config.position.x << ", " << config.position.y << ", " << config.position.z << ")" << std::endl;
-        testPhase++;
-    } else {
-        testPhase = 0; // Loop test
-    }
+
+    // 生成完全随机的HSV颜色对
+    auto generateRandomColorPair = []() -> std::pair<glm::vec4, glm::vec4> {
+        // 随机生成主色（使用HSV模型，全范围随机）
+        float hue1 = dis(gen);           // 色相：0.0-1.0 全范围
+        float saturation1 = dis(gen);    // 饱和度：0.0-1.0 全范围
+        float value1 = 0.5f + dis(gen) * 0.5f; // 亮度：0.5-1.0（确保颜色不太暗）
+
+        glm::vec4 primaryColor = HSVtoRGB(hue1, saturation1, value1);
+
+        // 生成相近的辅色（在HSV空间微调）
+        // 色相偏移：-0.2到0.2之间
+        float hueOffset = (dis(gen) * 0.4f) - 0.2f;
+        float hue2 = fmod(hue1 + hueOffset + 1.0f, 1.0f);
+
+        // 饱和度和亮度也随机微调（确保在0.0-1.0范围内）
+        float saturation2 = glm::clamp(saturation1 + (dis(gen) * 0.3f - 0.15f), 0.0f, 1.0f);
+        float value2 = glm::clamp(value1 + (dis(gen) * 0.3f - 0.15f), 0.0f, 1.0f);
+
+        glm::vec4 secondaryColor = HSVtoRGB(hue2, saturation2, value2);
+
+        return { primaryColor, secondaryColor };
+        };
+
+    // 随机选择一种烟花类型
+    int typeIndex = static_cast<int>(dis(gen) * 6) % 6;
+    FireworkType selectedType = dualColorTypes[typeIndex];
+
+    // 生成完全随机颜色对（100%概率）
+    std::pair<glm::vec4, glm::vec4> selectedColors = generateRandomColorPair();
+
+    // 随机位置（x在-8到8之间，z在-5到5之间）
+    float randomX = -8.0f + dis(gen) * 16.0f;
+    float randomZ = -5.0f + dis(gen) * 10.0f;
+    glm::vec3 launchPos(randomX, 0.5f, randomZ);
+
+    // 随机尺寸（0.02f到0.05f）
+    float randomSize = 0.02f + dis(gen) * 0.03f;
+
+    // 随机寿命（1.0f到2.0f）
+    float randomLife = 1.0f + dis(gen) * 1.0f;
+
+    // 发射烟花
+    launch(launchPos, selectedType, randomLife,
+        selectedColors.first, selectedColors.second, randomSize);
+
 }
 
 void FireworkParticleSystem::cleanupGL() {
