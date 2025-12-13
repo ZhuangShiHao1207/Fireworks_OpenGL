@@ -109,7 +109,7 @@ bool UIManager::LoadFonts() {
 void UIManager::CreateDefaultUI() {
     // 标题
     TextElement* title = new TextElement();
-    title->SetText("烟花系统 Fireworks");
+    title->SetText("Fireworks System");
     title->SetPosition(15.0f, 20.0f);
     title->SetColor(glm::vec4(1.0f, 1.0f, 1.0f, 1.0f));
     title->SetScale(1.0f);
@@ -125,7 +125,7 @@ void UIManager::CreateDefaultUI() {
 
     // 烟花类型
     TextElement* fireworkType = new TextElement();
-    fireworkType->SetText("当前类型: 球形 Sphere");
+    fireworkType->SetText("Current Type: Sphere");
     fireworkType->SetPosition(15.0f, 90.0f);
     fireworkType->SetColor(glm::vec4(1.0f, 0.5f, 0.5f, 1.0f));
     fireworkType->SetScale(0.8f);
@@ -133,7 +133,7 @@ void UIManager::CreateDefaultUI() {
 
     // 烟花计数
     TextElement* fireworkCount = new TextElement();
-    fireworkCount->SetText("发射次数: 0");
+    fireworkCount->SetText("Launch Count: 0");
     fireworkCount->SetPosition(15.0f, 120.0f);
     fireworkCount->SetColor(glm::vec4(0.8f, 0.8f, 1.0f, 1.0f));
     fireworkCount->SetScale(0.8f);
@@ -141,7 +141,7 @@ void UIManager::CreateDefaultUI() {
 
     // 模式显示
     TextElement* mode = new TextElement();
-    mode->SetText("模式: 手动 Manual");
+    mode->SetText("Mode: Manual");
     mode->SetPosition(15.0f, 150.0f);
     mode->SetColor(glm::vec4(0.2f, 0.8f, 1.0f, 1.0f));
     mode->SetScale(0.8f);
@@ -149,7 +149,7 @@ void UIManager::CreateDefaultUI() {
 
     // 鼠标状态
     TextElement* mouseState = new TextElement();
-    mouseState->SetText("鼠标: 自由 Free");
+    mouseState->SetText("Mouse: Free");
     mouseState->SetPosition(15.0f, 180.0f);
     mouseState->SetColor(glm::vec4(1.0f, 1.0f, 0.3f, 1.0f));
     mouseState->SetScale(0.8f);
@@ -157,7 +157,7 @@ void UIManager::CreateDefaultUI() {
 
     // 灯光状态
     TextElement* lightsState = new TextElement();
-    lightsState->SetText("场景灯光: 开 ON");
+    lightsState->SetText("Lights: ON");
     lightsState->SetPosition(15.0f, 210.0f);
     lightsState->SetColor(glm::vec4(0.3f, 1.0f, 0.3f, 1.0f));
     lightsState->SetScale(0.8f);
@@ -165,7 +165,7 @@ void UIManager::CreateDefaultUI() {
 
     // 控制提示标题
     TextElement* controlsTitle = new TextElement();
-    controlsTitle->SetText("--- 控制 Controls ---");
+    controlsTitle->SetText("--- Controls ---");
     controlsTitle->SetPosition(15.0f, (float)screenHeight - 200.0f);
     controlsTitle->SetColor(glm::vec4(0.9f, 0.9f, 0.9f, 0.8f));
     controlsTitle->SetScale(0.6f);
@@ -173,15 +173,15 @@ void UIManager::CreateDefaultUI() {
 
     // 控制提示行
     std::vector<std::string> controlHints = {
-        "1-6: 选择烟花类型",
-        "鼠标点击: 发射烟花",
-        "M: 切换鼠标控制",
-        "L: 切换场景灯光",
-        "R: 环绕模式",
-        "F: 聚焦中心",
-        "0: 自动测试模式",
-        "H: 隐藏/显示提示",
-        "ESC: 退出"
+        "1-6: Select firework type",
+        "Mouse click: Launch firework",
+        "M: Toggle mouse control",
+        "L: Toggle scene lights",
+        "R: Orbit mode",
+        "F: Focus center",
+        "0: Auto test mode",
+        "H: Hide/Show hints",
+        "ESC: Exit"
     };
 
     float yPos = screenHeight - 180.0f;
@@ -344,7 +344,7 @@ void UIManager::IncrementFireworkCount() {
     fireworkCount++;
     SetFireworkCount(fireworkCount);
 
-    std::string hint = "烟花发射! 总数: " + std::to_string(fireworkCount) +
+    std::string hint = "Firework launched! Count: " + std::to_string(fireworkCount) +
         " / Fireworks: " + std::to_string(fireworkCount);
     ShowHint(hint, 1.5f);
 
@@ -356,7 +356,7 @@ void UIManager::SetFireworkCount(int count) {
 
     TextElement* element = GetTextElement("firework_count");
     if (element) {
-        std::string text = "发射次数: " + std::to_string(count);
+        std::string text = "Launch Count: " + std::to_string(count);
         element->SetText(text);
     }
 }
@@ -364,11 +364,10 @@ void UIManager::SetFireworkCount(int count) {
 void UIManager::SetFireworkType(int type) {
     TextElement* element = GetTextElement("firework_type");
     if (element) {
-        std::string chineseNames[] = { "球形", "环形", "心形", "多层", "螺旋", "二次爆炸" };
         std::string englishNames[] = { "Sphere", "Ring", "Heart", "MultiLayer", "Spiral", "Double" };
 
         if (type >= 1 && type <= 6) {
-            std::string text = "当前类型: " + chineseNames[type - 1] + " " + englishNames[type - 1];
+            std::string text = "Type: " + englishNames[type - 1];
             element->SetText(text);
 
             // 根据类型设置颜色
@@ -383,8 +382,7 @@ void UIManager::SetFireworkType(int type) {
             element->SetColor(colors[type - 1]);
 
             // 提示信息
-            std::string hint = "已选择: " + chineseNames[type - 1] +
-                " / Selected: " + englishNames[type - 1];
+            std::string hint = "Selected: " + englishNames[type - 1];
             ShowHint(hint, 1.5f);
 
             std::cout << "[UI] Firework type set to: " << type
@@ -417,8 +415,8 @@ void UIManager::SetFPS(float fps) {
 void UIManager::SetMouseEnabled(bool enabled) {
     TextElement* element = GetTextElement("mouse_state");
     if (element) {
-        std::string status = enabled ? "锁定 Locked" : "自由 Free";
-        std::string text = "鼠标: " + status;
+        std::string status = enabled ? "Locked" : "Free";
+        std::string text = "Mouse: " + status;
         element->SetText(text);
 
         glm::vec4 color = enabled ?
@@ -427,15 +425,15 @@ void UIManager::SetMouseEnabled(bool enabled) {
         element->SetColor(color);
     }
 
-    std::string status = enabled ? "锁定 / Locked" : "自由 / Free";
-    ShowHint("鼠标: " + status + " / Mouse: " + status, 1.5f);
+    std::string status = enabled ? "Locked" : "Free";
+    ShowHint("Mouse: " + status, 1.5f);
 }
 
 void UIManager::SetSceneLightsEnabled(bool enabled) {
     TextElement* element = GetTextElement("lights_state");
     if (element) {
-        std::string status = enabled ? "开 ON" : "关 OFF";
-        std::string text = "场景灯光: " + status;
+        std::string status = enabled ? "ON" : "OFF";
+        std::string text = "lights: " + status;
         element->SetText(text);
 
         glm::vec4 color = enabled ?
@@ -444,15 +442,15 @@ void UIManager::SetSceneLightsEnabled(bool enabled) {
         element->SetColor(color);
     }
 
-    std::string status = enabled ? "开 / ON" : "关 / OFF";
-    ShowHint("场景灯光: " + status + " / Scene Lights: " + status, 1.5f);
+    std::string status = enabled ? "ON" : "OFF";
+    ShowHint("Scene Lights: " + status, 1.5f);
 }
 
 void UIManager::SetAutoTestMode(bool enabled) {
     TextElement* element = GetTextElement("mode");
     if (element) {
-        std::string mode = enabled ? "自动 Auto" : "手动 Manual";
-        std::string text = "模式: " + mode;
+        std::string mode = enabled ? "Auto" : "Manual";
+        std::string text = "Mode: " + mode;
         element->SetText(text);
 
         glm::vec4 color = enabled ?
@@ -462,18 +460,18 @@ void UIManager::SetAutoTestMode(bool enabled) {
     }
 
     if (enabled) {
-        ShowHint("自动测试模式开启 / Auto Test Mode ON", 2.0f);
+        ShowHint("Auto Test Mode ON", 2.0f);
     }
     else {
-        ShowHint("自动测试模式关闭 / Auto Test Mode OFF", 2.0f);
+        ShowHint("Auto Test Mode OFF", 2.0f);
     }
 }
 
 void UIManager::ToggleControlHints() {
     showControlHints = !showControlHints;
 
-    std::string status = showControlHints ? "显示" : "隐藏";
-    std::string hint = "控制提示: " + status + " / Control Hints: " + status;
+    std::string status = showControlHints ? "Show" : "Hide";
+    std::string hint = "Control Hints: " + status;
 
     ShowHint(hint, 1.0f);
 

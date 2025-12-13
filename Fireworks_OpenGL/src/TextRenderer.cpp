@@ -192,7 +192,7 @@ void TextRenderer::RenderTextWithAlpha(const std::string& text, GLfloat x, GLflo
 
         // 计算字符的位置
         GLfloat xpos = x + ch.Bearing.x * scale;
-        GLfloat ypos = y - (ch.Size.y - ch.Bearing.y) * scale;
+        GLfloat ypos = y - ch.Bearing.y * scale;
 
         // 计算字符的宽高
         GLfloat w = ch.Size.x * scale;
@@ -200,13 +200,13 @@ void TextRenderer::RenderTextWithAlpha(const std::string& text, GLfloat x, GLflo
 
         // 为每个字符更新VBO
         GLfloat vertices[6][4] = {
-            { xpos,     ypos + h,   0.0, 0.0 },  // 左下
-            { xpos,     ypos,       0.0, 1.0 },  // 左上
-            { xpos + w, ypos,       1.0, 1.0 },  // 右上
+            { xpos,     ypos + h,   0.0, 1.0 },  // 左下
+            { xpos,     ypos,       0.0, 0.0 },  // 左上
+            { xpos + w, ypos,       1.0, 0.0 },  // 右上
 
-            { xpos,     ypos + h,   0.0, 0.0 },  // 左下
-            { xpos + w, ypos,       1.0, 1.0 },  // 右上
-            { xpos + w, ypos + h,   1.0, 0.0 }   // 右下
+            { xpos,     ypos + h,   0.0, 1.0 },  // 左下
+            { xpos + w, ypos,       1.0, 0.0 },  // 右上
+            { xpos + w, ypos + h,   1.0, 1.0 }   // 右下
         };
 
         // 在四边形上绘制字符纹理
