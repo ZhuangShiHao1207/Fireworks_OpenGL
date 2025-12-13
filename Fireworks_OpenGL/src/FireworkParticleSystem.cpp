@@ -1,4 +1,5 @@
 #include "FireworkParticleSystem.h"
+#include "miniaudio.h"
 #include <glm/gtc/matrix_transform.hpp>
 #include <random>
 #include <algorithm>
@@ -17,11 +18,22 @@ FireworkParticleSystem::FireworkParticleSystem() {
     glInited = false;
     shader = nullptr;
     lightManager = nullptr;
+    // 初始化音频引擎
+    ma_result result = ma_engine_init(NULL, &audioEngine);
+    if (result == MA_SUCCESS) {
+        audioInitialized = true;
+        std::cout << "Audio engine initialized\n";
+    }
+    else {
+        std::cerr << "Audio init failed: " << ma_result_description(result) << "\n";
+    }
 }
 
 FireworkParticleSystem::~FireworkParticleSystem() {
-    // 清理OpenGL资源
     cleanupGL();
+    if (audioInitialized) {
+        ma_engine_uninit(&audioEngine);
+    }
 }
 
 void FireworkParticleSystem::initGL() {
@@ -51,6 +63,12 @@ void FireworkParticleSystem::setLightManager(PointLightManager* manager) {
 }
 
 void FireworkParticleSystem::launch(const glm::vec3& position, FireworkType type, float life, const glm::vec4& color, float size) {
+    // 播放升空音效
+    if (audioInitialized) {
+        int index = static_cast<int>(dis(gen) * 2) % 2;
+        std::string path = "assets/sounds/firework/rise/firework_rise_0" + std::to_string(index + 1) + ".wav";
+        ma_engine_play_sound(&audioEngine, path.c_str(), NULL);
+    }
     glm::vec3 fixedVelocity(0.0f, 12.0f, 0.0f);
 
     Particle p;
@@ -255,6 +273,12 @@ glm::vec4 FireworkParticleSystem::calculateColorGradient(const Particle& p) cons
 void FireworkParticleSystem::createExplosion(const Particle& source, bool isSecondary) {
     int count = isSecondary ? 150 : 240; // 第一次爆炸粒子翻倍，第二次更多
 
+    // 主爆炸播放音效
+    if (audioInitialized && !isSecondary) {
+        int index = static_cast<int>(dis(gen) * 2) % 2;
+        std::string path = "assets/sounds/firework/explosion/firework_explosion_0" + std::to_string(index + 1) + ".wav";
+        ma_engine_play_sound(&audioEngine, path.c_str(), NULL);
+    }
     // 仅第一次爆炸添加光源，持续0.1秒
     if (lightManager && !isSecondary) {
         // 使用烟花的初始颜色（鲜艳）

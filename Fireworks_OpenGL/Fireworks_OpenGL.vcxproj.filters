@@ -33,6 +33,9 @@
     <ClCompile Include="PostProcessor.cpp">
       <Filter>源文件</Filter>
     </ClCompile>
+    <ClCompile Include="..\..\miniaudio\miniaudio.c">
+      <Filter>源文件</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="include\Shader.h">
@@ -68,6 +71,9 @@
     <ClInclude Include="PostProcessor.h">
       <Filter>头文件</Filter>
     </ClInclude>
+    <ClInclude Include="..\..\miniaudio\miniaudio.h">
+      <Filter>头文件</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <None Include="assets\shaders\*.fs" />
@@ -78,6 +84,30 @@
     <None Include="assets\shaders\*.fs" />
     <None Include="assets\shaders\*.fs" />
     <None Include="assets\shaders\*.vs" />
+    <None Include="assets\shaders\*.vs" />
+    <None Include="assets\shaders\*.vs" />
+    <None Include="assets\shaders\*.vs" />
+    <None Include="assets\shaders\*.vs" />
+    <None Include="assets\shaders\*.vs" />
+    <None Include="assets\shaders\*.vs" />
+    <None Include="assets\shaders\*.fs" />
+    <None Include="assets\shaders\*.fs" />
+    <None Include="assets\shaders\*.fs" />
+    <None Include="assets\shaders\*.fs" />
+    <None Include="assets\shaders\*.fs" />
+    <None Include="assets\shaders\*.fs" />
+    <None Include="assets\shaders\*.vs" />
+    <None Include="assets\shaders\*.vs" />
+    <None Include="assets\shaders\*.vs" />
+    <None Include="assets\shaders\*.vs" />
+    <None Include="assets\shaders\*.vs" />
+    <None Include="assets\shaders\*.vs" />
+    <None Include="assets\shaders\*.fs" />
+    <None Include="assets\shaders\*.fs" />
+    <None Include="assets\shaders\*.fs" />
+    <None Include="assets\shaders\*.fs" />
+    <None Include="assets\shaders\*.fs" />
+    <None Include="assets\shaders\*.fs" />
     <None Include="assets\shaders\*.vs" />
     <None Include="assets\shaders\*.vs" />
     <None Include="assets\shaders\*.vs" />
