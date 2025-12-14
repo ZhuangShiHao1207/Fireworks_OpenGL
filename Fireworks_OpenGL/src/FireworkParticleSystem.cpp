@@ -93,7 +93,7 @@ void FireworkParticleSystem::launch(const glm::vec3& position, FireworkType type
     p.color = primaryColor * scale;
     p.initialColor = primaryColor;
     p.secondaryColor = secondaryColor;
-    p.life = life * (0.7f + dis(gen) * 0.4f);  // 随机寿命，让爆炸高度随机
+    p.life = life * (0.4f + dis(gen) * 0.2f);  // 随机寿命，让爆炸高度随机
     p.maxLife = p.life;
     p.size = size;
     p.type = type;
@@ -571,10 +571,10 @@ void FireworkParticleSystem::runTest(float currentTime) {
     float randomSize = 0.02f + dis(gen) * 0.03f;
 
     // 随机寿命（0.5f到1.5f）
-    float randomLife = 0.5f + dis(gen) * 1.0f;
+    // float randomLife = 0.5f + dis(gen) * 1.0f;
 
     // 发射烟花
-    launch(launchPos, selectedType, randomLife,
+    launch(launchPos, selectedType, 1.5f,
         selectedColors.first, selectedColors.second, randomSize);
 
 }
@@ -691,7 +691,7 @@ void FireworkParticleSystem::generateImageParticles(const glm::vec3& center, con
             p.color = pixelColor;
             p.initialColor = pixelColor;
             
-            p.life = 1.0f; // 1秒后消失
+            p.life = 0.5f; // 1秒后消失
             p.maxLife = p.life;
             p.size = childSize ; // 稍大一些让图片更清晰
             p.type = FireworkType::Image;
