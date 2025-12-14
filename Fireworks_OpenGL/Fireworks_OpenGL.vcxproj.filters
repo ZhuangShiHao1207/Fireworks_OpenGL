@@ -37,6 +37,7 @@
       <Filter>源文件</Filter>
     </ClCompile>
     <ClCompile Include="src\UIManager.cpp">
+    <ClCompile Include="miniaudio_impl.cpp">
       <Filter>源文件</Filter>
     </ClCompile>
   </ItemGroup>
@@ -62,9 +63,6 @@
     <ClInclude Include="include\Model.h">
       <Filter>头文件</Filter>
     </ClInclude>
-    <ClInclude Include="include\SimpleModel.h">
-      <Filter>头文件</Filter>
-    </ClInclude>
     <ClInclude Include="include\PointLight.h">
       <Filter>头文件</Filter>
     </ClInclude>
@@ -81,6 +79,7 @@
       <Filter>头文件</Filter>
     </ClInclude>
     <ClInclude Include="include\UIManager.h">
+    <ClInclude Include="include\miniaudio.h">
       <Filter>头文件</Filter>
     </ClInclude>
   </ItemGroup>
@@ -107,6 +106,53 @@
     <None Include="assets\shaders\*.fs" />
     <None Include="assets\shaders\*.fs" />
     <None Include="assets\shaders\*.vs" />
+    <None Include="assets\shaders\*.vs" />
+    <None Include="assets\shaders\*.vs" />
+    <None Include="assets\shaders\*.vs" />
+    <None Include="assets\shaders\*.vs" />
+    <None Include="assets\shaders\*.vs" />
+    <None Include="assets\shaders\*.fs" />
+    <None Include="assets\shaders\*.fs" />
+    <None Include="assets\shaders\*.fs" />
+    <None Include="assets\shaders\*.fs" />
+    <None Include="assets\shaders\*.fs" />
+    <None Include="assets\shaders\*.fs" />
+    <None Include="assets\shaders\*.vs" />
+    <None Include="assets\shaders\*.vs" />
+    <None Include="assets\shaders\*.vs" />
+    <None Include="assets\shaders\*.vs" />
+    <None Include="assets\shaders\*.vs" />
+    <None Include="assets\shaders\*.vs" />
+    <None Include="assets\shaders\*.fs" />
+    <None Include="assets\shaders\*.fs" />
+    <None Include="assets\shaders\*.fs" />
+    <None Include="assets\shaders\*.fs" />
+    <None Include="assets\shaders\*.fs" />
+    <None Include="assets\shaders\*.fs" />
+    <None Include="assets\shaders\*.vs" />
+    <None Include="assets\shaders\*.vs" />
+    <None Include="assets\shaders\*.vs" />
+    <None Include="assets\shaders\*.vs" />
+    <None Include="assets\shaders\*.vs" />
+    <None Include="assets\shaders\*.vs" />
+    <None Include="assets\shaders\*.fs" />
+    <None Include="assets\shaders\*.fs" />
+    <None Include="assets\shaders\*.fs" />
+    <None Include="assets\shaders\*.fs" />
+    <None Include="assets\shaders\*.fs" />
+    <None Include="assets\shaders\*.fs" />
+    <None Include="assets\shaders\*.vs" />
+    <None Include="assets\shaders\*.vs" />
+    <None Include="assets\shaders\*.vs" />
+    <None Include="assets\shaders\*.vs" />
+    <None Include="assets\shaders\*.vs" />
+    <None Include="assets\shaders\*.vs" />
+    <None Include="assets\shaders\*.fs" />
+    <None Include="assets\shaders\*.fs" />
+    <None Include="assets\shaders\*.fs" />
+    <None Include="assets\shaders\*.fs" />
+    <None Include="assets\shaders\*.fs" />
+    <None Include="assets\shaders\*.fs" />
     <None Include="assets\shaders\*.vs" />
     <None Include="assets\shaders\*.vs" />
     <None Include="assets\shaders\*.vs" />

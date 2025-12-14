@@ -151,7 +151,8 @@ void PostProcessor::initRenderData()
     postShader->use();
     postShader->setBool("useBloom", true);
     postShader->setFloat("exposure", 0.8f);  // ? 降低曝光值从 1.0 到 0.8，减少过曝
-    // 定义屏幕四边形顶点数据
+    postShader->setFloat("fadeAlpha", 1.0f); // 默认不淡入淡出
+    // 设置屏幕矩形的顶点数据
     float quadVertices[] = {
     // positions // texCoords
     -1.0f,1.0f,0.0f,1.0f,
@@ -305,29 +306,38 @@ void PostProcessor::applyBloom()
 	glBindFramebuffer(GL_FRAMEBUFFER, 0);
 }
 
-// 绑定默认帧缓冲后渲染四边形
+// 设置淡入淡出透明度
+void PostProcessor::SetFadeAlpha(float alpha)
+{
+	if (postShader) {
+		postShader->use();
+		postShader->setFloat("fadeAlpha", alpha);
+	}
+}
+
+// 渲染到默认帧缓冲，包括后处理效果
 void PostProcessor::Render()
 {
 	 // std::cout << "Render" << std::endl;
 	 // Run bloom extraction + blur pass
 	 applyBloom();
 
-	 // 渲染合成：原场景 + 模糊后的辉光（假设 post shader 支持 bumble map 在纹理单元1）
+	 // 渲染合成：原场景 + 模糊后的辉光（如果 post shader 支持 bloom map 设置为纹理单元1）
 	 // Disable depth test so fullscreen quad is always drawn
 	 GLboolean depthWasEnabled = glIsEnabled(GL_DEPTH_TEST);
 	 glDisable(GL_DEPTH_TEST);
 
-	 // 设置最终输出的片段着色器的uniform
+	 // 传递场景和片段着色器uniform
 	 postShader->use();
 	 postShader->setInt("scene",0);
-	 postShader->setInt("bloomBlur",1); // 读取辉光纹理
+	 postShader->setInt("bloomBlur",1); // 混合辉光纹理
 
 	 // 原场景纹理绑定到纹理单元0
 	 glActiveTexture(GL_TEXTURE0);
 	 if (!glIsTexture(textureColorBuffer)) std::cerr << "[Render] Warning: scene texture invalid!" << std::endl;
 	 glBindTexture(GL_TEXTURE_2D, textureColorBuffer);
 
-	 //绑定最终模糊结果到纹理单元1
+	 // 辉光模糊纹理绑定到纹理单元1
 	 glActiveTexture(GL_TEXTURE1);
 
 	 if (lastBlurTextureIndex >= 0 && lastBlurTextureIndex < 2) {
