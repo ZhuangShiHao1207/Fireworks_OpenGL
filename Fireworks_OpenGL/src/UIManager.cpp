@@ -640,14 +640,15 @@ void UIManager::InitializeArtTexts() {
     // 清空现有艺术字
     artTexts.clear();
 
-    // 5句中文艺术字，对应F1-F5
+    // 6句中文艺术字，对应F1-F6
     // 注意：这里使用UTF-8编码的中文字符串
     std::vector<std::string> messages = {
         u8"烟花粒子系统展示",
         u8"1、展示天空盒、地面与模型",
         u8"2、单独展示部分烟花",
         u8"3、随机发射烟花",
-        u8"4、点击地面发射烟花"
+        u8"4、点击地面发射烟花",
+        u8"感谢观看",
     };
 
     // 对应的颜色
@@ -656,11 +657,12 @@ void UIManager::InitializeArtTexts() {
         glm::vec4(0.2f, 0.8f, 1.0f, 1.0f),   // 蓝色
         glm::vec4(1.0f, 0.8f, 0.2f, 1.0f),   // 金色
         glm::vec4(0.8f, 0.2f, 1.0f, 1.0f),   // 紫色
-        glm::vec4(0.2f, 1.0f, 0.5f, 1.0f)    // 绿色
+        glm::vec4(0.2f, 1.0f, 0.5f, 1.0f),   // 绿色
+        glm::vec4(1.0f, 0.8f, 0.2f, 1.0f)   // 金色
     };
 
     // 初始化艺术字对象
-    for (int i = 0; i < 5; i++) {
+    for (int i = 0; i < 6; i++) {
         ArtTextInfo artText;
         artText.text = messages[i];
         artText.color = colors[i];

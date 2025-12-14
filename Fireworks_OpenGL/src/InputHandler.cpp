@@ -121,10 +121,10 @@ void processInput(GLFWwindow* window)
     if (glfwGetKey(window, GLFW_KEY_T) == GLFW_RELEASE)
         tKeyPressed = false;
 
-    // F1-F5: 显示中文艺术字
-    static bool fKeysPressed[5] = { false };
+    // F1-F6: 显示中文艺术字
+    static bool fKeysPressed[6] = { false };
 
-    for (int i = 0; i < 5; i++) {
+    for (int i = 0; i < 6; i++) {
         int key = GLFW_KEY_F1 + i;
 
         if (glfwGetKey(window, key) == GLFW_PRESS && !fKeysPressed[i]) {
