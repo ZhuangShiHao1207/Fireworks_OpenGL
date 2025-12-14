@@ -667,6 +667,7 @@ void mouse_button_callback(GLFWwindow* window, int button, int action, int mods)
                 FireworkParticleSystem::FireworkType::Sphere,
                 randomLife, // 使用随机生命周期
                 glm::vec4(1.0f, 1.0f, 0.5f, 1.0f) * colorVariation,
+                glm::vec4(1.0f, 1.0f, 0.5f, 1.0f) * colorVariation,
                 fireworkSystem.launcherSize
             );
             std::cout << "[Mouse] Launch Sphere firework at ("
@@ -680,6 +681,7 @@ void mouse_button_callback(GLFWwindow* window, int button, int action, int mods)
                 FireworkParticleSystem::FireworkType::Ring,
                 randomLife,
                 glm::vec4(0.5f, 1.0f, 1.0f, 1.0f) * colorVariation,
+                glm::vec4(0.5f, 1.0f, 1.0f, 1.0f) * colorVariation,
                 fireworkSystem.launcherSize
             );
             std::cout << "[Mouse] Launch Ring firework" << std::endl;
@@ -690,6 +692,7 @@ void mouse_button_callback(GLFWwindow* window, int button, int action, int mods)
                 launchPosition,
                 FireworkParticleSystem::FireworkType::Heart,
                 randomLife,
+                glm::vec4(1.0f, 0.5f, 1.0f, 1.0f) * colorVariation,
                 glm::vec4(1.0f, 0.5f, 1.0f, 1.0f) * colorVariation,
                 fireworkSystem.launcherSize
             );
@@ -702,6 +705,7 @@ void mouse_button_callback(GLFWwindow* window, int button, int action, int mods)
                 FireworkParticleSystem::FireworkType::MultiLayer,
                 randomLife,
                 glm::vec4(0.3f, 0.8f, 1.0f, 1.0f) * colorVariation,
+                glm::vec4(0.3f, 0.8f, 1.0f, 1.0f) * colorVariation,
                 fireworkSystem.launcherSize
             );
             std::cout << "[Mouse] Launch MultiLayer firework" << std::endl;
@@ -713,6 +717,7 @@ void mouse_button_callback(GLFWwindow* window, int button, int action, int mods)
                 FireworkParticleSystem::FireworkType::Spiral,
                 randomLife,
                 glm::vec4(1.0f, 0.8f, 0.2f, 1.0f) * colorVariation,
+                glm::vec4(1.0f, 0.8f, 0.2f, 1.0f) * colorVariation,
                 fireworkSystem.launcherSize
             );
             std::cout << "[Mouse] Launch Spiral firework" << std::endl;
@@ -721,8 +726,9 @@ void mouse_button_callback(GLFWwindow* window, int button, int action, int mods)
         case 6:
             fireworkSystem.launch(
                 launchPosition,
-                FireworkParticleSystem::FireworkType::DoubleExplosion,
+                FireworkParticleSystem::FireworkType::Image,
                 randomLife,
+                glm::vec4(0.8f, 0.3f, 1.0f, 1.0f) * colorVariation,
                 glm::vec4(0.8f, 0.3f, 1.0f, 1.0f) * colorVariation,
                 fireworkSystem.launcherSize
             );
