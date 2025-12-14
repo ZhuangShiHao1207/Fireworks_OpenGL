@@ -1,16 +1,17 @@
-#include "TextRenderer.h"
+ï»¿#include "TextRenderer.h"
 #include <ft2build.h>
 #include FT_FREETYPE_H
 #include <iostream>
 #include <glm/gtc/matrix_transform.hpp>
-
+#include <codecvt>
+#include <vector>
 TextRenderer::TextRenderer(GLuint width, GLuint height)
-    : screenWidth(width), screenHeight(height), textShader("assets/shaders/text.vs", "assets/shaders/text.fs")// ³õÊ¼»¯ÎÄ±¾×ÅÉ«Æ÷
+    : screenWidth(width), screenHeight(height), textShader("assets/shaders/text.vs", "assets/shaders/text.fs")// åˆå§‹åŒ–æ–‡æœ¬ç€è‰²å™¨
 {
-    // ÉèÖÃÕı½»Í¶Ó°¾ØÕó
+    // è®¾ç½®æ­£äº¤æŠ•å½±çŸ©é˜µ
     UpdateProjection(width, height);
 
-    // ´´½¨¶¥µãÊı×éºÍ»º³å¶ÔÏó
+    // åˆ›å»ºé¡¶ç‚¹æ•°ç»„å’Œç¼“å†²å¯¹è±¡
     glGenVertexArrays(1, &VAO);
     glGenBuffers(1, &VBO);
 
@@ -26,11 +27,11 @@ TextRenderer::TextRenderer(GLuint width, GLuint height)
 }
 
 TextRenderer::~TextRenderer() {
-    // ÇåÀíOpenGL×ÊÔ´
+    // æ¸…ç†OpenGLèµ„æº
     glDeleteVertexArrays(1, &VAO);
     glDeleteBuffers(1, &VBO);
 
-    // ÇåÀí×Ö·ûÎÆÀí
+    // æ¸…ç†å­—ç¬¦çº¹ç†
     for (auto& ch : Characters) {
         glDeleteTextures(1, &ch.second.TextureID);
     }
@@ -39,14 +40,14 @@ TextRenderer::~TextRenderer() {
 bool TextRenderer::LoadFont(const std::string& fontPath, GLuint fontSize) {
     Characters.clear();
 
-    // ³õÊ¼»¯FreeType¿â
+    // åˆå§‹åŒ–FreeTypeåº“
     FT_Library ft;
     if (FT_Init_FreeType(&ft)) {
         std::cerr << "[TextRenderer] ERROR: Could not init FreeType Library" << std::endl;
         return false;
     }
 
-    // ¼ÓÔØ×ÖÌåÎÄ¼ş
+    // åŠ è½½å­—ä½“æ–‡ä»¶
     FT_Face face;
     if (FT_New_Face(ft, fontPath.c_str(), 0, &face)) {
         std::cerr << "[TextRenderer] ERROR: Failed to load font at " << fontPath << std::endl;
@@ -54,21 +55,21 @@ bool TextRenderer::LoadFont(const std::string& fontPath, GLuint fontSize) {
         return false;
     }
 
-    // ÉèÖÃ×ÖÌå´óĞ¡
+    // è®¾ç½®å­—ä½“å¤§å°
     FT_Set_Pixel_Sizes(face, 0, fontSize);
 
-    // ½ûÓÃ×Ö½Ú¶ÔÆëÏŞÖÆ£¨FreeType¼ÓÔØµÄÎ»Í¼²»ÊÇ4×Ö½Ú¶ÔÆëµÄ£©
+    // ç¦ç”¨å­—èŠ‚å¯¹é½é™åˆ¶ï¼ˆFreeTypeåŠ è½½çš„ä½å›¾ä¸æ˜¯4å­—èŠ‚å¯¹é½çš„ï¼‰
     glPixelStorei(GL_UNPACK_ALIGNMENT, 1);
 
-    // ¼ÓÔØÇ°128¸öASCII×Ö·û
+    // åŠ è½½å‰128ä¸ªASCIIå­—ç¬¦
     for (GLubyte c = 0; c < 128; c++) {
-        // ¼ÓÔØ×Ö·û×ÖĞÎ
+        // åŠ è½½å­—ç¬¦å­—å½¢
         if (FT_Load_Char(face, c, FT_LOAD_RENDER)) {
             std::cerr << "[TextRenderer] ERROR: Failed to load Glyph for character '" << c << "'" << std::endl;
             continue;
         }
 
-        // Éú³ÉÎÆÀí
+        // ç”Ÿæˆçº¹ç†
         GLuint texture;
         glGenTextures(1, &texture);
         glBindTexture(GL_TEXTURE_2D, texture);
@@ -84,13 +85,13 @@ bool TextRenderer::LoadFont(const std::string& fontPath, GLuint fontSize) {
             face->glyph->bitmap.buffer
         );
 
-        // ÉèÖÃÎÆÀíÑ¡Ïî
+        // è®¾ç½®çº¹ç†é€‰é¡¹
         glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_S, GL_CLAMP_TO_EDGE);
         glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_T, GL_CLAMP_TO_EDGE);
         glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_LINEAR);
         glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_LINEAR);
 
-        // ´æ´¢×Ö·ûĞÅÏ¢
+        // å­˜å‚¨å­—ç¬¦ä¿¡æ¯
         Character character = {
             texture,
             glm::ivec2(face->glyph->bitmap.width, face->glyph->bitmap.rows),
@@ -101,133 +102,160 @@ bool TextRenderer::LoadFont(const std::string& fontPath, GLuint fontSize) {
         Characters.insert(std::pair<GLchar, Character>(c, character));
     }
 
-    // ÇåÀíFreeType×ÊÔ´
+    // åŠ è½½å¸¸ç”¨ä¸­æ–‡å­—ç¬¦ï¼ˆä½¿ç”¨UTF-8ç¼–ç ï¼‰
+    // è¿™é‡Œåˆ—å‡º5å¥è‰ºæœ¯å­—ä¸­ä¼šç”¨åˆ°çš„æ‰€æœ‰ä¸­æ–‡å­—ç¬¦
+    std::vector<unsigned int> chineseChars = {
+        // ç¬¬ä¸€å¥: çƒŸèŠ±ç²’å­ç³»ç»Ÿå±•ç¤º
+        0x70DF, 0x82B1, 0x7C92, 0x5B50, 0x7CFB, 0x7EDF, 0x5C55, 0x793A,
+
+        // ç¬¬äºŒå¥: 1ã€å±•ç¤ºå¤©ç©ºç›’ã€åœ°é¢ä¸æ¨¡å‹
+        0x0031, 0x3001, 0x5C55, 0x793A, 0x5929, 0x7A7A, 0x76D2, 0x3001, 0x5730, 0x9762, 0x4E0E, 0x6A21, 0x578B,
+
+        // ç¬¬ä¸‰å¥: 2ã€å•ç‹¬å±•ç¤ºéƒ¨åˆ†çƒŸèŠ±
+        0x0032, 0x3001, 0x5355, 0x72EC, 0x5C55, 0x793A, 0x90E8, 0x5206, 0x70DF, 0x82B1,
+
+        // ç¬¬å››å¥: 3ã€éšæœºå‘å°„çƒŸèŠ±
+        0x0033, 0x3001, 0x968F, 0x673A, 0x53D1, 0x5C04, 0x70DF, 0x82B1,
+
+        // ç¬¬äº”å¥: 4ã€ç‚¹å‡»åœ°é¢å‘å°„çƒŸèŠ±
+        0x0034, 0x3001, 0x70B9, 0x51FB, 0x5730, 0x9762, 0x53D1, 0x5C04, 0x70DF, 0x82B1,
+
+        // å¸¸ç”¨æ ‡ç‚¹ç¬¦å·ï¼ˆå¤ç”¨å·²æœ‰æ ‡ç‚¹ï¼Œè¡¥å……å¯¹é½ï¼‰
+        0x3001, 0x3002, 0xFF01, 0xFF1F, 0xFF0E
+    };
+
+    // åŠ è½½è¿™äº›ä¸­æ–‡å­—ç¬¦
+    for (unsigned int charCode : chineseChars) {
+        if (Characters.find(charCode) != Characters.end()) {
+            continue; // é¿å…é‡å¤åŠ è½½
+        }
+
+        if (FT_Load_Char(face, charCode, FT_LOAD_RENDER)) {
+            // å¦‚æœå­—ä½“ä¸åŒ…å«è¿™ä¸ªå­—ç¬¦ï¼Œè·³è¿‡
+            continue;
+        }
+
+        GLuint texture;
+        glGenTextures(1, &texture);
+        glBindTexture(GL_TEXTURE_2D, texture);
+        glTexImage2D(
+            GL_TEXTURE_2D, 0, GL_RED,
+            face->glyph->bitmap.width,
+            face->glyph->bitmap.rows,
+            0, GL_RED, GL_UNSIGNED_BYTE,
+            face->glyph->bitmap.buffer
+        );
+
+        glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_S, GL_CLAMP_TO_EDGE);
+        glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_T, GL_CLAMP_TO_EDGE);
+        glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_LINEAR);
+        glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_LINEAR);
+
+        Character character = {
+            texture,
+            glm::ivec2(face->glyph->bitmap.width, face->glyph->bitmap.rows),
+            glm::ivec2(face->glyph->bitmap_left, face->glyph->bitmap_top),
+            static_cast<GLuint>(face->glyph->advance.x)
+        };
+
+        Characters[charCode] = character;
+    }
+
+    // æ¸…ç†FreeTypeèµ„æº
     FT_Done_Face(face);
     FT_Done_FreeType(ft);
 
-    // »Ö¸´Ä¬ÈÏµÄ4×Ö½Ú¶ÔÆë
+    // æ¢å¤é»˜è®¤çš„4å­—èŠ‚å¯¹é½
     glPixelStorei(GL_UNPACK_ALIGNMENT, 4);
 
     std::cout << "[TextRenderer] Loaded font: " << fontPath << " (size: " << fontSize << ")" << std::endl;
     return true;
 }
 
-void TextRenderer::RenderText(const std::string& text, GLfloat x, GLfloat y, GLfloat scale, glm::vec3 color) {
-    // ÆôÓÃ»ìºÏ£¨ÓÃÓÚÍ¸Ã÷ÎÆÀí£©
-    glEnable(GL_BLEND);
-    glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
-
-    // ¼¤»î×ÅÉ«Æ÷
-    textShader.use();
-    textShader.setVec3("textColor", color);
-
-    // ¼¤»îÎÆÀíµ¥Ôª0
-    glActiveTexture(GL_TEXTURE0);
-    glBindVertexArray(VAO);
-
-    // ±éÀú×Ö·û´®ÖĞµÄËùÓĞ×Ö·û
-    std::string::const_iterator c;
-    for (c = text.begin(); c != text.end(); c++) {
-        Character ch = Characters[*c];
-
-        // ¼ÆËã×Ö·ûµÄÎ»ÖÃ
-        GLfloat xpos = x + ch.Bearing.x * scale;
-        GLfloat ypos = y - (ch.Size.y - ch.Bearing.y) * scale;
-
-        // ¼ÆËã×Ö·ûµÄ¿í¸ß
-        GLfloat w = ch.Size.x * scale;
-        GLfloat h = ch.Size.y * scale;
-
-        // ÎªÃ¿¸ö×Ö·û¸üĞÂVBO
-        GLfloat vertices[6][4] = {
-            { xpos,     ypos + h,   0.0, 0.0 },  // ×óÏÂ
-            { xpos,     ypos,       0.0, 1.0 },  // ×óÉÏ
-            { xpos + w, ypos,       1.0, 1.0 },  // ÓÒÉÏ
-
-            { xpos,     ypos + h,   0.0, 0.0 },  // ×óÏÂ
-            { xpos + w, ypos,       1.0, 1.0 },  // ÓÒÉÏ
-            { xpos + w, ypos + h,   1.0, 0.0 }   // ÓÒÏÂ
-        };
-
-        // ÔÚËÄ±ßĞÎÉÏ»æÖÆ×Ö·ûÎÆÀí
-        glBindTexture(GL_TEXTURE_2D, ch.TextureID);
-
-        // ¸üĞÂVBOÄÚ´æ
-        glBindBuffer(GL_ARRAY_BUFFER, VBO);
-        glBufferSubData(GL_ARRAY_BUFFER, 0, sizeof(vertices), vertices);
-        glBindBuffer(GL_ARRAY_BUFFER, 0);
-
-        // »æÖÆËÄ±ßĞÎ
-        glDrawArrays(GL_TRIANGLES, 0, 6);
-
-        // ¸üĞÂxÎ»ÖÃ£¬ÎªÏÂÒ»¸ö×Ö·û×ö×¼±¸£¨×¢Òâµ¥Î»ÊÇ1/64ÏñËØ£©
-        x += (ch.Advance >> 6) * scale;
-    }
-
-    glBindVertexArray(0);
-    glBindTexture(GL_TEXTURE_2D, 0);
-    glDisable(GL_BLEND);
+void TextRenderer::RenderText(const std::string& text, GLfloat x, GLfloat y,
+    GLfloat scale, glm::vec3 color) {
+    RenderTextWithAlpha(text, x, y, scale, glm::vec4(color, 1.0f));
 }
 
 void TextRenderer::RenderTextWithAlpha(const std::string& text, GLfloat x, GLfloat y, GLfloat scale, glm::vec4 color) {
-    // ÆôÓÃ»ìºÏ£¨ÓÃÓÚÍ¸Ã÷ÎÆÀí£©
     GLboolean blendEnabled = glIsEnabled(GL_BLEND);
     if (!blendEnabled) {
         glEnable(GL_BLEND);
     }
     glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
 
-    // ¼¤»î×ÅÉ«Æ÷
     textShader.use();
     textShader.setVec4("textColor", color);
-
-    // ¼¤»îÎÆÀíµ¥Ôª0
     glActiveTexture(GL_TEXTURE0);
     glBindVertexArray(VAO);
 
-    // ±éÀú×Ö·û´®ÖĞµÄËùÓĞ×Ö·û
-    std::string::const_iterator c;
-    for (c = text.begin(); c != text.end(); c++) {
-        Character ch = Characters[*c];
+    // UTF-8è§£ç å’Œæ¸²æŸ“
+    const char* c = text.c_str();
+    while (*c) {
+        unsigned int charCode = 0;
+        
+        // UTF-8è§£ç 
+        if ((*c & 0x80) == 0) {
+            // 1å­—èŠ‚å­—ç¬¦ (ASCII)
+            charCode = *c;
+            c += 1;
+        } else if ((*c & 0xE0) == 0xC0) {
+            // 2å­—èŠ‚å­—ç¬¦
+            charCode = ((c[0] & 0x1F) << 6) | (c[1] & 0x3F);
+            c += 2;
+        } else if ((*c & 0xF0) == 0xE0) {
+            // 3å­—èŠ‚å­—ç¬¦ (åŒ…æ‹¬å¤§éƒ¨åˆ†ä¸­æ–‡)
+            charCode = ((c[0] & 0x0F) << 12) | ((c[1] & 0x3F) << 6) | (c[2] & 0x3F);
+            c += 3;
+        } else if ((*c & 0xF8) == 0xF0) {
+            // 4å­—èŠ‚å­—ç¬¦
+            charCode = ((c[0] & 0x07) << 18) | ((c[1] & 0x3F) << 12) | ((c[2] & 0x3F) << 6) | (c[3] & 0x3F);
+            c += 4;
+        } else {
+            // æ— æ•ˆUTF-8ï¼Œè·³è¿‡
+            c++;
+            continue;
+        }
 
-        // ¼ÆËã×Ö·ûµÄÎ»ÖÃ
+        auto it = Characters.find(charCode);
+        if (it == Characters.end()) {
+            // å¦‚æœå­—ç¬¦æœªåŠ è½½ï¼Œä½¿ç”¨é—®å·ä»£æ›¿
+            it = Characters.find('?');
+            if (it == Characters.end()) {
+                continue;
+            }
+        }
+
+        const Character& ch = it->second;
+        
         GLfloat xpos = x + ch.Bearing.x * scale;
         GLfloat ypos = y - ch.Bearing.y * scale;
-
-        // ¼ÆËã×Ö·ûµÄ¿í¸ß
+        
         GLfloat w = ch.Size.x * scale;
         GLfloat h = ch.Size.y * scale;
-
-        // ÎªÃ¿¸ö×Ö·û¸üĞÂVBO
+        
         GLfloat vertices[6][4] = {
-            { xpos,     ypos + h,   0.0, 1.0 },  // ×óÏÂ
-            { xpos,     ypos,       0.0, 0.0 },  // ×óÉÏ
-            { xpos + w, ypos,       1.0, 0.0 },  // ÓÒÉÏ
-
-            { xpos,     ypos + h,   0.0, 1.0 },  // ×óÏÂ
-            { xpos + w, ypos,       1.0, 0.0 },  // ÓÒÉÏ
-            { xpos + w, ypos + h,   1.0, 1.0 }   // ÓÒÏÂ
+            { xpos,     ypos + h,   0.0, 1.0 },
+            { xpos,     ypos,       0.0, 0.0 },
+            { xpos + w, ypos,       1.0, 0.0 },
+            
+            { xpos,     ypos + h,   0.0, 1.0 },
+            { xpos + w, ypos,       1.0, 0.0 },
+            { xpos + w, ypos + h,   1.0, 1.0 }
         };
-
-        // ÔÚËÄ±ßĞÎÉÏ»æÖÆ×Ö·ûÎÆÀí
+        
         glBindTexture(GL_TEXTURE_2D, ch.TextureID);
-
-        // ¸üĞÂVBOÄÚ´æ
         glBindBuffer(GL_ARRAY_BUFFER, VBO);
         glBufferSubData(GL_ARRAY_BUFFER, 0, sizeof(vertices), vertices);
         glBindBuffer(GL_ARRAY_BUFFER, 0);
-
-        // »æÖÆËÄ±ßĞÎ
         glDrawArrays(GL_TRIANGLES, 0, 6);
-
-        // ¸üĞÂxÎ»ÖÃ£¬ÎªÏÂÒ»¸ö×Ö·û×ö×¼±¸
+        
         x += (ch.Advance >> 6) * scale;
     }
 
     glBindVertexArray(0);
     glBindTexture(GL_TEXTURE_2D, 0);
-
-    // »Ö¸´»ìºÏ×´Ì¬
+    
     if (!blendEnabled) {
         glDisable(GL_BLEND);
     }
@@ -237,10 +265,55 @@ void TextRenderer::UpdateProjection(GLuint width, GLuint height) {
     screenWidth = width;
     screenHeight = height;
 
-    // ´´½¨Õı½»Í¶Ó°¾ØÕó£¨ÓÃÓÚ2DÎÄ±¾äÖÈ¾£©
+    // åˆ›å»ºæ­£äº¤æŠ•å½±çŸ©é˜µï¼ˆç”¨äº2Dæ–‡æœ¬æ¸²æŸ“ï¼‰
     glm::mat4 projection = glm::ortho(0.0f, static_cast<GLfloat>(width),
         static_cast<GLfloat>(height), 0.0f);
 
     textShader.use();
     textShader.setMat4("projection", projection);
+}
+
+float TextRenderer::CalculateTextWidth(const std::string& text, GLfloat scale) {
+    float width = 0.0f;
+    const char* c = text.c_str();
+
+    while (*c) {
+        unsigned int charCode = 0;
+
+        // UTF-8è§£ç 
+        if ((*c & 0x80) == 0) {
+            charCode = *c;
+            c += 1;
+        }
+        else if ((*c & 0xE0) == 0xC0) {
+            charCode = ((c[0] & 0x1F) << 6) | (c[1] & 0x3F);
+            c += 2;
+        }
+        else if ((*c & 0xF0) == 0xE0) {
+            charCode = ((c[0] & 0x0F) << 12) | ((c[1] & 0x3F) << 6) | (c[2] & 0x3F);
+            c += 3;
+        }
+        else if ((*c & 0xF8) == 0xF0) {
+            charCode = ((c[0] & 0x07) << 18) | ((c[1] & 0x3F) << 12) | ((c[2] & 0x3F) << 6) | (c[3] & 0x3F);
+            c += 4;
+        }
+        else {
+            c++;
+            continue;
+        }
+
+        auto it = Characters.find(charCode);
+        if (it != Characters.end()) {
+            width += (it->second.Advance >> 6) * scale;
+        }
+        else {
+            // ä½¿ç”¨ç©ºæ ¼å®½åº¦ä½œä¸ºä¼°è®¡
+            auto spaceIt = Characters.find(' ');
+            if (spaceIt != Characters.end()) {
+                width += (spaceIt->second.Advance >> 6) * scale;
+            }
+        }
+    }
+
+    return width;
 }

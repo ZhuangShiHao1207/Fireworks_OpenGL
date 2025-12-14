@@ -33,8 +33,11 @@ public:
     void RenderTextWithAlpha(const std::string& text, GLfloat x, GLfloat y,
         GLfloat scale, glm::vec4 color);
 
+    // 计算文本宽度（支持中文）
+    float CalculateTextWidth(const std::string& text, GLfloat scale);
+
 private:
-    std::map<GLchar, Character> Characters;  // 字符集
+    std::map<unsigned int, Character> Characters;  // 字符集
     Shader textShader;                       // 文本着色器
     GLuint VAO, VBO;                         // 顶点数组和缓冲对象
     GLuint screenWidth, screenHeight;        // 屏幕尺寸

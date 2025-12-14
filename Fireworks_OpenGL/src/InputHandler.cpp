@@ -121,6 +121,27 @@ void processInput(GLFWwindow* window)
     if (glfwGetKey(window, GLFW_KEY_T) == GLFW_RELEASE)
         tKeyPressed = false;
 
+    // F1-F5: 显示中文艺术字
+    static bool fKeysPressed[5] = { false };
+
+    for (int i = 0; i < 5; i++) {
+        int key = GLFW_KEY_F1 + i;
+
+        if (glfwGetKey(window, key) == GLFW_PRESS && !fKeysPressed[i]) {
+            if (uiManager) {
+                uiManager->StartArtTextAnimation(i);
+            }
+            fKeysPressed[i] = true;
+
+            // 可选：在控制台输出信息
+            // std::cout << "[Input] F" << (i + 1) << " pressed - Chinese art text " 
+            //           << (i + 1) << " started" << std::endl;
+        }
+        if (glfwGetKey(window, key) == GLFW_RELEASE) {
+            fKeysPressed[i] = false;
+        }
+    }
+
     // 发射烟花 --> 通过三个通道控制颜色
     static bool key1Pressed = false;
     if (glfwGetKey(window, GLFW_KEY_1) == GLFW_PRESS && !key1Pressed)

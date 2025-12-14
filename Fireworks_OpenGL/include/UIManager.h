@@ -120,7 +120,8 @@ public:
     void RemoveElement(const std::string& id);
     UIElement* GetElement(const std::string& id);
     TextElement* GetTextElement(const std::string& id);
-    void StartArtTextAnimation();//艺术字动画控制
+    // 艺术字动画控制
+    void StartArtTextAnimation(int index);  // F1-F5对应index 0-4
 
     // 创建预设UI元素
     void CreateDefaultUI();
@@ -172,31 +173,27 @@ private:
     // 内部状态
     int fireworkCount = 0;
 
-    // 艺术字状态
-    struct ArtTextAnimation {
-        bool isActive = false;
+    // 艺术字系统
+    struct ArtTextInfo {
         std::string text;
-        float alpha = 0.0f;
-        float scale = 1.0f;
-        float positionY = 0.0f;
-        float timer = 0.0f;
-        float totalDuration = 4.0f; // 总时长：4秒
+        glm::vec4 color;
+        float x, y;
+        float scale;
+        float alpha;
+        float time;
+        int state;  // 0:隐藏, 1:进入, 2:显示, 3:退出
+        bool active;
     };
 
-    ArtTextAnimation artTextAnim;
+    std::vector<ArtTextInfo> artTexts;
 
-    // 艺术字文本列表
-    std::vector<std::string> artTexts = {
-        "FIREWORKS!",
-        "AMAZING!",
-        "WOW!",
-        "SPECTACULAR!",
-        "BEAUTIFUL!"
-    };
+    // 艺术字动画参数
+    float artTextEnterTime = 1.0f;
+    float artTextDisplayTime = 3.0f;
+    float artTextExitTime = 1.0f;
 
-    int currentArtTextIndex = 0;
-
-    // 更新和渲染艺术字
-    void UpdateArtTextAnimation(float deltaTime);
-    void RenderArtTextAnimation();
+    // 艺术字相关方法
+    void InitializeArtTexts();
+    void UpdateArtText(ArtTextInfo& artText, float deltaTime);
+    void RenderArtText(const ArtTextInfo& artText);
 };

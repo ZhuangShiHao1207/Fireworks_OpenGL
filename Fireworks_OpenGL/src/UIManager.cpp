@@ -1,4 +1,4 @@
-// src/UIManager.cpp
+ï»¿// src/UIManager.cpp
 #include "UIManager.h"
 #include <iostream>
 #include <fstream>
@@ -6,7 +6,7 @@
 #include <algorithm>
 #include <glad/glad.h>
 
-// TextElement ·½·¨ÊµÏÖ
+// TextElement æ–¹æ³•å®ç°
 void TextElement::Render(TextRenderer* textRenderer) {
     if (visible && !text.empty()) {
         textRenderer->RenderTextWithAlpha(text, x, y, scale, color);
@@ -14,25 +14,25 @@ void TextElement::Render(TextRenderer* textRenderer) {
 }
 
 void TextElement::Update(float deltaTime) {
-    // ÎÄ±¾ÔªËØÍ¨³£²»ĞèÒªÃ¿Ö¡¸üĞÂ
+    // æ–‡æœ¬å…ƒç´ é€šå¸¸ä¸éœ€è¦æ¯å¸§æ›´æ–°
 }
 
-// ButtonElement ·½·¨ÊµÏÖ
+// ButtonElement æ–¹æ³•å®ç°
 void ButtonElement::Render(TextRenderer* textRenderer) {
     if (!visible) return;
 
-    // ÕâÀï¿ÉÒÔ»æÖÆ°´Å¥±³¾°£¨ĞèÒª¶îÍâµÄäÖÈ¾Âß¼­£©
-    // ÔİÊ±Ö»»æÖÆÎÄ±¾
+    // è¿™é‡Œå¯ä»¥ç»˜åˆ¶æŒ‰é’®èƒŒæ™¯ï¼ˆéœ€è¦é¢å¤–çš„æ¸²æŸ“é€»è¾‘ï¼‰
+    // æš‚æ—¶åªç»˜åˆ¶æ–‡æœ¬
 
     glm::vec4 color = (state == HOVER && active) ? hoverColor : textColor;
     textRenderer->RenderTextWithAlpha(text, x, y, 1.0f, color);
 }
 
 void ButtonElement::Update(float deltaTime) {
-    // °´Å¥×´Ì¬¸üĞÂ
+    // æŒ‰é’®çŠ¶æ€æ›´æ–°
 }
 
-// UIManager ·½·¨ÊµÏÖ
+// UIManager æ–¹æ³•å®ç°
 UIManager::UIManager()
     : textRenderer(nullptr), screenWidth(0), screenHeight(0) {
     currentHint.duration = 0;
@@ -48,34 +48,37 @@ bool UIManager::Initialize(unsigned int width, unsigned int height) {
     screenWidth = width;
     screenHeight = height;
 
-    // ³õÊ¼»¯ÎÄ±¾äÖÈ¾Æ÷
+    // åˆå§‹åŒ–æ–‡æœ¬æ¸²æŸ“å™¨
     textRenderer = new TextRenderer(width, height);
     if (!textRenderer) {
         std::cerr << "[UIManager] Failed to create TextRenderer" << std::endl;
         return false;
     }
 
-    // ¼ÓÔØ×ÖÌå
+    // åŠ è½½å­—ä½“
     if (!LoadFonts()) {
         std::cerr << "[UIManager] Font loading failed" << std::endl;
         return false;
     }
 
-    // ´´½¨Ä¬ÈÏUIÔªËØ
+    // åˆ›å»ºé»˜è®¤UIå…ƒç´ 
     CreateDefaultUI();
+
+    // åˆå§‹åŒ–è‰ºæœ¯å­—
+    InitializeArtTexts();
 
     std::cout << "[UIManager] Initialized successfully" << std::endl;
     return true;
 }
 
 void UIManager::Cleanup() {
-    // É¾³ıËùÓĞUIÔªËØ
+    // åˆ é™¤æ‰€æœ‰UIå…ƒç´ 
     for (auto& pair : uiElements) {
         delete pair.second;
     }
     uiElements.clear();
 
-    // É¾³ıÎÄ±¾äÖÈ¾Æ÷
+    // åˆ é™¤æ–‡æœ¬æ¸²æŸ“å™¨
     if (textRenderer) {
         delete textRenderer;
         textRenderer = nullptr;
@@ -83,20 +86,21 @@ void UIManager::Cleanup() {
 }
 
 bool UIManager::LoadFonts() {
-    // ×ÖÌåÎÄ¼şÂ·¾¶ÁĞ±í
+    // å­—ä½“æ–‡ä»¶è·¯å¾„åˆ—è¡¨
     std::vector<std::string> fontPaths = {
+        "assets/fonts/simhei.ttf",
+        "assets/fonts/simsun.ttc",
         "assets/fonts/msyh.ttc",
         "assets/fonts/arial.ttf",
-        "fonts/msyh.ttc",
-        "fonts/arial.ttf"
     };
 
     for (const auto& path : fontPaths) {
         std::ifstream fontFile(path);
         if (fontFile.good()) {
             fontFile.close();
-            if (textRenderer->LoadFont(path, 24)) {
-                std::cout << "[UIManager] Loaded font from: " << path << std::endl;
+            // ä½¿ç”¨è¾ƒå¤§çš„å­—ä½“å¤§å°ï¼ˆ48ï¼‰æ¥ç¡®ä¿ä¸­æ–‡æ¸…æ™°
+            if (textRenderer->LoadFont(path, 48)) {
+                std::cout << "[UIManager] Loaded Chinese font from: " << path << std::endl;
                 return true;
             }
         }
@@ -107,27 +111,27 @@ bool UIManager::LoadFonts() {
 }
 
 void UIManager::CreateDefaultUI() {
-    // ±êÌâ - ¶¥²¿¾ÓÖĞ
+    // æ ‡é¢˜ - é¡¶éƒ¨å±…ä¸­
     TextElement* title = new TextElement();
     title->SetText("Fireworks System");
-    title->SetPosition(screenWidth / 2.0f - 80.0f, 20.0f); // ´ÖÂÔ¾ÓÖĞ£¬ºóÃæ»á¾«È·¼ÆËã
+    title->SetPosition(screenWidth / 2.0f - 80.0f, 20.0f); // ç²—ç•¥å±…ä¸­ï¼Œåé¢ä¼šç²¾ç¡®è®¡ç®—
     title->SetColor(glm::vec4(1.0f, 1.0f, 1.0f, 1.0f));
     title->SetScale(1.0f);
     AddElement("title", title);
 
     // ============================================
-    // ×ó²à×´Ì¬À¸ - ×óÉÏ½Ç£¨Ô­À´±êÌâµÄÎ»ÖÃ£©
+    // å·¦ä¾§çŠ¶æ€æ  - å·¦ä¸Šè§’ï¼ˆåŸæ¥æ ‡é¢˜çš„ä½ç½®ï¼‰
     // ============================================
 
-    // FPSÏÔÊ¾
+    // FPSæ˜¾ç¤º
     TextElement* fps = new TextElement();
     fps->SetText("FPS: 0");
-    fps->SetPosition(20.0f, 60.0f); // ´Ó±êÌâÔ­À´µÄÎ»ÖÃ¿ªÊ¼
+    fps->SetPosition(20.0f, 60.0f); // ä»æ ‡é¢˜åŸæ¥çš„ä½ç½®å¼€å§‹
     fps->SetColor(glm::vec4(0.0f, 1.0f, 0.0f, 1.0f));
     fps->SetScale(0.8f);
     AddElement("fps", fps);
 
-    // ÑÌ»¨ÀàĞÍ
+    // çƒŸèŠ±ç±»å‹
     TextElement* fireworkType = new TextElement();
     fireworkType->SetText("Type: Sphere");
     fireworkType->SetPosition(20.0f, 90.0f);
@@ -135,7 +139,7 @@ void UIManager::CreateDefaultUI() {
     fireworkType->SetScale(0.8f);
     AddElement("firework_type", fireworkType);
 
-    // ÑÌ»¨¼ÆÊı
+    // çƒŸèŠ±è®¡æ•°
     TextElement* fireworkCount = new TextElement();
     fireworkCount->SetText("Count: 0");
     fireworkCount->SetPosition(20.0f, 120.0f);
@@ -143,7 +147,7 @@ void UIManager::CreateDefaultUI() {
     fireworkCount->SetScale(0.8f);
     AddElement("firework_count", fireworkCount);
 
-    // Ä£Ê½ÏÔÊ¾
+    // æ¨¡å¼æ˜¾ç¤º
     TextElement* mode = new TextElement();
     mode->SetText("Mode: Manual");
     mode->SetPosition(20.0f, 150.0f);
@@ -151,7 +155,7 @@ void UIManager::CreateDefaultUI() {
     mode->SetScale(0.8f);
     AddElement("mode", mode);
 
-    // Êó±ê×´Ì¬
+    // é¼ æ ‡çŠ¶æ€
     TextElement* mouseState = new TextElement();
     mouseState->SetText("Mouse: Free");
     mouseState->SetPosition(20.0f, 180.0f);
@@ -159,7 +163,7 @@ void UIManager::CreateDefaultUI() {
     mouseState->SetScale(0.8f);
     AddElement("mouse_state", mouseState);
 
-    // µÆ¹â×´Ì¬
+    // ç¯å…‰çŠ¶æ€
     TextElement* lightsState = new TextElement();
     lightsState->SetText("Lights: ON");
     lightsState->SetPosition(20.0f, 210.0f);
@@ -168,10 +172,10 @@ void UIManager::CreateDefaultUI() {
     AddElement("lights_state", lightsState);
 
     // ============================================
-    // ÑÌ»¨ÀàĞÍËµÃ÷ - ·ÅÔÚ×´Ì¬À¸ÏÂ·½
+    // çƒŸèŠ±ç±»å‹è¯´æ˜ - æ”¾åœ¨çŠ¶æ€æ ä¸‹æ–¹
     // ============================================
 
-    // ÑÌ»¨ÀàĞÍËµÃ÷±êÌâ
+    // çƒŸèŠ±ç±»å‹è¯´æ˜æ ‡é¢˜
     TextElement* fireworkTypesTitle = new TextElement();
     fireworkTypesTitle->SetText("--- Firework Types ---");
     fireworkTypesTitle->SetPosition(20.0f, 250.0f);
@@ -179,7 +183,7 @@ void UIManager::CreateDefaultUI() {
     fireworkTypesTitle->SetScale(0.7f);
     AddElement("firework_types_title", fireworkTypesTitle);
 
-    // ÑÌ»¨ÀàĞÍËµÃ÷
+    // çƒŸèŠ±ç±»å‹è¯´æ˜
     std::vector<std::string> fireworkTypeHints = {
         "1: Sphere (Red/Yellow)",
         "2: Ring (Cyan)",
@@ -198,15 +202,15 @@ void UIManager::CreateDefaultUI() {
         hint->SetText(fireworkTypeHints[i]);
         hint->SetPosition(30.0f, fireworkHintY + i * fireworkHintLineHeight);
 
-        // ¸ù¾İÑÌ»¨ÀàĞÍÉèÖÃÑÕÉ«
+        // æ ¹æ®çƒŸèŠ±ç±»å‹è®¾ç½®é¢œè‰²
         glm::vec4 color;
         switch (i) {
-        case 0: color = glm::vec4(1.0f, 0.5f, 0.5f, 1.0f); break;    // ºì/»Æ
-        case 1: color = glm::vec4(0.5f, 1.0f, 1.0f, 1.0f); break;    // Çà
-        case 2: color = glm::vec4(1.0f, 0.5f, 1.0f, 1.0f); break;    // ·Û
-        case 3: color = glm::vec4(0.3f, 0.8f, 1.0f, 1.0f); break;    // À¶
-        case 4: color = glm::vec4(1.0f, 0.8f, 0.2f, 1.0f); break;    // ½ğ
-        case 5: color = glm::vec4(0.8f, 0.3f, 1.0f, 1.0f); break;    // ×Ï
+        case 0: color = glm::vec4(1.0f, 0.5f, 0.5f, 1.0f); break;    // çº¢/é»„
+        case 1: color = glm::vec4(0.5f, 1.0f, 1.0f, 1.0f); break;    // é’
+        case 2: color = glm::vec4(1.0f, 0.5f, 1.0f, 1.0f); break;    // ç²‰
+        case 3: color = glm::vec4(0.3f, 0.8f, 1.0f, 1.0f); break;    // è“
+        case 4: color = glm::vec4(1.0f, 0.8f, 0.2f, 1.0f); break;    // é‡‘
+        case 5: color = glm::vec4(0.8f, 0.3f, 1.0f, 1.0f); break;    // ç´«
         default: color = glm::vec4(0.9f, 0.9f, 0.9f, 1.0f);
         }
 
@@ -216,18 +220,18 @@ void UIManager::CreateDefaultUI() {
     }
 
     // ============================================
-    // ¿ØÖÆËµÃ÷ - ·ÅÔÚÓÒÉÏ½Ç
+    // æ§åˆ¶è¯´æ˜ - æ”¾åœ¨å³ä¸Šè§’
     // ============================================
 
-    // ¿ØÖÆËµÃ÷±êÌâ - ÓÒÉÏ½Ç
+    // æ§åˆ¶è¯´æ˜æ ‡é¢˜ - å³ä¸Šè§’
     TextElement* controlsTitle = new TextElement();
     controlsTitle->SetText("--- Controls ---");
-    controlsTitle->SetPosition(screenWidth - 200.0f, 60.0f); // ´ÓÓÒÉÏ½ÇÍùÏÂÒ»µã¿ªÊ¼
+    controlsTitle->SetPosition(screenWidth - 200.0f, 60.0f); // ä»å³ä¸Šè§’å¾€ä¸‹ä¸€ç‚¹å¼€å§‹
     controlsTitle->SetColor(glm::vec4(0.9f, 0.9f, 0.9f, 1.0f));
     controlsTitle->SetScale(0.7f);
     AddElement("controls_title", controlsTitle);
 
-    // ¿ØÖÆËµÃ÷
+    // æ§åˆ¶è¯´æ˜
     std::vector<std::string> controlHints = {
         "Mouse click: Launch firework",
         "Mouse (locked): Left click = Launch",
@@ -258,33 +262,40 @@ void UIManager::CreateDefaultUI() {
 void UIManager::Render(float deltaTime) {
     if (!textRenderer) return;
 
-    // ¸üĞÂUIµ­ÈëĞ§¹û
+    // æ›´æ–°UIæ·¡å…¥æ•ˆæœ
     uiFadeTime += deltaTime;
     float fadeAlpha = std::min(uiFadeTime / 2.0f, 1.0f);
 
-    // ¸üĞÂÌáÊ¾ÏµÍ³
+    // æ›´æ–°æç¤ºç³»ç»Ÿ
     if (currentHint.timeLeft > 0) {
         currentHint.timeLeft -= deltaTime;
         currentHint.alpha = std::min(currentHint.timeLeft / 0.5f, 1.0f);
         currentHint.alpha = std::max(currentHint.alpha, 0.0f);
     }
 
-    // ±£´æOpenGL×´Ì¬
+    // æ›´æ–°è‰ºæœ¯å­—åŠ¨ç”»
+    for (auto& artText : artTexts) {
+        if (artText.active) {
+            UpdateArtText(artText, deltaTime);
+        }
+    }
+
+    // ä¿å­˜OpenGLçŠ¶æ€
     GLboolean depthTestEnabled = glIsEnabled(GL_DEPTH_TEST);
     GLboolean blendEnabled = glIsEnabled(GL_BLEND);
 
-    // ÉèÖÃUIäÖÈ¾×´Ì¬
+    // è®¾ç½®UIæ¸²æŸ“çŠ¶æ€
     glDisable(GL_DEPTH_TEST);
     glEnable(GL_BLEND);
     glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
 
-    // Ó¦ÓÃµ­ÈëĞ§¹ûµ½UIÔªËØ
+    // åº”ç”¨æ·¡å…¥æ•ˆæœåˆ°UIå…ƒç´ 
     for (auto& pair : uiElements) {
         if (pair.second->GetType() == UIElement::TEXT) {
             TextElement* textElement = static_cast<TextElement*>(pair.second);
             glm::vec4 color = textElement->GetColor();
 
-            // ¶Ô×´Ì¬Ãæ°åÓ¦ÓÃµ­ÈëĞ§¹û
+            // å¯¹çŠ¶æ€é¢æ¿åº”ç”¨æ·¡å…¥æ•ˆæœ
             if (pair.first == "fps" || pair.first == "firework_type" ||
                 pair.first == "firework_count" || pair.first == "mode" ||
                 pair.first == "mouse_state" || pair.first == "lights_state") {
@@ -292,7 +303,7 @@ void UIManager::Render(float deltaTime) {
                 textElement->SetColor(color);
             }
 
-            // ¶ÔÑÌ»¨ÀàĞÍËµÃ÷Ó¦ÓÃ¿É¼ûĞÔ¿ØÖÆ
+            // å¯¹çƒŸèŠ±ç±»å‹è¯´æ˜åº”ç”¨å¯è§æ€§æ§åˆ¶
             else if (pair.first.find("firework_hint_") != std::string::npos ||
                 pair.first == "firework_types_title") {
                 if (!showControlHints) {
@@ -304,7 +315,7 @@ void UIManager::Render(float deltaTime) {
                 textElement->SetColor(color);
             }
 
-            // ¶Ô¿ØÖÆËµÃ÷Ó¦ÓÃ¿É¼ûĞÔ¿ØÖÆ
+            // å¯¹æ§åˆ¶è¯´æ˜åº”ç”¨å¯è§æ€§æ§åˆ¶
             else if (pair.first.find("control_hint_") != std::string::npos ||
                 pair.first == "controls_title") {
                 if (!showControlHints) {
@@ -317,17 +328,22 @@ void UIManager::Render(float deltaTime) {
             }
         }
 
-        // äÖÈ¾UIÔªËØ
+        // æ¸²æŸ“UIå…ƒç´ 
         if (pair.second->IsVisible()) {
             pair.second->Update(deltaTime);
             pair.second->Render(textRenderer);
         }
     }
 
-    // äÖÈ¾ÌáÊ¾
+    // æ¸²æŸ“è‰ºæœ¯å­—ï¼ˆåœ¨æ™®é€šUIä¹‹ä¸Šï¼‰
+    for (const auto& artText : artTexts) {
+        RenderArtText(artText);
+    }
+
+    // æ¸²æŸ“æç¤º
     RenderHint(deltaTime);
 
-    // »Ö¸´OpenGL×´Ì¬
+    // æ¢å¤OpenGLçŠ¶æ€
     if (depthTestEnabled) glEnable(GL_DEPTH_TEST);
     if (!blendEnabled) glDisable(GL_BLEND);
 }
@@ -337,7 +353,7 @@ void UIManager::RenderHint(float deltaTime) {
 
     glm::vec4 hintColor(1.0f, 0.8f, 0.2f, currentHint.alpha);
 
-    // ´ÖÂÔ¹ÀËãÎÄ±¾¿í¶È
+    // ç²—ç•¥ä¼°ç®—æ–‡æœ¬å®½åº¦
     float textWidth = currentHint.text.length() * 12.0f;
     float hintX = (screenWidth - textWidth) * 0.5f;
 
@@ -352,21 +368,27 @@ void UIManager::UpdateScreenSize(unsigned int width, unsigned int height) {
         textRenderer->UpdateProjection(width, height);
     }
 
-    // ¸üĞÂUIÔªËØÎ»ÖÃ
+    // æ›´æ–°UIå…ƒç´ ä½ç½®
     UpdateElementPositions();
+
+    // æ›´æ–°è‰ºæœ¯å­—ä½ç½®
+    for (auto& artText : artTexts) {
+        artText.x = width / 2.0f;
+        artText.y = height / 2.0f - 100.0f;
+    }
 }
 
 void UIManager::UpdateElementPositions() {
-    // ¸üĞÂ±êÌâÎ»ÖÃ£¨¶¥²¿¾ÓÖĞ£©
+    // æ›´æ–°æ ‡é¢˜ä½ç½®ï¼ˆé¡¶éƒ¨å±…ä¸­ï¼‰
     UIElement* title = GetElement("title");
     if (title) {
-        // ´ÖÂÔ¹ÀËã±êÌâ¿í¶È£º"Fireworks System" ´óÔ¼ 17¸ö×Ö·û * 12ÏñËØ = 204ÏñËØ
+        // ç²—ç•¥ä¼°ç®—æ ‡é¢˜å®½åº¦ï¼š"Fireworks System" å¤§çº¦ 17ä¸ªå­—ç¬¦ * 12åƒç´  = 204åƒç´ 
         float titleWidth = 17.0f * 12.0f;
         float titleX = (screenWidth - titleWidth) / 2.0f;
         title->SetPosition(titleX, 20.0f);
     }
     
-    // ¸üĞÂÑÌ»¨ÀàĞÍËµÃ÷Î»ÖÃ
+    // æ›´æ–°çƒŸèŠ±ç±»å‹è¯´æ˜ä½ç½®
     UIElement* fireworkTypesTitle = GetElement("firework_types_title");
     if (fireworkTypesTitle) {
         fireworkTypesTitle->SetPosition(20.0f, 250.0f);
@@ -383,7 +405,7 @@ void UIManager::UpdateElementPositions() {
         }
     }
     
-    // ¸üĞÂ¿ØÖÆËµÃ÷Î»ÖÃ£¨ÓÒÉÏ½Ç£©
+    // æ›´æ–°æ§åˆ¶è¯´æ˜ä½ç½®ï¼ˆå³ä¸Šè§’ï¼‰
     UIElement* controlsTitle = GetElement("controls_title");
     if (controlsTitle) {
         controlsTitle->SetPosition(screenWidth - 200.0f, 60.0f);
@@ -402,7 +424,7 @@ void UIManager::UpdateElementPositions() {
 }
 
 void UIManager::AddElement(const std::string& id, UIElement* element) {
-    // Èç¹ûÒÑ´æÔÚÍ¬ÃûÔªËØ£¬ÏÈÉ¾³ı
+    // å¦‚æœå·²å­˜åœ¨åŒåå…ƒç´ ï¼Œå…ˆåˆ é™¤
     auto it = uiElements.find(id);
     if (it != uiElements.end()) {
         delete it->second;
@@ -432,7 +454,7 @@ TextElement* UIManager::GetTextElement(const std::string& id) {
     return nullptr;
 }
 
-void UIManager::ShowHint(const std::string& text, float duration) {//ÔİÊ±ÆÁ±ÎHINTÏûÏ¢
+void UIManager::ShowHint(const std::string& text, float duration) {//æš‚æ—¶å±è”½HINTæ¶ˆæ¯
     //currentHint.text = text;
     //currentHint.duration = duration;
     //currentHint.timeLeft = duration;
@@ -471,18 +493,18 @@ void UIManager::SetFireworkType(int type) {
             std::string text = "Type: " + englishNames[type - 1];
             element->SetText(text);
 
-            // ¸ù¾İÀàĞÍÉèÖÃÑÕÉ«
+            // æ ¹æ®ç±»å‹è®¾ç½®é¢œè‰²
             glm::vec4 colors[] = {
-                glm::vec4(1.0f, 0.5f, 0.5f, 1.0f),  // ºì
-                glm::vec4(0.5f, 1.0f, 0.5f, 1.0f),  // ÂÌ
-                glm::vec4(1.0f, 0.5f, 1.0f, 1.0f),  // ×Ï
-                glm::vec4(0.5f, 0.8f, 1.0f, 1.0f),  // À¶
-                glm::vec4(1.0f, 0.8f, 0.2f, 1.0f),  // ½ğ
-                glm::vec4(0.8f, 0.3f, 1.0f, 1.0f)   // ×Ï
+                glm::vec4(1.0f, 0.5f, 0.5f, 1.0f),  // çº¢
+                glm::vec4(0.5f, 1.0f, 0.5f, 1.0f),  // ç»¿
+                glm::vec4(1.0f, 0.5f, 1.0f, 1.0f),  // ç´«
+                glm::vec4(0.5f, 0.8f, 1.0f, 1.0f),  // è“
+                glm::vec4(1.0f, 0.8f, 0.2f, 1.0f),  // é‡‘
+                glm::vec4(0.8f, 0.3f, 1.0f, 1.0f)   // ç´«
             };
             element->SetColor(colors[type - 1]);
 
-            // ÌáÊ¾ĞÅÏ¢
+            // æç¤ºä¿¡æ¯
             std::string hint = "Selected: " + englishNames[type - 1];
             ShowHint(hint, 1.5f);
 
@@ -498,16 +520,16 @@ void UIManager::SetFPS(float fps) {
         std::string text = "FPS: " + std::to_string((int)fps);
         element->SetText(text);
 
-        // ¸ù¾İFPSÉèÖÃÑÕÉ«
+        // æ ¹æ®FPSè®¾ç½®é¢œè‰²
         glm::vec4 color;
         if (fps >= 60.0f) {
-            color = glm::vec4(0.0f, 1.0f, 0.0f, 1.0f);  // ÂÌÉ«
+            color = glm::vec4(0.0f, 1.0f, 0.0f, 1.0f);  // ç»¿è‰²
         }
         else if (fps >= 30.0f) {
-            color = glm::vec4(1.0f, 1.0f, 0.0f, 1.0f);  // »ÆÉ«
+            color = glm::vec4(1.0f, 1.0f, 0.0f, 1.0f);  // é»„è‰²
         }
         else {
-            color = glm::vec4(1.0f, 0.0f, 0.0f, 1.0f);  // ºìÉ«
+            color = glm::vec4(1.0f, 0.0f, 0.0f, 1.0f);  // çº¢è‰²
         }
         element->SetColor(color);
     }
@@ -521,8 +543,8 @@ void UIManager::SetMouseEnabled(bool enabled) {
         element->SetText(text);
 
         glm::vec4 color = enabled ?
-            glm::vec4(0.3f, 1.0f, 0.3f, 1.0f) :  // ÂÌÉ«
-            glm::vec4(1.0f, 1.0f, 0.3f, 1.0f);    // »ÆÉ«
+            glm::vec4(0.3f, 1.0f, 0.3f, 1.0f) :  // ç»¿è‰²
+            glm::vec4(1.0f, 1.0f, 0.3f, 1.0f);    // é»„è‰²
         element->SetColor(color);
     }
 
@@ -538,8 +560,8 @@ void UIManager::SetSceneLightsEnabled(bool enabled) {
         element->SetText(text);
 
         glm::vec4 color = enabled ?
-            glm::vec4(0.3f, 1.0f, 0.3f, 1.0f) :  // ÂÌÉ«
-            glm::vec4(1.0f, 0.3f, 0.3f, 1.0f);    // ºìÉ«
+            glm::vec4(0.3f, 1.0f, 0.3f, 1.0f) :  // ç»¿è‰²
+            glm::vec4(1.0f, 0.3f, 0.3f, 1.0f);    // çº¢è‰²
         element->SetColor(color);
     }
 
@@ -555,8 +577,8 @@ void UIManager::SetAutoTestMode(bool enabled) {
         element->SetText(text);
 
         glm::vec4 color = enabled ?
-            glm::vec4(1.0f, 0.5f, 0.2f, 1.0f) :  // ³ÈÉ«
-            glm::vec4(0.2f, 0.8f, 1.0f, 1.0f);    // ÇàÉ«
+            glm::vec4(1.0f, 0.5f, 0.2f, 1.0f) :  // æ©™è‰²
+            glm::vec4(0.2f, 0.8f, 1.0f, 1.0f);    // é’è‰²
         element->SetColor(color);
     }
 
@@ -571,9 +593,9 @@ void UIManager::SetAutoTestMode(bool enabled) {
 void UIManager::ToggleAllText() {
     showControlHints = !showControlHints;
 
-    // Òş²Ø/ÏÔÊ¾ËùÓĞÎÄ±¾ÔªËØ£¨²»½ö½öÊÇ¿ØÖÆÌáÊ¾£©
+    // éšè—/æ˜¾ç¤ºæ‰€æœ‰æ–‡æœ¬å…ƒç´ ï¼ˆä¸ä»…ä»…æ˜¯æ§åˆ¶æç¤ºï¼‰
     for (auto& pair : uiElements) {
-        // ËùÓĞÎÄ±¾ÔªËØ¶¼ÊÜ¿ØÖÆ
+        // æ‰€æœ‰æ–‡æœ¬å…ƒç´ éƒ½å—æ§åˆ¶
         if (pair.second->GetType() == UIElement::TEXT) {
             pair.second->SetVisible(showControlHints);
         }
@@ -588,7 +610,7 @@ void UIManager::ToggleAllText() {
 }
 
 void UIManager::OnMouseMove(float x, float y) {
-    // ¸üĞÂËùÓĞ°´Å¥µÄĞüÍ£×´Ì¬
+    // æ›´æ–°æ‰€æœ‰æŒ‰é’®çš„æ‚¬åœçŠ¶æ€
     for (auto& pair : uiElements) {
         if (pair.second->GetType() == UIElement::BUTTON) {
             ButtonElement* button = static_cast<ButtonElement*>(pair.second);
@@ -603,114 +625,142 @@ void UIManager::OnMouseMove(float x, float y) {
 }
 
 void UIManager::OnMouseClick(float x, float y) {
-    // ´¦ÀíUIÔªËØµã»÷
+    // å¤„ç†UIå…ƒç´ ç‚¹å‡»
     for (auto& pair : uiElements) {
         if (pair.second->Contains(x, y) && pair.second->IsActive()) {
             //std::cout << "[UI] Clicked on: " << pair.first << std::endl;
-            // ÕâÀï¿ÉÒÔÌí¼Óµã»÷ÊÂ¼ş´¦Àí
+            // è¿™é‡Œå¯ä»¥æ·»åŠ ç‚¹å‡»äº‹ä»¶å¤„ç†
         }
     }
 }
 
-// UIManager.cpp
-// ÔÚÎÄ¼şÄ©Î²Ìí¼ÓÒÔÏÂº¯Êı
+void UIManager::InitializeArtTexts() {
+    // æ¸…ç©ºç°æœ‰è‰ºæœ¯å­—
+    artTexts.clear();
 
-// ¿ªÊ¼ÒÕÊõ×Ö¶¯»­
-void UIManager::StartArtTextAnimation() {
-    if (artTexts.empty()) return;
+    // 5å¥ä¸­æ–‡è‰ºæœ¯å­—ï¼Œå¯¹åº”F1-F5
+    // æ³¨æ„ï¼šè¿™é‡Œä½¿ç”¨UTF-8ç¼–ç çš„ä¸­æ–‡å­—ç¬¦ä¸²
+    std::vector<std::string> messages = {
+        u8"çƒŸèŠ±ç²’å­ç³»ç»Ÿå±•ç¤º",
+        u8"1ã€å±•ç¤ºå¤©ç©ºç›’ã€åœ°é¢ä¸æ¨¡å‹",
+        u8"2ã€å•ç‹¬å±•ç¤ºéƒ¨åˆ†çƒŸèŠ±",
+        u8"3ã€éšæœºå‘å°„çƒŸèŠ±",
+        u8"4ã€ç‚¹å‡»åœ°é¢å‘å°„çƒŸèŠ±"
+    };
 
-    // »ñÈ¡µ±Ç°ÒÕÊõ×ÖÎÄ±¾
-    artTextAnim.text = artTexts[currentArtTextIndex];
-    artTextAnim.isActive = true;
-    artTextAnim.timer = 0.0f;
-    artTextAnim.alpha = 0.0f;
-    artTextAnim.scale = 0.5f;
-    artTextAnim.positionY = screenHeight / 2.0f;
+    // å¯¹åº”çš„é¢œè‰²
+    std::vector<glm::vec4> colors = {
+        glm::vec4(1.0f, 0.5f, 0.2f, 1.0f),   // æ©™è‰²
+        glm::vec4(0.2f, 0.8f, 1.0f, 1.0f),   // è“è‰²
+        glm::vec4(1.0f, 0.8f, 0.2f, 1.0f),   // é‡‘è‰²
+        glm::vec4(0.8f, 0.2f, 1.0f, 1.0f),   // ç´«è‰²
+        glm::vec4(0.2f, 1.0f, 0.5f, 1.0f)    // ç»¿è‰²
+    };
 
-    // ÒÆ¶¯µ½ÏÂÒ»¸öÒÕÊõ×Ö
-    currentArtTextIndex = (currentArtTextIndex + 1) % artTexts.size();
+    // åˆå§‹åŒ–è‰ºæœ¯å­—å¯¹è±¡
+    for (int i = 0; i < 5; i++) {
+        ArtTextInfo artText;
+        artText.text = messages[i];
+        artText.color = colors[i];
+        artText.x = screenWidth / 2.0f;
+        artText.y = screenHeight / 2.0f - 100.0f; // å±å¹•ä¸­å¤®åä¸Š
+        artText.scale = 2.0f;  // å¤§å·å­—ä½“
+        artText.alpha = 0.0f;
+        artText.time = 0.0f;
+        artText.state = 0;  // éšè—
+        artText.active = false;
+        artTexts.push_back(artText);
+    }
 
-    std::cout << "[ArtText] Showing: " << artTextAnim.text << std::endl;
+    std::cout << "[UIManager] Art texts initialized" << std::endl;
 }
 
-// ¸üĞÂÒÕÊõ×Ö¶¯»­
-void UIManager::UpdateArtTextAnimation(float deltaTime) {
-    if (!artTextAnim.isActive) return;
-
-    artTextAnim.timer += deltaTime;
-    float progress = artTextAnim.timer / artTextAnim.totalDuration;
-
-    // ¶¯»­·ÖÎª3¸ö½×¶Î£º
-    // 1. ½øÈë½×¶Î (0.0-1.0Ãë)£ºµ­Èë + ·Å´ó
-    // 2. ±£³Ö½×¶Î (1.0-3.0Ãë)£ºÇáÎ¢Âö¶¯
-    // 3. ÍË³ö½×¶Î (3.0-4.0Ãë)£ºµ­³ö + ÉÏÒÆ
-
-    if (progress < 0.25f) { // 0-1Ãë£º½øÈë
-        float t = progress / 0.25f; // ¹éÒ»»¯µ½0-1
-        artTextAnim.alpha = t;
-        artTextAnim.scale = 0.5f + t * 1.5f; // 0.5 -> 2.0
-        artTextAnim.positionY = screenHeight / 2.0f;
-    }
-    else if (progress < 0.75f) { // 1-3Ãë£º±£³Ö + Âö¶¯
-        float t = (progress - 0.25f) / 0.5f;
-        artTextAnim.alpha = 1.0f;
-        // ÇáÎ¢Âö¶¯Ğ§¹û
-        artTextAnim.scale = 2.0f + sin(t * 3.14159f * 2.0f) * 0.1f;
-        artTextAnim.positionY = screenHeight / 2.0f;
-    }
-    else { // 3-4Ãë£ºÍË³ö
-        float t = (progress - 0.75f) / 0.25f;
-        artTextAnim.alpha = 1.0f - t;
-        artTextAnim.scale = 2.0f - t * 0.5f; // 2.0 -> 1.5
-        artTextAnim.positionY = screenHeight / 2.0f - t * 100.0f; // ÏòÉÏÒÆ¶¯
+void UIManager::StartArtTextAnimation(int index) {
+    if (index < 0 || index >= artTexts.size()) {
+        std::cerr << "[UIManager] Invalid art text index: " << index << std::endl;
+        return;
     }
 
-    // ¶¯»­½áÊø
-    if (progress >= 1.0f) {
-        artTextAnim.isActive = false;
+    // éšè—å½“å‰æ˜¾ç¤ºçš„è‰ºæœ¯å­—ï¼ˆå¦‚æœæœ‰ï¼‰
+    for (auto& artText : artTexts) {
+        if (artText.active && artText.state != 0) {
+            artText.state = 3; // å¼€å§‹é€€å‡ºåŠ¨ç”»
+            artText.time = 0.0f;
+        }
+    }
+
+    // å¯åŠ¨é€‰ä¸­çš„è‰ºæœ¯å­—
+    ArtTextInfo& artText = artTexts[index];
+    artText.state = 1; // è¿›å…¥åŠ¨ç”»
+    artText.active = true;
+    artText.time = 0.0f;
+    artText.alpha = 0.0f;
+    artText.scale = 2.5f; // åˆå§‹æ”¾å¤§æ•ˆæœ
+
+    // é‡æ–°è®¡ç®—å±…ä¸­ä½ç½®ï¼ˆè€ƒè™‘çª—å£å¤§å°å¯èƒ½å·²æ”¹å˜ï¼‰
+    artText.x = screenWidth / 2.0f;
+    artText.y = screenHeight / 2.0f - 100.0f;
+
+    std::cout << "[UIManager] Art text animation started: " << index + 1 << std::endl;
+}
+
+void UIManager::UpdateArtText(ArtTextInfo& artText, float deltaTime) {
+    if (!artText.active) return;
+
+    artText.time += deltaTime;
+
+    switch (artText.state) {
+    case 1: // è¿›å…¥åŠ¨ç”»
+        artText.alpha = artText.time / artTextEnterTime;
+        artText.scale = 2.5f - (artText.time / artTextEnterTime) * 0.5f; // ä»2.5ç¼©å°åˆ°2.0
+
+        if (artText.time >= artTextEnterTime) {
+            artText.state = 2; // æ˜¾ç¤ºçŠ¶æ€
+            artText.time = 0.0f;
+            artText.alpha = 1.0f;
+            artText.scale = 2.0f;
+        }
+        break;
+
+    case 2: // æ˜¾ç¤ºçŠ¶æ€
+        if (artText.time >= artTextDisplayTime) {
+            artText.state = 3; // é€€å‡ºåŠ¨ç”»
+            artText.time = 0.0f;
+        }
+        break;
+
+    case 3: // é€€å‡ºåŠ¨ç”»
+        artText.alpha = 1.0f - (artText.time / artTextExitTime);
+        artText.scale = 2.0f - (artText.time / artTextExitTime) * 1.0f; // ä»2.0ç¼©å°åˆ°1.0
+
+        if (artText.time >= artTextExitTime) {
+            artText.state = 0; // éšè—
+            artText.active = false;
+            artText.alpha = 0.0f;
+            artText.scale = 2.0f;
+        }
+        break;
     }
 }
 
-// äÖÈ¾ÒÕÊõ×Ö¶¯»­
-void UIManager::RenderArtTextAnimation() {
-    if (!artTextAnim.isActive || !textRenderer) return;
+void UIManager::RenderArtText(const ArtTextInfo& artText) {
+    if (!artText.active || artText.alpha <= 0.0f) return;
+    if (!textRenderer) return;
 
-    // ¼ÆËãÎÄ±¾¿í¶È£¨½üËÆÖµ£©
-    float textWidth = artTextAnim.text.length() * 30.0f * artTextAnim.scale;
-    float x = (screenWidth - textWidth) / 2.0f;
+    // è®¡ç®—æ–‡æœ¬å®½åº¦ä»¥å±…ä¸­æ˜¾ç¤º
+    float textWidth = textRenderer->CalculateTextWidth(artText.text, artText.scale);
+    float x = artText.x - textWidth / 2.0f;
 
-    // ÑÕÉ«£º½ğÉ« + Í¸Ã÷¶È
-    glm::vec4 color(1.0f, 0.8f, 0.2f, artTextAnim.alpha);
+    // è®¾ç½®é¢œè‰²ï¼ˆåŒ…å«é€æ˜åº¦ï¼‰
+    glm::vec4 color = artText.color;
+    color.a = artText.alpha;
 
-    // äÖÈ¾¶à²ã´´½¨»Ô¹âĞ§¹û
-    if (artTextAnim.alpha > 0.3f) {
-        // »Ô¹â²ã1£¨ÍâÈ¦£©
-        glm::vec4 glowColor(1.0f, 0.6f, 0.1f, artTextAnim.alpha * 0.3f);
-        textRenderer->RenderTextWithAlpha(
-            artTextAnim.text,
-            x - 2.0f,
-            artTextAnim.positionY - 2.0f,
-            artTextAnim.scale * 1.05f,
-            glowColor
-        );
+    // æ¸²æŸ“ä¸»æ–‡æœ¬
+    textRenderer->RenderTextWithAlpha(artText.text, x, artText.y, artText.scale, color);
 
-        // »Ô¹â²ã2£¨ÖĞ¼ä£©
-        glowColor = glm::vec4(1.0f, 0.7f, 0.15f, artTextAnim.alpha * 0.5f);
-        textRenderer->RenderTextWithAlpha(
-            artTextAnim.text,
-            x - 1.0f,
-            artTextAnim.positionY - 1.0f,
-            artTextAnim.scale * 1.02f,
-            glowColor
-        );
+    // æ·»åŠ ç®€å•çš„é˜´å½±æ•ˆæœ
+    if (artText.alpha > 0.3f) {
+        glm::vec4 shadowColor(0.0f, 0.0f, 0.0f, color.a * 0.5f);
+        textRenderer->RenderTextWithAlpha(artText.text, x + 3.0f, artText.y + 3.0f, artText.scale, shadowColor);
     }
-
-    // Ö÷ÎÄ±¾
-    textRenderer->RenderTextWithAlpha(
-        artTextAnim.text,
-        x,
-        artTextAnim.positionY,
-        artTextAnim.scale,
-        color
-    );
 }
