@@ -114,7 +114,7 @@ void UIManager::CreateDefaultUI() {
     // 标题 - 顶部居中
     TextElement* title = new TextElement();
     title->SetText("Fireworks System");
-    title->SetPosition(screenWidth / 2.0f - 80.0f, 20.0f); // 粗略居中，后面会精确计算
+    title->SetPosition(screenWidth / 2.0f - 180.0f, 40.0f); // 粗略居中，后面会精确计算
     title->SetColor(glm::vec4(1.0f, 1.0f, 1.0f, 1.0f));
     title->SetScale(1.0f);
     AddElement("title", title);
@@ -126,7 +126,7 @@ void UIManager::CreateDefaultUI() {
     // FPS显示
     TextElement* fps = new TextElement();
     fps->SetText("FPS: 0");
-    fps->SetPosition(20.0f, 60.0f); // 从标题原来的位置开始
+    fps->SetPosition(20.0f, 40.0f); // 从标题原来的位置开始
     fps->SetColor(glm::vec4(0.0f, 1.0f, 0.0f, 1.0f));
     fps->SetScale(0.8f);
     AddElement("fps", fps);
@@ -134,7 +134,7 @@ void UIManager::CreateDefaultUI() {
     // 烟花类型
     TextElement* fireworkType = new TextElement();
     fireworkType->SetText("Type: Sphere");
-    fireworkType->SetPosition(20.0f, 90.0f);
+    fireworkType->SetPosition(20.0f, 80.0f);
     fireworkType->SetColor(glm::vec4(1.0f, 0.5f, 0.5f, 1.0f));
     fireworkType->SetScale(0.8f);
     AddElement("firework_type", fireworkType);
@@ -150,7 +150,7 @@ void UIManager::CreateDefaultUI() {
     // 模式显示
     TextElement* mode = new TextElement();
     mode->SetText("Mode: Manual");
-    mode->SetPosition(20.0f, 150.0f);
+    mode->SetPosition(20.0f, 160.0f);
     mode->SetColor(glm::vec4(0.2f, 0.8f, 1.0f, 1.0f));
     mode->SetScale(0.8f);
     AddElement("mode", mode);
@@ -158,7 +158,7 @@ void UIManager::CreateDefaultUI() {
     // 鼠标状态
     TextElement* mouseState = new TextElement();
     mouseState->SetText("Mouse: Free");
-    mouseState->SetPosition(20.0f, 180.0f);
+    mouseState->SetPosition(20.0f, 200.0f);
     mouseState->SetColor(glm::vec4(1.0f, 1.0f, 0.3f, 1.0f));
     mouseState->SetScale(0.8f);
     AddElement("mouse_state", mouseState);
@@ -166,7 +166,7 @@ void UIManager::CreateDefaultUI() {
     // 灯光状态
     TextElement* lightsState = new TextElement();
     lightsState->SetText("Lights: ON");
-    lightsState->SetPosition(20.0f, 210.0f);
+    lightsState->SetPosition(20.0f, 240.0f);
     lightsState->SetColor(glm::vec4(0.3f, 1.0f, 0.3f, 1.0f));
     lightsState->SetScale(0.8f);
     AddElement("lights_state", lightsState);
@@ -178,7 +178,7 @@ void UIManager::CreateDefaultUI() {
     // 烟花类型说明标题
     TextElement* fireworkTypesTitle = new TextElement();
     fireworkTypesTitle->SetText("--- Firework Types ---");
-    fireworkTypesTitle->SetPosition(20.0f, 250.0f);
+    fireworkTypesTitle->SetPosition(20.0f, 300.0f);
     fireworkTypesTitle->SetColor(glm::vec4(1.0f, 1.0f, 0.5f, 1.0f));
     fireworkTypesTitle->SetScale(0.7f);
     AddElement("firework_types_title", fireworkTypesTitle);
@@ -193,8 +193,8 @@ void UIManager::CreateDefaultUI() {
         "6: Double (Purple)"
     };
 
-    float fireworkHintY = 275.0f;
-    float fireworkHintLineHeight = 18.0f;
+    float fireworkHintY = 330.0f;
+    float fireworkHintLineHeight = 25.0f;
 
     for (int i = 0; i < (int)fireworkTypeHints.size(); i++) {
         std::string id = "firework_hint_" + std::to_string(i);
@@ -226,7 +226,7 @@ void UIManager::CreateDefaultUI() {
     // 控制说明标题 - 右上角
     TextElement* controlsTitle = new TextElement();
     controlsTitle->SetText("--- Controls ---");
-    controlsTitle->SetPosition(screenWidth - 200.0f, 60.0f); // 从右上角往下一点开始
+    controlsTitle->SetPosition(screenWidth - 325.0f, 60.0f); // 从右上角往下一点开始
     controlsTitle->SetColor(glm::vec4(0.9f, 0.9f, 0.9f, 1.0f));
     controlsTitle->SetScale(0.7f);
     AddElement("controls_title", controlsTitle);
@@ -234,8 +234,10 @@ void UIManager::CreateDefaultUI() {
     // 控制说明
     std::vector<std::string> controlHints = {
         "Mouse click: Launch firework",
-        "Mouse (locked): Left click = Launch",
-        "Mouse (locked): Right click = Change type",
+        "Mouse (locked): ",
+        "Left click = Launch",
+        "Mouse (locked): ",
+        "Right click = Change type",
         "M: Toggle mouse control",
         "L: Toggle scene lights",
         "R: Orbit mode",
@@ -246,13 +248,13 @@ void UIManager::CreateDefaultUI() {
     };
 
     float controlHintY = 85.0f;
-    float controlHintLineHeight = 18.0f;
+    float controlHintLineHeight = 25.0f;
 
     for (int i = 0; i < (int)controlHints.size(); i++) {
         std::string id = "control_hint_" + std::to_string(i);
         TextElement* hint = new TextElement();
         hint->SetText(controlHints[i]);
-        hint->SetPosition(screenWidth - 200.0f, controlHintY + i * controlHintLineHeight);
+        hint->SetPosition(screenWidth - 350.0f, controlHintY + i * controlHintLineHeight);
         hint->SetColor(glm::vec4(0.9f, 0.9f, 0.9f, 1.0f));
         hint->SetScale(0.5f);
         AddElement(id, hint);
