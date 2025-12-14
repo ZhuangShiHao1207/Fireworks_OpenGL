@@ -95,7 +95,7 @@ void FireworkParticleSystem::launch(const glm::vec3& position, FireworkType type
     p.secondaryColor = secondaryColor;
     p.life = life * (0.4f + dis(gen) * 0.2f);  // 随机寿命，让爆炸高度随机
     p.maxLife = p.life;
-    p.size = size;
+    p.size = size * 2.5f;  // 🔧 增大升空粒子大小（原本是 size，现在是 2.5 倍）
     p.type = type;
     p.isTail = false;
     p.canExplodeAgain = false;
@@ -264,13 +264,14 @@ glm::vec4 FireworkParticleSystem::calculateColorGradient(const Particle& p) cons
 
     if (lifeRatio > 0.95f) {
         // 初始阶段：稍微明亮（缩短到只有最开始5%的时间）
-        float brightness = 1.0f; // 最多增强到1.15倍
-        resultColor = glm::vec4(
-            (glm::min)(p.initialColor.r * brightness, 1.0f), 
-            (glm::min)(p.initialColor.g * brightness, 1.0f), 
-            (glm::min)(p.initialColor.b * brightness, 1.0f), 
-            1.0f
-        );
+//         float brightness = 1.0f; // 最多增强到1.15倍
+//         resultColor = glm::vec4(
+//             (glm::min)(p.initialColor.r * brightness, 1.0f), 
+//             (glm::min)(p.initialColor.g * brightness, 1.0f), 
+//             (glm::min)(p.initialColor.b * brightness, 1.0f), 
+//             1.0f
+//         );
+        resultColor = glm::vec4(p.initialColor.r, p.initialColor.g, p.initialColor.b, 1.0f);
     }
     else if (lifeRatio > 0.15f) {
         // 中段：保持原色明亮（延长保持原色的时间）
@@ -309,8 +310,8 @@ void FireworkParticleSystem::createExplosion(const Particle& source, bool isSeco
     }
 
     // Use initialColor instead of current color to keep explosions bright
-    // 图片烟花不需要延迟二次爆炸
-    if (!isSecondary && source.type != FireworkType::Image) {
+    // 🔧 允许图片烟花也有二次爆炸（移除了 source.type != FireworkType::Image 的判断）
+    if (!isSecondary) {
         // 添加延迟0.1秒的第二次爆炸
         DelayedExplosion delayed;
         delayed.position = source.position;
@@ -347,12 +348,13 @@ void FireworkParticleSystem::createExplosion(const Particle& source, bool isSeco
         break;
     case FireworkType::Image:
         // 图片烟花使用固定路径（不采样，处理所有像素）
-        generateImageParticles(source.position, "assets/firework_images/fish.png", 1);
+        //generateImageParticles(source.position, "assets/firework_images/word.png", 1);
+        generateImageParticles(source.position, "assets/firework_images/image.png", 1);
         break;
     }
 }
 
-// 球形烟花
+// 球形烟花 - 🔧 缩短生命周期
 void FireworkParticleSystem::generateSphereParticles(const glm::vec3& center, const glm::vec4& color, int count, float radius, bool canExplode) {
     for (int i = 0; i < count; ++i) {
         float u = dis(gen);
@@ -370,7 +372,8 @@ void FireworkParticleSystem::generateSphereParticles(const glm::vec3& center, co
         ) * r;
         p.color = color;
         p.initialColor = color;
-        p.life = 0.6f + 0.25f * dis(gen);
+		// 调整生命周期（0.4-0.55s）
+        p.life = 0.4f + 0.15f * dis(gen);
         p.maxLife = p.life;
         p.size = childSize;
         p.type = FireworkType::Sphere;
@@ -395,7 +398,7 @@ void FireworkParticleSystem::generateRingParticles(const glm::vec3& center, cons
         );
         p.color = color;
         p.initialColor = color;
-        p.life = 0.6f + 0.25f * dis(gen);
+        p.life = 0.35f + 0.15f * dis(gen);  // 🔧 缩短：0.35-0.5秒（原本 0.6-0.85秒）
         p.maxLife = p.life;
         p.size = childSize;
         p.type = FireworkType::Ring;
@@ -405,7 +408,7 @@ void FireworkParticleSystem::generateRingParticles(const glm::vec3& center, cons
     }
 }
 
-// 多层烟花
+// 多层烟花 - 🔧 缩短生命周期
 void FireworkParticleSystem::generateMultiLayerParticles(const glm::vec3& center, const glm::vec4& color, int count, float radiusScale) {
     int layers = 3;
     int particlesPerLayer = count / layers;
@@ -438,7 +441,8 @@ void FireworkParticleSystem::generateMultiLayerParticles(const glm::vec3& center
             ) * layerRadius;
             p.color = layerColor;
             p.initialColor = layerColor;
-            p.life = 0.5f + 0.15f * dis(gen) + layer * 0.15f; // 外层寿命更长
+			// 外层寿命更长 （整体寿命：）
+            p.life = 0.4f + 0.15f * dis(gen) + layer * 0.1f; // 🔧 缩短：0.3-0.6秒（原本 0.5-1.1秒）
             p.maxLife = p.life;
             p.size = childSize * (1.0f + layer * 0.2f); // 外层更大
             p.type = FireworkType::MultiLayer;
@@ -449,7 +453,7 @@ void FireworkParticleSystem::generateMultiLayerParticles(const glm::vec3& center
     }
 }
 
-// 螺旋烟花
+// 螺旋烟花 - 🔧 缩短生命周期
 void FireworkParticleSystem::generateSpiralParticles(const glm::vec3& center, const glm::vec4& color, int count, float radiusScale) {
     int spirals = 3; // 3条螺旋线
     for (int i = 0; i < count; ++i) {
@@ -469,7 +473,7 @@ void FireworkParticleSystem::generateSpiralParticles(const glm::vec3& center, co
         );
         p.color = color;
         p.initialColor = color;
-        p.life = 0.75f + 0.25f * dis(gen);
+        p.life = 0.45f + 0.15f * dis(gen);  // 🔧 缩短：0.45-0.6秒（原本 0.75-1.0秒）
         p.maxLife = p.life;
         p.size = childSize;
         p.type = FireworkType::Spiral;
@@ -480,7 +484,7 @@ void FireworkParticleSystem::generateSpiralParticles(const glm::vec3& center, co
     }
 }
 
-// 心形烟花
+// 心形烟花 - 🔧 缩短生命周期
 void FireworkParticleSystem::generateHeartParticles(const glm::vec3& center, const glm::vec4& color, int count, float radiusScale) {
     for (int i = 0; i < count; ++i) {
         float t = (float)i / count * 2.0f * 3.14159265f;
@@ -503,7 +507,7 @@ void FireworkParticleSystem::generateHeartParticles(const glm::vec3& center, con
         );
         p.color = color;
         p.initialColor = color;
-        p.life = 0.75f + 0.25f * dis(gen);
+        p.life = 0.45f + 0.15f * dis(gen);  // 🔧 缩短：0.45-0.6秒（原本 0.75-1.0秒）
         p.maxLife = p.life;
         p.size = childSize;
         p.type = FireworkType::Heart;
@@ -688,14 +692,14 @@ void FireworkParticleSystem::generateImageParticles(const glm::vec3& center, con
             p.velocity = glm::vec3(posX * expandSpeed, posY * expandSpeed, 0.0f);
             
             // 保持原始颜色，不增强亮度
-            p.color = pixelColor;
-            p.initialColor = pixelColor;
+            p.color = pixelColor * 0.5f;
+            p.initialColor = pixelColor * 0.5f;
             
-            p.life = 0.5f; // 0.5秒后消失
+            p.life = 0.3f;
             p.maxLife = p.life;
-            p.size = childSize ; // 稍大一些让图片更清晰
+            p.size = childSize * 1.7f;
             p.type = FireworkType::Image;
-            p.isTail = true; // 标记为拖尾粒子，防止生成拖尾
+            p.isTail = false;  // 🔧 改为 false，允许生成拖尾
             p.canExplodeAgain = false;
             
             explosionParticles.push_back(p);

@@ -47,13 +47,13 @@ public:
     // 拖尾参数
     float tailLife = 0.02f;         // 拖尾粒子的寿命（秒）
     float tailInterval = 0.016f;    // 拖尾生成间隔（秒）
-    float tailAlpha = 0.5f;         // 拖尾透明度系数
+    float tailAlpha = 0.8f;         // 🔧 拖尾透明度系数（提高至0.8，原本0.5）
 
     // 尺寸和物理参数
-    float launcherSize = 0.05f;     // 上升弹粒子大小
-    float childSize = 0.05f;        // 爆炸子粒子大小
+    float launcherSize = 0.11f;     // 上升弹粒子大小
+    float childSize = 0.09f;        // 爆炸子粒子大小
     float gravity = -5.0f;          // 重力加速度（负Y方向）
-    float timeScale = 0.2f;         // 时间缩放（1.0=正常，0.5=慢动作）
+    float timeScale = 0.18f;         // 时间缩放（1.0=正常，0.5=慢动作）
 
 private:
     struct Particle {
