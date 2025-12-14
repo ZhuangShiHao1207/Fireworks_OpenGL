@@ -570,8 +570,8 @@ void FireworkParticleSystem::runTest(float currentTime) {
     // 随机尺寸（0.02f到0.05f）
     float randomSize = 0.02f + dis(gen) * 0.03f;
 
-    // 随机寿命（1.0f到2.0f）
-    float randomLife = 1.0f + dis(gen) * 1.0f;
+    // 随机寿命（0.5f到1.5f）
+    float randomLife = 0.5f + dis(gen) * 1.0f;
 
     // 发射烟花
     launch(launchPos, selectedType, randomLife,
@@ -691,9 +691,9 @@ void FireworkParticleSystem::generateImageParticles(const glm::vec3& center, con
             p.color = pixelColor;
             p.initialColor = pixelColor;
             
-            p.life = 2.0f; // 2秒后消失
+            p.life = 1.0f; // 1秒后消失
             p.maxLife = p.life;
-            p.size = childSize * 1.5f; // 稍大一些让图片更清晰
+            p.size = childSize ; // 稍大一些让图片更清晰
             p.type = FireworkType::Image;
             p.isTail = true; // 标记为拖尾粒子，防止生成拖尾
             p.canExplodeAgain = false;
