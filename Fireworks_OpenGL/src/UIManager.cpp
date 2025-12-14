@@ -362,6 +362,65 @@ void UIManager::RenderHint(float deltaTime) {
     textRenderer->RenderTextWithAlpha(currentHint.text, hintX, 100.0f, 0.7f, hintColor);
 }
 
+//计算缩放
+float UIManager::CalculateUIScale() const {
+    // 基于高度计算缩放
+    float baseHeight = 720.0f; // 基准高度
+    return std::min(1.0f, static_cast<float>(screenHeight) / baseHeight);
+}
+
+void UIManager::UpdateSimpleUIPositions() {
+    float scale = CalculateUIScale();
+
+    // 更新UI元素位置和大小
+    auto updateElement = [&](const std::string& id, float x, float y, float baseScale) {
+        UIElement* element = GetElement(id);
+        if (element) {
+            element->SetPosition(x * scale, y * scale);
+            if (element->GetType() == UIElement::TEXT) {
+                TextElement* text = static_cast<TextElement*>(element);
+                text->SetScale(baseScale * scale);
+            }
+        }
+        };
+
+    // 标题
+    updateElement("title", screenWidth / 2.0f - 180.0f * scale, 40.0f * scale, 1.0f);
+
+    // 左侧状态栏
+    float leftX = 20.0f * scale;
+    float stateY = 40.0f * scale;
+    float stateSpacing = 40.0f * scale;
+    updateElement("fps", leftX, stateY, 0.8f);
+    updateElement("firework_type", leftX, stateY + stateSpacing, 0.8f);
+    updateElement("firework_count", leftX, stateY + stateSpacing * 2, 0.8f);
+    updateElement("mode", leftX, stateY + stateSpacing * 3, 0.8f);
+    updateElement("mouse_state", leftX, stateY + stateSpacing * 4, 0.8f);
+    updateElement("lights_state", leftX, stateY + stateSpacing * 5, 0.8f);
+
+    // 烟花类型说明
+    float typesY = stateY + stateSpacing * 7;
+    updateElement("firework_types_title", leftX, typesY, 0.7f);
+    for (int i = 0; i < 6; i++) {
+        updateElement("firework_hint_" + std::to_string(i),
+            leftX + 10.0f * scale,
+            typesY + 30.0f * scale + i * 25.0f * scale,
+            0.5f);
+    }
+
+    // 控制说明（右上角）
+    float rightX = screenWidth - 350.0f * scale;
+    float controlsY = 60.0f * scale;
+    updateElement("controls_title", rightX, controlsY, 0.7f);
+    for (int i = 0; i < 12; i++) {
+        updateElement("control_hint_" + std::to_string(i),
+            rightX,
+            controlsY + 25.0f * scale + i * 25.0f * scale,
+            0.5f);
+    }
+}
+
+
 void UIManager::UpdateScreenSize(unsigned int width, unsigned int height) {
     screenWidth = width;
     screenHeight = height;
@@ -370,13 +429,15 @@ void UIManager::UpdateScreenSize(unsigned int width, unsigned int height) {
         textRenderer->UpdateProjection(width, height);
     }
 
-    // 更新UI元素位置
-    UpdateElementPositions();
+    // 更新UI位置
+    UpdateSimpleUIPositions();
 
-    // 更新艺术字位置
+    // 更新艺术字位置和大小
+    float scale = CalculateUIScale();
     for (auto& artText : artTexts) {
-        artText.x = width / 2.0f;
-        artText.y = height / 2.0f - 100.0f;
+        artText.x = screenWidth / 2.0f;
+        artText.y = screenHeight / 2.0f;
+        artText.scale = 2.0f * scale;
     }
 }
 
@@ -754,17 +815,18 @@ void UIManager::RenderArtText(const ArtTextInfo& artText) {
     // 计算文本宽度以居中显示
     float textWidth = textRenderer->CalculateTextWidth(artText.text, artText.scale);
     float x = artText.x - textWidth / 2.0f;
+    float y = artText.y;
 
     // 设置颜色（包含透明度）
     glm::vec4 color = artText.color;
     color.a = artText.alpha;
 
     // 渲染主文本
-    textRenderer->RenderTextWithAlpha(artText.text, x, artText.y, artText.scale, color);
+    textRenderer->RenderTextWithAlpha(artText.text, x, y, artText.scale, color);
 
     // 添加简单的阴影效果
     if (artText.alpha > 0.3f) {
         glm::vec4 shadowColor(0.0f, 0.0f, 0.0f, color.a * 0.5f);
-        textRenderer->RenderTextWithAlpha(artText.text, x + 3.0f, artText.y + 3.0f, artText.scale, shadowColor);
+        textRenderer->RenderTextWithAlpha(artText.text, x + 3.0f, y + 3.0f, artText.scale, shadowColor);
     }
 }

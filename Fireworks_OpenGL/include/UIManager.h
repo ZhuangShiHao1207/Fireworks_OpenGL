@@ -196,4 +196,9 @@ private:
     void InitializeArtTexts();
     void UpdateArtText(ArtTextInfo& artText, float deltaTime);
     void RenderArtText(const ArtTextInfo& artText);
+
+    //比例缩放相关
+    float CalculateUIScale() const;
+    void UpdateSimpleUIPositions();
+
 };
