@@ -16,7 +16,8 @@ public:
         Ring,            // 环形烟花
         MultiLayer,      // 多层烟花
         Spiral,          // 螺旋烟花
-        Heart            // 心形烟花
+        Heart,           // 心形烟花
+        Image            // 图片烟花
     };
 
     FireworkParticleSystem();
@@ -71,6 +72,14 @@ private:
         float rotationAngle = 0.0f;   // 旋转角度（用于螺旋烟花）
         float tailTimer = 0.0f;       // 拖尾生成计时器
         float explodeAtHeight = 0.0f; // 随机爆炸高度
+        glm::vec2 imageOffset = glm::vec2(0.0f); // 图片粒子的偏移（相对于中心）
+    };
+
+    // 图片数据结构
+    struct ImageData {
+        std::vector<glm::vec4> pixels; // 像素颜色数组
+        int width;
+        int height;
     };
 
     // 延迟爆炸事件结构
@@ -111,4 +120,8 @@ private:
     void generateMultiLayerParticles(const glm::vec3& center, const glm::vec4& color, int count, float radiusScale = 3.0f);
     void generateSpiralParticles(const glm::vec3& center, const glm::vec4& color, int count, float radiusScale = 4.0f);
     void generateHeartParticles(const glm::vec3& center, const glm::vec4& color, int count, float radiusScale = 3.0f);
+    void generateImageParticles(const glm::vec3& center, const std::string& imagePath, int sampleRate = 2);
+    
+    // 图片加载辅助方法
+    ImageData loadImage(const std::string& imagePath);
 };

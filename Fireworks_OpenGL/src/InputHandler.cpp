@@ -424,6 +424,23 @@ void processInput(GLFWwindow* window)
     }
     if (glfwGetKey(window, GLFW_KEY_V) == GLFW_RELEASE) keyVPressed = false;
 
+    // I键：图片烟花（显示鱼的图片）
+    static bool keyIPressed = false;
+    if (glfwGetKey(window, GLFW_KEY_I) == GLFW_PRESS && !keyIPressed) {
+        glm::vec3 launchPos = glm::vec3(0.0f, 0.5f, 0.0f);
+
+        fireworkSystem.launch(
+            launchPos,
+            FireworkParticleSystem::FireworkType::Image,
+            1.5f,
+            glm::vec4(1.0f, 1.0f, 1.0f, 1.0f), // 白色作为占位符（实际使用图片颜色）
+            glm::vec4(1.0f, 1.0f, 1.0f, 1.0f),
+            fireworkSystem.launcherSize);
+        keyIPressed = true;
+        std::cout << "[Image] Launch Image Firework (Fish)!" << std::endl;
+    }
+    if (glfwGetKey(window, GLFW_KEY_I) == GLFW_RELEASE) keyIPressed = false;
+
 
     // 运行测试序列
     static bool key0Pressed = false;

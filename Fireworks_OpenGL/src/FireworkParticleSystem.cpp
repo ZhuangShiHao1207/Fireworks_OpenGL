@@ -1,5 +1,6 @@
 #include "FireworkParticleSystem.h"
 #include "miniaudio.h"
+#include "stb_image.h"
 #include <glm/gtc/matrix_transform.hpp>
 #include <random>
 #include <algorithm>
@@ -203,7 +204,7 @@ void FireworkParticleSystem::update(float deltaTime) {
     for (auto& tail : tailParticles) {
         if (tail.life > 0.0f) {
             float t = 1.0f - (tail.life / tail.maxLife);
-            tail.size = std::max(0.01f, tail.size * (1.0f - t * 0.1f));
+            tail.size = (std::max)(0.01f, tail.size * (1.0f - t * 0.1f));
             tail.life -= dt;
             tail.color = calculateColorGradient(tail);
         }
@@ -265,9 +266,9 @@ glm::vec4 FireworkParticleSystem::calculateColorGradient(const Particle& p) cons
         // 初始阶段：稍微明亮（缩短到只有最开始5%的时间）
         float brightness = 1.0f; // 最多增强到1.15倍
         resultColor = glm::vec4(
-            glm::min(p.initialColor.r * brightness, 1.0f), 
-            glm::min(p.initialColor.g * brightness, 1.0f), 
-            glm::min(p.initialColor.b * brightness, 1.0f), 
+            (glm::min)(p.initialColor.r * brightness, 1.0f), 
+            (glm::min)(p.initialColor.g * brightness, 1.0f), 
+            (glm::min)(p.initialColor.b * brightness, 1.0f), 
             1.0f
         );
     }
@@ -308,9 +309,8 @@ void FireworkParticleSystem::createExplosion(const Particle& source, bool isSeco
     }
 
     // Use initialColor instead of current color to keep explosions bright
-    // 所有类型都在第一次爆炸时添加延迟爆炸
-    // 在 createExplosion 函数中修改延迟爆炸事件部分：
-    if (!isSecondary) {
+    // 图片烟花不需要延迟二次爆炸
+    if (!isSecondary && source.type != FireworkType::Image) {
         // 添加延迟0.1秒的第二次爆炸
         DelayedExplosion delayed;
         delayed.position = source.position;
@@ -344,6 +344,10 @@ void FireworkParticleSystem::createExplosion(const Particle& source, bool isSeco
         break;
     case FireworkType::Heart:
         generateHeartParticles(source.position, source.initialColor, count);
+        break;
+    case FireworkType::Image:
+        // 图片烟花使用固定路径（不采样，处理所有像素）
+        generateImageParticles(source.position, "assets/firework_images/fish.png", 1);
         break;
     }
 }
@@ -597,4 +601,107 @@ void FireworkParticleSystem::cleanupGL() {
     }
 
     glInited = false;
+}
+
+// 加载图片数据
+FireworkParticleSystem::ImageData FireworkParticleSystem::loadImage(const std::string& imagePath) {
+    ImageData data;
+    data.width = 0;
+    data.height = 0;
+
+    int channels;
+    unsigned char* imageData = stbi_load(imagePath.c_str(), &data.width, &data.height, &channels, 4); // 强制加载为RGBA
+    
+    if (!imageData) {
+        std::cerr << "Failed to load image: " << imagePath << std::endl;
+        return data;
+    }
+
+    std::cout << "Loaded image: " << imagePath << " (" << data.width << "x" << data.height << ")" << std::endl;
+
+    // 将图片数据转换为glm::vec4数组
+    data.pixels.resize(data.width * data.height);
+    for (int y = 0; y < data.height; ++y) {
+        for (int x = 0; x < data.width; ++x) {
+            int index = (y * data.width + x) * 4;
+            int pixelIndex = y * data.width + x;
+            
+            data.pixels[pixelIndex] = glm::vec4(
+                imageData[index] / 255.0f,     // R
+                imageData[index + 1] / 255.0f, // G
+                imageData[index + 2] / 255.0f, // B
+                imageData[index + 3] / 255.0f  // A
+            );
+        }
+    }
+
+    stbi_image_free(imageData);
+    return data;
+}
+
+// 生成图片烟花粒子
+void FireworkParticleSystem::generateImageParticles(const glm::vec3& center, const std::string& imagePath, int sampleRate) {
+    // 加载图片
+    ImageData image = loadImage(imagePath);
+    if (image.width == 0 || image.height == 0) {
+        std::cerr << "Image load failed, cannot create image firework!" << std::endl;
+        return;
+    }
+
+    // 不采样，处理每个像素
+    int step = 1;
+    
+    // 计算图片缩放比例，使其在3D空间中合适大小
+    float scaleX = 6.0f / image.width;  // 图片宽度映射到6个单位
+    float scaleY = 6.0f / image.height; // 图片高度映射到6个单位
+    float scale = (std::min)(scaleX, scaleY); // 使用较小的缩放保持比例
+
+    // 图片中心化
+    float offsetX = (image.width * scale) / 2.0f;
+    float offsetY = (image.height * scale) / 2.0f;
+
+    int particleCount = 0;
+
+    // 遍历图片像素，创建粒子
+    for (int y = 0; y < image.height; y += step) {
+        for (int x = 0; x < image.width; x += step) {
+            int index = y * image.width + x;
+            glm::vec4 pixelColor = image.pixels[index];
+
+            // 跳过透明像素
+            if (pixelColor.a < 0.1f) continue;
+
+            // 计算粒子在图片中的相对位置（以图片中心为原点）
+            float posX = x * scale - offsetX;
+            float posY = offsetY - y * scale; // 反转Y坐标，修正上下颠倒
+
+            Particle p;
+            p.position = center; // 初始位置在爆炸中心
+            
+            // 速度：从中心向外扩散，保持图片形状
+            // 使用imageOffset存储粒子的目标位置（相对中心）
+            p.imageOffset = glm::vec2(posX, posY);
+            
+            // 初始速度：向图片对应位置扩散（放大效果）
+            // 扩散速度基于距离中心的位置
+            float expandSpeed = 3.0f; // 扩散速度系数
+            p.velocity = glm::vec3(posX * expandSpeed, posY * expandSpeed, 0.0f);
+            
+            // 保持原始颜色，不增强亮度
+            p.color = pixelColor;
+            p.initialColor = pixelColor;
+            
+            p.life = 2.0f; // 2秒后消失
+            p.maxLife = p.life;
+            p.size = childSize * 1.5f; // 稍大一些让图片更清晰
+            p.type = FireworkType::Image;
+            p.isTail = true; // 标记为拖尾粒子，防止生成拖尾
+            p.canExplodeAgain = false;
+            
+            explosionParticles.push_back(p);
+            particleCount++;
+        }
+    }
+
+    std::cout << "Created image firework with " << particleCount << " particles" << std::endl;
 }
