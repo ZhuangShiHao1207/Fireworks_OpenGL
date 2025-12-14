@@ -432,13 +432,13 @@ TextElement* UIManager::GetTextElement(const std::string& id) {
     return nullptr;
 }
 
-void UIManager::ShowHint(const std::string& text, float duration) {
-    currentHint.text = text;
-    currentHint.duration = duration;
-    currentHint.timeLeft = duration;
-    currentHint.alpha = 1.0f;
+void UIManager::ShowHint(const std::string& text, float duration) {//暂时屏蔽HINT消息
+    //currentHint.text = text;
+    //currentHint.duration = duration;
+    //currentHint.timeLeft = duration;
+    //currentHint.alpha = 1.0f;
 
-    std::cout << "[UI Hint] " << text << std::endl;
+    //std::cout << "[UI Hint] " << text << std::endl;
 }
 
 void UIManager::IncrementFireworkCount() {
@@ -449,7 +449,7 @@ void UIManager::IncrementFireworkCount() {
         " / Fireworks: " + std::to_string(fireworkCount);
     ShowHint(hint, 1.5f);
 
-    std::cout << "[UI] Firework count incremented to: " << fireworkCount << std::endl;
+    //std::cout << "[UI] Firework count incremented to: " << fireworkCount << std::endl;
 }
 
 void UIManager::SetFireworkCount(int count) {
@@ -486,8 +486,8 @@ void UIManager::SetFireworkType(int type) {
             std::string hint = "Selected: " + englishNames[type - 1];
             ShowHint(hint, 1.5f);
 
-            std::cout << "[UI] Firework type set to: " << type
-                << " (" << englishNames[type - 1] << ")" << std::endl;
+            //std::cout << "[UI] Firework type set to: " << type
+            //    << " (" << englishNames[type - 1] << ")" << std::endl;
         }
     }
 }
@@ -568,25 +568,23 @@ void UIManager::SetAutoTestMode(bool enabled) {
     }
 }
 
-void UIManager::ToggleControlHints() {
+void UIManager::ToggleAllText() {
     showControlHints = !showControlHints;
 
-    // 更新所有烟花类型说明和控制说明的可见性
+    // 隐藏/显示所有文本元素（不仅仅是控制提示）
     for (auto& pair : uiElements) {
-        if (pair.first.find("firework_hint_") != std::string::npos ||
-            pair.first == "firework_types_title" ||
-            pair.first.find("control_hint_") != std::string::npos ||
-            pair.first == "controls_title") {
+        // 所有文本元素都受控制
+        if (pair.second->GetType() == UIElement::TEXT) {
             pair.second->SetVisible(showControlHints);
         }
     }
 
     std::string status = showControlHints ? "Shown" : "Hidden";
-    std::string hint = "Control hints " + status;
+    std::string hint = "All UI text " + status;
 
     ShowHint(hint, 1.0f);
 
-    std::cout << "[UI] Control hints: " << (showControlHints ? "ON" : "OFF") << std::endl;
+    //std::cout << "[UI] All UI text: " << (showControlHints ? "ON" : "OFF") << std::endl;
 }
 
 void UIManager::OnMouseMove(float x, float y) {
@@ -608,8 +606,111 @@ void UIManager::OnMouseClick(float x, float y) {
     // 处理UI元素点击
     for (auto& pair : uiElements) {
         if (pair.second->Contains(x, y) && pair.second->IsActive()) {
-            std::cout << "[UI] Clicked on: " << pair.first << std::endl;
+            //std::cout << "[UI] Clicked on: " << pair.first << std::endl;
             // 这里可以添加点击事件处理
         }
     }
+}
+
+// UIManager.cpp
+// 在文件末尾添加以下函数
+
+// 开始艺术字动画
+void UIManager::StartArtTextAnimation() {
+    if (artTexts.empty()) return;
+
+    // 获取当前艺术字文本
+    artTextAnim.text = artTexts[currentArtTextIndex];
+    artTextAnim.isActive = true;
+    artTextAnim.timer = 0.0f;
+    artTextAnim.alpha = 0.0f;
+    artTextAnim.scale = 0.5f;
+    artTextAnim.positionY = screenHeight / 2.0f;
+
+    // 移动到下一个艺术字
+    currentArtTextIndex = (currentArtTextIndex + 1) % artTexts.size();
+
+    std::cout << "[ArtText] Showing: " << artTextAnim.text << std::endl;
+}
+
+// 更新艺术字动画
+void UIManager::UpdateArtTextAnimation(float deltaTime) {
+    if (!artTextAnim.isActive) return;
+
+    artTextAnim.timer += deltaTime;
+    float progress = artTextAnim.timer / artTextAnim.totalDuration;
+
+    // 动画分为3个阶段：
+    // 1. 进入阶段 (0.0-1.0秒)：淡入 + 放大
+    // 2. 保持阶段 (1.0-3.0秒)：轻微脉动
+    // 3. 退出阶段 (3.0-4.0秒)：淡出 + 上移
+
+    if (progress < 0.25f) { // 0-1秒：进入
+        float t = progress / 0.25f; // 归一化到0-1
+        artTextAnim.alpha = t;
+        artTextAnim.scale = 0.5f + t * 1.5f; // 0.5 -> 2.0
+        artTextAnim.positionY = screenHeight / 2.0f;
+    }
+    else if (progress < 0.75f) { // 1-3秒：保持 + 脉动
+        float t = (progress - 0.25f) / 0.5f;
+        artTextAnim.alpha = 1.0f;
+        // 轻微脉动效果
+        artTextAnim.scale = 2.0f + sin(t * 3.14159f * 2.0f) * 0.1f;
+        artTextAnim.positionY = screenHeight / 2.0f;
+    }
+    else { // 3-4秒：退出
+        float t = (progress - 0.75f) / 0.25f;
+        artTextAnim.alpha = 1.0f - t;
+        artTextAnim.scale = 2.0f - t * 0.5f; // 2.0 -> 1.5
+        artTextAnim.positionY = screenHeight / 2.0f - t * 100.0f; // 向上移动
+    }
+
+    // 动画结束
+    if (progress >= 1.0f) {
+        artTextAnim.isActive = false;
+    }
+}
+
+// 渲染艺术字动画
+void UIManager::RenderArtTextAnimation() {
+    if (!artTextAnim.isActive || !textRenderer) return;
+
+    // 计算文本宽度（近似值）
+    float textWidth = artTextAnim.text.length() * 30.0f * artTextAnim.scale;
+    float x = (screenWidth - textWidth) / 2.0f;
+
+    // 颜色：金色 + 透明度
+    glm::vec4 color(1.0f, 0.8f, 0.2f, artTextAnim.alpha);
+
+    // 渲染多层创建辉光效果
+    if (artTextAnim.alpha > 0.3f) {
+        // 辉光层1（外圈）
+        glm::vec4 glowColor(1.0f, 0.6f, 0.1f, artTextAnim.alpha * 0.3f);
+        textRenderer->RenderTextWithAlpha(
+            artTextAnim.text,
+            x - 2.0f,
+            artTextAnim.positionY - 2.0f,
+            artTextAnim.scale * 1.05f,
+            glowColor
+        );
+
+        // 辉光层2（中间）
+        glowColor = glm::vec4(1.0f, 0.7f, 0.15f, artTextAnim.alpha * 0.5f);
+        textRenderer->RenderTextWithAlpha(
+            artTextAnim.text,
+            x - 1.0f,
+            artTextAnim.positionY - 1.0f,
+            artTextAnim.scale * 1.02f,
+            glowColor
+        );
+    }
+
+    // 主文本
+    textRenderer->RenderTextWithAlpha(
+        artTextAnim.text,
+        x,
+        artTextAnim.positionY,
+        artTextAnim.scale,
+        color
+    );
 }

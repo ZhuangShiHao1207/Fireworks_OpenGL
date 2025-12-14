@@ -120,6 +120,7 @@ public:
     void RemoveElement(const std::string& id);
     UIElement* GetElement(const std::string& id);
     TextElement* GetTextElement(const std::string& id);
+    void StartArtTextAnimation();//艺术字动画控制
 
     // 创建预设UI元素
     void CreateDefaultUI();
@@ -133,7 +134,7 @@ public:
     void SetMouseEnabled(bool enabled);
     void SetSceneLightsEnabled(bool enabled);
     void SetAutoTestMode(bool enabled);
-    void ToggleControlHints();
+    void ToggleAllText();
 
     // 鼠标交互
     void OnMouseMove(float x, float y);
@@ -170,4 +171,32 @@ private:
 
     // 内部状态
     int fireworkCount = 0;
+
+    // 艺术字状态
+    struct ArtTextAnimation {
+        bool isActive = false;
+        std::string text;
+        float alpha = 0.0f;
+        float scale = 1.0f;
+        float positionY = 0.0f;
+        float timer = 0.0f;
+        float totalDuration = 4.0f; // 总时长：4秒
+    };
+
+    ArtTextAnimation artTextAnim;
+
+    // 艺术字文本列表
+    std::vector<std::string> artTexts = {
+        "FIREWORKS!",
+        "AMAZING!",
+        "WOW!",
+        "SPECTACULAR!",
+        "BEAUTIFUL!"
+    };
+
+    int currentArtTextIndex = 0;
+
+    // 更新和渲染艺术字
+    void UpdateArtTextAnimation(float deltaTime);
+    void RenderArtTextAnimation();
 };

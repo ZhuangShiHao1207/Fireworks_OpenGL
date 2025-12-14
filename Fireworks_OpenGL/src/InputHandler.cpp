@@ -5,7 +5,7 @@
 #include "PostProcessor.h"
 #include <iostream>
 #include <UIManager.h>
-
+#include<random>
 // 外部变量声明（在 main.cpp 中定义）
 extern Camera camera;
 extern float deltaTime;
@@ -95,10 +95,10 @@ void processInput(GLFWwindow* window)
     static bool hKeyPressed = false;
     if (glfwGetKey(window, GLFW_KEY_H) == GLFW_PRESS && !hKeyPressed) {
         if (uiManager) {
-            uiManager->ToggleControlHints();
+            uiManager->ToggleAllText();  // 改为隐藏所有文本
         }
         hKeyPressed = true;
-        std::cout << "[UI] Toggled control hints" << std::endl;
+        std::cout << "[UI] Toggled all UI text" << std::endl;
     }
     if (glfwGetKey(window, GLFW_KEY_H) == GLFW_RELEASE) {
         hKeyPressed = false;
@@ -304,25 +304,76 @@ void mouse_callback(GLFWwindow* window, double xposIn, double yposIn)
 // glfw: 鼠标点击时调用此回调函数
 void mouse_button_callback(GLFWwindow* window, int button, int action, int mods)
 {
+    static int currentFireworkType = 1; // 在这里声明，作为静态变量
+
     // 只在鼠标锁定模式下发射烟花
     if (!mouseEnabled) return;
 
     // 检查是否是左键按下
     if (button == GLFW_MOUSE_BUTTON_LEFT && action == GLFW_PRESS)
     {
-        // 获取当前鼠标位置（在锁定模式下，鼠标位置可能为0,0，我们需要使用摄像机方向）
-        double xpos, ypos;
-        glfwGetCursorPos(window, &xpos, &ypos);
+        // 计算摄像机射线与地面(y=0)的交点
+        glm::vec3 launchPosition;
 
-        // 将屏幕坐标转换为世界坐标（需要深度缓冲信息，这里简化处理）
-        // 使用摄像机前方的位置作为发射基准点
+        // 正确的射线与地面交点计算
+        // 射线方程: P = camera.Position + t * camera.Front
+        // 地面方程: y = 0
+        // 代入: camera.Position.y + t * camera.Front.y = 0
+        // 解出: t = -camera.Position.y / camera.Front.y
 
-        // 从摄像机位置向前发射烟花
-        glm::vec3 launchPosition = camera.Position + camera.Front * 5.0f; // 摄像机前方5个单位
-        launchPosition.y = 0.5f; // 设置在地面上方一点
+        // 检查视线方向是否有垂直分量
+        if (fabs(camera.Front.y) > 0.0001f) {
+            // 计算参数t
+            float t = -camera.Position.y / camera.Front.y;
 
-        // 根据当前选择的烟花类型发射
-        static int currentFireworkType = 1; // 默认球形烟花
+            // 只有当t > 0时，交点才在摄像机前方
+            if (t > 0) {
+                launchPosition = camera.Position + camera.Front * t;
+                launchPosition.y = 0.5f; // 确保在地面上方发射
+            }
+            else {
+                // t <= 0，说明地面在摄像机后方，使用固定距离
+                launchPosition = camera.Position + camera.Front * 30.0f;
+                launchPosition.y = 0.5f;
+            }
+        }
+        else {
+            // 视线基本水平（垂直分量接近0），使用固定距离
+            launchPosition = camera.Position + camera.Front * 30.0f;
+            launchPosition.y = 0.5f;
+        }
+
+        // 确保发射位置在合理范围内（避免太远或太近）
+        // 限制离原点的水平距离
+        float maxHorizontalDistance = 50.0f;
+        glm::vec2 horizontalPos(launchPosition.x, launchPosition.z);
+        float distanceFromCenter = glm::length(horizontalPos);
+
+        if (distanceFromCenter > maxHorizontalDistance) {
+            // 归一化并限制距离
+            glm::vec2 dir = glm::normalize(horizontalPos) * maxHorizontalDistance;
+            launchPosition.x = dir.x;
+            launchPosition.z = dir.y;
+        }
+
+        // 确保不会发射到中心点太近的位置
+        float minDistance = 3.0f;
+        if (distanceFromCenter < minDistance) {
+            glm::vec2 dir = glm::normalize(horizontalPos) * minDistance;
+            launchPosition.x = dir.x;
+            launchPosition.z = dir.y;
+        }
+
+        // 添加随机数生成器用于随机效果
+        static std::random_device rd;
+        static std::mt19937 gen(rd());
+        static std::uniform_real_distribution<float> dis(0.0f, 1.0f);
+
+        // 随机生命周期：0.8-1.2秒，控制爆炸高度
+        float randomLife = 0.8f + dis(gen) * 0.4f;
+
+        // 随机轻微颜色变化
+        float colorVariation = 0.9f + dis(gen) * 0.2f;
 
         // 更新UI中的烟花计数
         if (uiManager) {
@@ -335,20 +386,21 @@ void mouse_button_callback(GLFWwindow* window, int button, int action, int mods)
             fireworkSystem.launch(
                 launchPosition,
                 FireworkParticleSystem::FireworkType::Sphere,
-                1.5f,
-                glm::vec4(1.0f, 1.0f, 0.5f, 1.0f),
+                randomLife, // 使用随机生命周期
+                glm::vec4(1.0f, 1.0f, 0.5f, 1.0f) * colorVariation,
                 fireworkSystem.launcherSize
             );
             std::cout << "[Mouse] Launch Sphere firework at ("
-                << launchPosition.x << ", " << launchPosition.y << ", " << launchPosition.z << ")" << std::endl;
+                << launchPosition.x << ", " << launchPosition.y << ", " << launchPosition.z << ")"
+                << " with life " << randomLife << std::endl;
             break;
 
         case 2:
             fireworkSystem.launch(
                 launchPosition,
                 FireworkParticleSystem::FireworkType::Ring,
-                1.5f,
-                glm::vec4(0.5f, 1.0f, 1.0f, 1.0f),
+                randomLife,
+                glm::vec4(0.5f, 1.0f, 1.0f, 1.0f) * colorVariation,
                 fireworkSystem.launcherSize
             );
             std::cout << "[Mouse] Launch Ring firework" << std::endl;
@@ -358,8 +410,8 @@ void mouse_button_callback(GLFWwindow* window, int button, int action, int mods)
             fireworkSystem.launch(
                 launchPosition,
                 FireworkParticleSystem::FireworkType::Heart,
-                1.5f,
-                glm::vec4(1.0f, 0.5f, 1.0f, 1.0f),
+                randomLife,
+                glm::vec4(1.0f, 0.5f, 1.0f, 1.0f) * colorVariation,
                 fireworkSystem.launcherSize
             );
             std::cout << "[Mouse] Launch Heart firework" << std::endl;
@@ -369,8 +421,8 @@ void mouse_button_callback(GLFWwindow* window, int button, int action, int mods)
             fireworkSystem.launch(
                 launchPosition,
                 FireworkParticleSystem::FireworkType::MultiLayer,
-                1.5f,
-                glm::vec4(0.3f, 0.8f, 1.0f, 1.0f),
+                randomLife,
+                glm::vec4(0.3f, 0.8f, 1.0f, 1.0f) * colorVariation,
                 fireworkSystem.launcherSize
             );
             std::cout << "[Mouse] Launch MultiLayer firework" << std::endl;
@@ -380,8 +432,8 @@ void mouse_button_callback(GLFWwindow* window, int button, int action, int mods)
             fireworkSystem.launch(
                 launchPosition,
                 FireworkParticleSystem::FireworkType::Spiral,
-                1.5f,
-                glm::vec4(1.0f, 0.8f, 0.2f, 1.0f),
+                randomLife,
+                glm::vec4(1.0f, 0.8f, 0.2f, 1.0f) * colorVariation,
                 fireworkSystem.launcherSize
             );
             std::cout << "[Mouse] Launch Spiral firework" << std::endl;
@@ -391,13 +443,26 @@ void mouse_button_callback(GLFWwindow* window, int button, int action, int mods)
             fireworkSystem.launch(
                 launchPosition,
                 FireworkParticleSystem::FireworkType::DoubleExplosion,
-                1.5f,
-                glm::vec4(0.8f, 0.3f, 1.0f, 1.0f),
+                randomLife,
+                glm::vec4(0.8f, 0.3f, 1.0f, 1.0f) * colorVariation,
                 fireworkSystem.launcherSize
             );
             std::cout << "[Mouse] Launch DoubleExplosion firework" << std::endl;
             break;
         }
+    }
+
+    // 鼠标右键切换烟花类型
+    if (button == GLFW_MOUSE_BUTTON_RIGHT && action == GLFW_PRESS && mouseEnabled)
+    {
+        currentFireworkType = (currentFireworkType % 6) + 1;
+
+        if (uiManager) {
+            uiManager->SetFireworkType(currentFireworkType);
+            uiManager->ShowHint("Mouse firework type changed", 1.0f);
+        }
+
+        std::cout << "[Mouse] Firework type changed to: " << currentFireworkType << std::endl;
     }
 }
 
@@ -405,26 +470,4 @@ void mouse_button_callback(GLFWwindow* window, int button, int action, int mods)
 void scroll_callback(GLFWwindow* window, double xoffset, double yoffset)
 {
     camera.ProcessMouseScroll(static_cast<float>(yoffset));
-}
-
-// 鼠标位置辅助函数
-glm::vec3 GetMouseWorldPosition(GLFWwindow* window, Camera& camera, float distance = 10.0f)
-{
-    // 获取鼠标位置
-    double xpos, ypos;
-    glfwGetCursorPos(window, &xpos, &ypos);
-
-    // 将屏幕坐标转换为归一化设备坐标
-    int width, height;
-    glfwGetWindowSize(window, &width, &height);
-
-    float x = (2.0f * xpos) / width - 1.0f;
-    float y = 1.0f - (2.0f * ypos) / height;
-
-    // 创建射线
-    glm::vec4 rayClip = glm::vec4(x, y, -1.0f, 1.0f);
-
-    // 需要投影矩阵和视图矩阵来转换到世界空间
-    // 这里简化：使用摄像机方向作为发射方向
-    return camera.Position + camera.Front * distance;
 }
