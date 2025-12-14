@@ -370,7 +370,7 @@ void FireworkParticleSystem::generateSphereParticles(const glm::vec3& center, co
         ) * r;
         p.color = color;
         p.initialColor = color;
-        p.life = 1.2f + 0.5f * dis(gen);
+        p.life = 0.6f + 0.25f * dis(gen);
         p.maxLife = p.life;
         p.size = childSize;
         p.type = FireworkType::Sphere;
@@ -395,7 +395,7 @@ void FireworkParticleSystem::generateRingParticles(const glm::vec3& center, cons
         );
         p.color = color;
         p.initialColor = color;
-        p.life = 1.2f + 0.5f * dis(gen);
+        p.life = 0.6f + 0.25f * dis(gen);
         p.maxLife = p.life;
         p.size = childSize;
         p.type = FireworkType::Ring;
@@ -438,7 +438,7 @@ void FireworkParticleSystem::generateMultiLayerParticles(const glm::vec3& center
             ) * layerRadius;
             p.color = layerColor;
             p.initialColor = layerColor;
-            p.life = 1.0f + 0.3f * dis(gen) + layer * 0.3f; // 外层寿命更长
+            p.life = 0.5f + 0.15f * dis(gen) + layer * 0.15f; // 外层寿命更长
             p.maxLife = p.life;
             p.size = childSize * (1.0f + layer * 0.2f); // 外层更大
             p.type = FireworkType::MultiLayer;
@@ -469,7 +469,7 @@ void FireworkParticleSystem::generateSpiralParticles(const glm::vec3& center, co
         );
         p.color = color;
         p.initialColor = color;
-        p.life = 1.5f + 0.5f * dis(gen);
+        p.life = 0.75f + 0.25f * dis(gen);
         p.maxLife = p.life;
         p.size = childSize;
         p.type = FireworkType::Spiral;
@@ -503,7 +503,7 @@ void FireworkParticleSystem::generateHeartParticles(const glm::vec3& center, con
         );
         p.color = color;
         p.initialColor = color;
-        p.life = 1.5f + 0.5f * dis(gen);
+        p.life = 0.75f + 0.25f * dis(gen);
         p.maxLife = p.life;
         p.size = childSize;
         p.type = FireworkType::Heart;
@@ -691,7 +691,7 @@ void FireworkParticleSystem::generateImageParticles(const glm::vec3& center, con
             p.color = pixelColor;
             p.initialColor = pixelColor;
             
-            p.life = 0.5f; // 1秒后消失
+            p.life = 0.5f; // 0.5秒后消失
             p.maxLife = p.life;
             p.size = childSize ; // 稍大一些让图片更清晰
             p.type = FireworkType::Image;
