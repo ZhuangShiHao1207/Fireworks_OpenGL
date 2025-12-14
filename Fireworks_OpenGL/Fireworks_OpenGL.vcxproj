@@ -105,13 +105,13 @@
       <SDLCheck>true</SDLCheck>
       <PreprocessorDefinitions>_DEBUG;_CONSOLE;%(PreprocessorDefinitions)</PreprocessorDefinitions>
       <ConformanceMode>true</ConformanceMode>
-      <AdditionalIncludeDirectories>$(ProjectDir)include;$(ProjectDir)external\glfw\glfw-3.4\include;$(ProjectDir)external\glad\include;$(ProjectDir)external\glm;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
+      <AdditionalIncludeDirectories>$(ProjectDir)include;$(ProjectDir)external\glfw\glfw-3.4\include;$(ProjectDir)external\glad\include;$(ProjectDir)external\glm;$(VcpkgRoot)installed\x64-windows\include;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
     </ClCompile>
     <Link>
       <SubSystem>Console</SubSystem>
       <GenerateDebugInformation>true</GenerateDebugInformation>
-      <AdditionalLibraryDirectories>$(ProjectDir)external\glfw\glfw-3.4\build\src\Release</AdditionalLibraryDirectories>
-      <AdditionalDependencies>glfw3.lib;opengl32.lib;%(AdditionalDependencies)</AdditionalDependencies>
+      <AdditionalLibraryDirectories>$(ProjectDir)external\glfw\glfw-3.4\build\src\Release;$(VcpkgRoot)installed\x64-windows\debug\lib</AdditionalLibraryDirectories>
+      <AdditionalDependencies>glfw3.lib;opengl32.lib;assimp-vc143-mtd.lib;%(AdditionalDependencies)</AdditionalDependencies>
     </Link>
   </ItemDefinitionGroup>
   <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Release|x64'">
@@ -127,7 +127,7 @@
     <Link>
       <SubSystem>Console</SubSystem>
       <GenerateDebugInformation>true</GenerateDebugInformation>
-      <AdditionalLibraryDirectories>$(VcpkgRoot)installed\x64-windows\lib;$(ProjectDir)external\glfw\glfw-3.4\build\src\Release;$(VcpkgRoot)installed\x64-windows\lib;%(AdditionalLibraryDirectories)</AdditionalLibraryDirectories>
+      <AdditionalLibraryDirectories>$(VcpkgRoot)installed\x64-windows\lib;$(ProjectDir)external\glfw\glfw-3.4\build\src\Release;%(AdditionalLibraryDirectories)</AdditionalLibraryDirectories>
       <AdditionalDependencies>glfw3.lib;opengl32.lib;assimp-vc143-mt.lib;%(AdditionalDependencies)</AdditionalDependencies>
     </Link>
     <PostBuildEvent>
@@ -137,6 +137,7 @@
   <ItemGroup>
     <ClCompile Include="external\glad\src\glad.c" />
     <ClCompile Include="main.cpp" />
+    <ClCompile Include="miniaudio_impl.cpp" />
     <ClCompile Include="PostProcessor.cpp" />
     <ClCompile Include="src\InputHandler.cpp" />
     <ClCompile Include="src\FireworkParticleSystem.cpp" />
@@ -147,10 +148,10 @@
     <ClInclude Include="include\FireworkParticleSystem.h" />
     <ClInclude Include="include\Ground.h" />
     <ClInclude Include="include\Mesh.h" />
+    <ClInclude Include="include\miniaudio.h" />
     <ClInclude Include="include\Model.h" />
     <ClInclude Include="include\PointLight.h" />
     <ClInclude Include="include\Shader.h" />
-    <ClInclude Include="include\SimpleModel.h" />
     <ClInclude Include="include\Skybox.h" />
     <ClInclude Include="include\InputHandler.h" />
     <ClInclude Include="include\stb_image.h" />

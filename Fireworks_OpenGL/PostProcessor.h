@@ -15,6 +15,8 @@ public:
     void Unbind();
     // 绘制屏幕四边形并应用后处理着色器
     void Render();
+    // 设置渐变 alpha 值
+    void SetFadeAlpha(float alpha);
 
     unsigned int GetTexture() const { return textureColorBuffer; }
 
