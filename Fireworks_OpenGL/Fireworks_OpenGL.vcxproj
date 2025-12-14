@@ -135,20 +135,20 @@
     </PostBuildEvent>
   </ItemDefinitionGroup>
   <ItemGroup>
-    <ClCompile Include="..\..\miniaudio\miniaudio.c" />
     <ClCompile Include="external\glad\src\glad.c" />
     <ClCompile Include="main.cpp" />
+    <ClCompile Include="miniaudio_impl.cpp" />
     <ClCompile Include="PostProcessor.cpp" />
     <ClCompile Include="src\InputHandler.cpp" />
     <ClCompile Include="src\FireworkParticleSystem.cpp" />
     <ClCompile Include="stb_image_impl.cpp" />
   </ItemGroup>
   <ItemGroup>
-    <ClInclude Include="..\..\miniaudio\miniaudio.h" />
     <ClInclude Include="include\Camera.h" />
     <ClInclude Include="include\FireworkParticleSystem.h" />
     <ClInclude Include="include\Ground.h" />
     <ClInclude Include="include\Mesh.h" />
+    <ClInclude Include="include\miniaudio.h" />
     <ClInclude Include="include\Model.h" />
     <ClInclude Include="include\PointLight.h" />
     <ClInclude Include="include\Shader.h" />
