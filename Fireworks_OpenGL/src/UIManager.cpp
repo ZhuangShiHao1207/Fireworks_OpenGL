@@ -67,6 +67,9 @@ bool UIManager::Initialize(unsigned int width, unsigned int height) {
     // 初始化艺术字
     InitializeArtTexts();
 
+    // 初始位置更新
+    UpdateSimpleUIPositions();
+
     std::cout << "[UIManager] Initialized successfully" << std::endl;
     return true;
 }
@@ -185,12 +188,19 @@ void UIManager::CreateDefaultUI() {
 
     // 烟花类型说明
     std::vector<std::string> fireworkTypeHints = {
-        "1: Sphere (Red/Yellow)",
+        "1: Sphere (Yellow)",
         "2: Ring (Cyan)",
         "3: Heart (Pink)",
         "4: MultiLayer (Blue)",
         "5: Spiral (Gold)",
-        "6: Double (Purple)"
+        "6: Sphere (Purple)",
+        "7: Dual Sphere (Random Colors)",
+        "8: Dual Ring (Random Colors)",
+        "Z: Dual Heart (Random Colors)",
+        "X: Dual MultiLayer (Random Colors)",
+        "C: Dual Spiral (Random Colors)",
+        "V: Dual Sphere (Random Colors)",
+        "I: Image Firework (Genshin Impact)"
     };
 
     float fireworkHintY = 330.0f;
@@ -204,14 +214,27 @@ void UIManager::CreateDefaultUI() {
 
         // 根据烟花类型设置颜色
         glm::vec4 color;
-        switch (i) {
-        case 0: color = glm::vec4(1.0f, 0.5f, 0.5f, 1.0f); break;    // 红/黄
-        case 1: color = glm::vec4(0.5f, 1.0f, 1.0f, 1.0f); break;    // 青
-        case 2: color = glm::vec4(1.0f, 0.5f, 1.0f, 1.0f); break;    // 粉
-        case 3: color = glm::vec4(0.3f, 0.8f, 1.0f, 1.0f); break;    // 蓝
-        case 4: color = glm::vec4(1.0f, 0.8f, 0.2f, 1.0f); break;    // 金
-        case 5: color = glm::vec4(0.8f, 0.3f, 1.0f, 1.0f); break;    // 紫
-        default: color = glm::vec4(0.9f, 0.9f, 0.9f, 1.0f);
+        // 基础烟花（1-6键）
+        if (i < 6) {
+            switch (i) {
+            case 0: color = glm::vec4(1.0f, 0.5f, 0.5f, 0.7f); break;    // 红/黄
+            case 1: color = glm::vec4(0.5f, 1.0f, 1.0f, 0.7f); break;    // 青
+            case 2: color = glm::vec4(1.0f, 0.5f, 1.0f, 0.7f); break;    // 粉
+            case 3: color = glm::vec4(0.3f, 0.8f, 1.0f, 0.7f); break;    // 蓝
+            case 4: color = glm::vec4(1.0f, 0.8f, 0.2f, 0.7f); break;    // 金
+            case 5: color = glm::vec4(0.8f, 0.3f, 1.0f, 0.7f); break;    // 紫
+            default: color = glm::vec4(0.9f, 0.9f, 0.9f, 0.7f);
+            }
+        }
+        // 双色随机烟花（7-12）
+        else if (i < 12) {
+            // 统一使用白色
+            color = glm::vec4(0.9f, 0.9f, 0.9f, 0.7f);
+        }
+        // 图片烟花（13）
+        else {
+            // 使用绿色
+            color = glm::vec4(0.3f, 1.0f, 0.3f, 0.7f);
         }
 
         hint->SetColor(color);
@@ -236,14 +259,14 @@ void UIManager::CreateDefaultUI() {
         "Mouse click: Launch firework",
         "Mouse (locked): ",
         "Left click = Launch",
-        "Mouse (locked): ",
         "Right click = Change type",
         "M: Toggle mouse control",
         "L: Toggle scene lights",
         "R: Orbit mode",
         "F: Focus center",
+        "9: Cinematic mode",
         "0: Auto test mode",
-        "H: Hide/Show hints",
+        "H: Hide/Show all UI hints",
         "ESC: Exit"
     };
 
@@ -255,7 +278,7 @@ void UIManager::CreateDefaultUI() {
         TextElement* hint = new TextElement();
         hint->SetText(controlHints[i]);
         hint->SetPosition(screenWidth - 350.0f, controlHintY + i * controlHintLineHeight);
-        hint->SetColor(glm::vec4(0.9f, 0.9f, 0.9f, 1.0f));
+        hint->SetColor(glm::vec4(0.9f, 0.9f, 0.9f, 0.2f));
         hint->SetScale(0.5f);
         AddElement(id, hint);
     }
@@ -372,51 +395,85 @@ float UIManager::CalculateUIScale() const {
 void UIManager::UpdateSimpleUIPositions() {
     float scale = CalculateUIScale();
 
-    // 更新UI元素位置和大小
-    auto updateElement = [&](const std::string& id, float x, float y, float baseScale) {
-        UIElement* element = GetElement(id);
-        if (element) {
-            element->SetPosition(x * scale, y * scale);
-            if (element->GetType() == UIElement::TEXT) {
-                TextElement* text = static_cast<TextElement*>(element);
-                text->SetScale(baseScale * scale);
-            }
-        }
-        };
-
     // 标题
-    updateElement("title", screenWidth / 2.0f - 180.0f * scale, 40.0f * scale, 1.0f);
+    UIElement* title = GetElement("title");
+    if (title) {
+        // 计算精确的居中位置
+        float textWidth = textRenderer->CalculateTextWidth("Fireworks System", 1.0f * scale);
+        title->SetPosition((screenWidth - textWidth) / 2.0f, 40.0f * scale);
+        if (title->GetType() == UIElement::TEXT) {
+            static_cast<TextElement*>(title)->SetScale(1.0f * scale);
+        }
+    }
 
     // 左侧状态栏
     float leftX = 20.0f * scale;
-    float stateY = 40.0f * scale;
+    float stateY = 60.0f * scale;
     float stateSpacing = 40.0f * scale;
-    updateElement("fps", leftX, stateY, 0.8f);
-    updateElement("firework_type", leftX, stateY + stateSpacing, 0.8f);
-    updateElement("firework_count", leftX, stateY + stateSpacing * 2, 0.8f);
-    updateElement("mode", leftX, stateY + stateSpacing * 3, 0.8f);
-    updateElement("mouse_state", leftX, stateY + stateSpacing * 4, 0.8f);
-    updateElement("lights_state", leftX, stateY + stateSpacing * 5, 0.8f);
 
-    // 烟花类型说明
-    float typesY = stateY + stateSpacing * 7;
-    updateElement("firework_types_title", leftX, typesY, 0.7f);
-    for (int i = 0; i < 6; i++) {
-        updateElement("firework_hint_" + std::to_string(i),
-            leftX + 10.0f * scale,
-            typesY + 30.0f * scale + i * 25.0f * scale,
-            0.5f);
+    // 状态栏元素
+    std::vector<std::string> stateElements = {
+        "fps", "firework_type", "firework_count",
+        "mode", "mouse_state", "lights_state"
+    };
+
+    for (size_t i = 0; i < stateElements.size(); i++) {
+        UIElement* element = GetElement(stateElements[i]);
+        if (element) {
+            element->SetPosition(leftX, stateY + stateSpacing * i);
+            if (element->GetType() == UIElement::TEXT) {
+                static_cast<TextElement*>(element)->SetScale(0.8f * scale);
+            }
+        }
     }
 
-    // 控制说明（右上角）
+    // 烟花类型说明 - 现在有13行
+    float typesY = stateY + stateSpacing * stateElements.size() + 20.0f * scale;
+
+    UIElement* typesTitle = GetElement("firework_types_title");
+    if (typesTitle) {
+        typesTitle->SetPosition(leftX, typesY);
+        if (typesTitle->GetType() == UIElement::TEXT) {
+            static_cast<TextElement*>(typesTitle)->SetScale(0.7f * scale);
+        }
+    }
+
+    // 烟花类型说明项 - 共13行
+    for (int i = 0; i < 13; i++) {
+        std::string id = "firework_hint_" + std::to_string(i);
+        UIElement* hint = GetElement(id);
+        if (hint) {
+            hint->SetPosition(leftX + 15.0f * scale,
+                typesY + 30.0f * scale + i * 25.0f * scale);
+            if (hint->GetType() == UIElement::TEXT) {
+                static_cast<TextElement*>(hint)->SetScale(0.5f * scale);
+            }
+        }
+    }
+
+    // 控制说明 - 现在有14行
     float rightX = screenWidth - 350.0f * scale;
     float controlsY = 60.0f * scale;
-    updateElement("controls_title", rightX, controlsY, 0.7f);
-    for (int i = 0; i < 12; i++) {
-        updateElement("control_hint_" + std::to_string(i),
-            rightX,
-            controlsY + 25.0f * scale + i * 25.0f * scale,
-            0.5f);
+
+    UIElement* controlsTitle = GetElement("controls_title");
+    if (controlsTitle) {
+        controlsTitle->SetPosition(rightX, controlsY);
+        if (controlsTitle->GetType() == UIElement::TEXT) {
+            static_cast<TextElement*>(controlsTitle)->SetScale(0.7f * scale);
+        }
+    }
+
+    // 控制说明项 - 共14行
+    for (int i = 0; i < 14; i++) {
+        std::string id = "control_hint_" + std::to_string(i);
+        UIElement* hint = GetElement(id);
+        if (hint) {
+            hint->SetPosition(rightX,
+                controlsY + 25.0f * scale + i * 25.0f * scale);
+            if (hint->GetType() == UIElement::TEXT) {
+                static_cast<TextElement*>(hint)->SetScale(0.5f * scale);
+            }
+        }
     }
 }
 
@@ -438,51 +495,6 @@ void UIManager::UpdateScreenSize(unsigned int width, unsigned int height) {
         artText.x = screenWidth / 2.0f;
         artText.y = screenHeight / 2.0f;
         artText.scale = 2.0f * scale;
-    }
-}
-
-void UIManager::UpdateElementPositions() {
-    // 更新标题位置（顶部居中）
-    UIElement* title = GetElement("title");
-    if (title) {
-        // 粗略估算标题宽度："Fireworks System" 大约 17个字符 * 12像素 = 204像素
-        float titleWidth = 17.0f * 12.0f;
-        float titleX = (screenWidth - titleWidth) / 2.0f;
-        title->SetPosition(titleX, 20.0f);
-    }
-    
-    // 更新烟花类型说明位置
-    UIElement* fireworkTypesTitle = GetElement("firework_types_title");
-    if (fireworkTypesTitle) {
-        fireworkTypesTitle->SetPosition(20.0f, 250.0f);
-    }
-    
-    float fireworkHintY = 275.0f;
-    float fireworkHintLineHeight = 18.0f;
-    
-    for (int i = 0; i < 6; i++) {
-        std::string id = "firework_hint_" + std::to_string(i);
-        UIElement* hint = GetElement(id);
-        if (hint) {
-            hint->SetPosition(30.0f, fireworkHintY + i * fireworkHintLineHeight);
-        }
-    }
-    
-    // 更新控制说明位置（右上角）
-    UIElement* controlsTitle = GetElement("controls_title");
-    if (controlsTitle) {
-        controlsTitle->SetPosition(screenWidth - 200.0f, 60.0f);
-    }
-    
-    float controlHintY = 85.0f;
-    float controlHintLineHeight = 18.0f;
-    
-    for (int i = 0; i < 8; i++) {
-        std::string id = "control_hint_" + std::to_string(i);
-        UIElement* hint = GetElement(id);
-        if (hint) {
-            hint->SetPosition(screenWidth - 200.0f, controlHintY + i * controlHintLineHeight);
-        }
     }
 }
 
@@ -550,29 +562,37 @@ void UIManager::SetFireworkCount(int count) {
 void UIManager::SetFireworkType(int type) {
     TextElement* element = GetTextElement("firework_type");
     if (element) {
-        std::string englishNames[] = { "Sphere", "Ring", "Heart", "MultiLayer", "Spiral", "Double" };
+        std::string englishNames[] = {
+            "Sphere", "Ring", "Heart", "MultiLayer", "Spiral", "Sphere",
+            "Dual Sphere", "Dual Ring", "Dual Heart", "Dual MultiLayer",
+            "Dual Spiral", "Dual Sphere", "Image"
+        };
 
-        if (type >= 1 && type <= 6) {
+        if (type >= 1 && type <= 13) {
             std::string text = "Type: " + englishNames[type - 1];
             element->SetText(text);
 
             // 根据类型设置颜色
             glm::vec4 colors[] = {
-                glm::vec4(1.0f, 0.5f, 0.5f, 1.0f),  // 红
-                glm::vec4(0.5f, 1.0f, 0.5f, 1.0f),  // 绿
-                glm::vec4(1.0f, 0.5f, 1.0f, 1.0f),  // 紫
-                glm::vec4(0.5f, 0.8f, 1.0f, 1.0f),  // 蓝
-                glm::vec4(1.0f, 0.8f, 0.2f, 1.0f),  // 金
-                glm::vec4(0.8f, 0.3f, 1.0f, 1.0f)   // 紫
+                glm::vec4(1.0f, 0.5f, 0.5f, 1.0f),  // 红/黄球形
+                glm::vec4(0.5f, 1.0f, 1.0f, 1.0f),  // 青环形
+                glm::vec4(1.0f, 0.5f, 1.0f, 1.0f),  // 粉心形
+                glm::vec4(0.3f, 0.8f, 1.0f, 1.0f),  // 蓝多层
+                glm::vec4(1.0f, 0.8f, 0.2f, 1.0f),  // 金螺旋
+                glm::vec4(0.8f, 0.3f, 1.0f, 1.0f),  // 紫球形
+                glm::vec4(1.0f, 0.8f, 0.2f, 1.0f),  // 双色球形
+                glm::vec4(1.0f, 0.8f, 0.2f, 1.0f),  // 双色环形
+                glm::vec4(1.0f, 0.8f, 0.2f, 1.0f),  // 双色心形
+                glm::vec4(1.0f, 0.8f, 0.2f, 1.0f),  // 双色多层
+                glm::vec4(1.0f, 0.8f, 0.2f, 1.0f),  // 双色螺旋
+                glm::vec4(1.0f, 0.8f, 0.2f, 1.0f),  // 双色球形
+                glm::vec4(0.2f, 1.0f, 1.0f, 1.0f)   // 图片烟花
             };
             element->SetColor(colors[type - 1]);
 
             // 提示信息
             std::string hint = "Selected: " + englishNames[type - 1];
             ShowHint(hint, 1.5f);
-
-            //std::cout << "[UI] Firework type set to: " << type
-            //    << " (" << englishNames[type - 1] << ")" << std::endl;
         }
     }
 }
@@ -701,6 +721,7 @@ void UIManager::InitializeArtTexts() {
     // 清空现有艺术字
     artTexts.clear();
 
+    float scale = CalculateUIScale();
     // 6句中文艺术字，对应F1-F6
     // 注意：这里使用UTF-8编码的中文字符串
     std::vector<std::string> messages = {
@@ -728,8 +749,8 @@ void UIManager::InitializeArtTexts() {
         artText.text = messages[i];
         artText.color = colors[i];
         artText.x = screenWidth / 2.0f;
-        artText.y = screenHeight / 2.0f - 100.0f; // 屏幕中央偏上
-        artText.scale = 2.0f;  // 大号字体
+        artText.y = screenHeight / 2.0f - 100.0f * scale; // 屏幕中央偏上
+        artText.scale = 2.0f * scale;  //字体缩放
         artText.alpha = 0.0f;
         artText.time = 0.0f;
         artText.state = 0;  // 隐藏

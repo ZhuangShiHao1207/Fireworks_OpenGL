@@ -149,7 +149,6 @@ private:
     // 内部方法
     bool LoadFonts();
     void RenderHint(float deltaTime);
-    void UpdateElementPositions();
 
     // UI系统组件
     TextRenderer* textRenderer;
