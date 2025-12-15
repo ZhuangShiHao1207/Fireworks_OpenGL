@@ -72,7 +72,6 @@ private:
         float rotationAngle = 0.0f;   // 旋转角度（用于螺旋烟花）
         float tailTimer = 0.0f;       // 拖尾生成计时器
         float explodeAtHeight = 0.0f; // 随机爆炸高度
-        glm::vec2 imageOffset = glm::vec2(0.0f); // 图片粒子的偏移（相对于中心）
     };
 
     // 图片数据结构

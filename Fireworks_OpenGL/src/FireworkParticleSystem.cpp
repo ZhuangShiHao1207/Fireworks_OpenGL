@@ -162,7 +162,7 @@ void FireworkParticleSystem::update(float deltaTime) {
             p.life -= dt;
             p.color = calculateColorGradient(p);
             
-            createTail(p, prevPos);
+            if (!p.isTail) createTail(p, prevPos);
         }
     }
 
@@ -347,7 +347,7 @@ void FireworkParticleSystem::createExplosion(const Particle& source, bool isSeco
         break;
     case FireworkType::Image:
         // 图片烟花使用固定路径（不采样，处理所有像素）
-        generateImageParticles(source.position, "assets/firework_images/fish.png", 1);
+        generateImageParticles(source.position, "assets/firework_images/image.png", 1);
         break;
     }
 }
@@ -652,8 +652,8 @@ void FireworkParticleSystem::generateImageParticles(const glm::vec3& center, con
     int step = 1;
     
     // 计算图片缩放比例，使其在3D空间中合适大小
-    float scaleX = 6.0f / image.width;  // 图片宽度映射到6个单位
-    float scaleY = 6.0f / image.height; // 图片高度映射到6个单位
+    float scaleX = 3.0f / image.width;  // 图片宽度映射到3个单位
+    float scaleY = 3.0f / image.height; // 图片高度映射到3个单位
     float scale = (std::min)(scaleX, scaleY); // 使用较小的缩放保持比例
 
     // 图片中心化
@@ -674,22 +674,20 @@ void FireworkParticleSystem::generateImageParticles(const glm::vec3& center, con
             // 计算粒子在图片中的相对位置（以图片中心为原点）
             float posX = x * scale - offsetX;
             float posY = offsetY - y * scale; // 反转Y坐标，修正上下颠倒
-
+			//posX *= 0.2f; // 进一步缩小X轴比例，防止图片过宽
+			//posY *= 0.2f; // 进一步缩小Y轴比例，防止图片过高
             Particle p;
             p.position = center; // 初始位置在爆炸中心
             
             // 速度：从中心向外扩散，保持图片形状
-            // 使用imageOffset存储粒子的目标位置（相对中心）
-            p.imageOffset = glm::vec2(posX, posY);
-            
             // 初始速度：向图片对应位置扩散（放大效果）
             // 扩散速度基于距离中心的位置
-            float expandSpeed = 3.0f; // 扩散速度系数
+            float expandSpeed = 0.5f; // 扩散速度系数
             p.velocity = glm::vec3(posX * expandSpeed, posY * expandSpeed, 0.0f);
             
             // 保持原始颜色，不增强亮度
-            p.color = pixelColor;
-            p.initialColor = pixelColor;
+            p.color = pixelColor * 0.5f;
+            p.initialColor = pixelColor * 0.5f;
             
             p.life = 0.5f; // 0.5秒后消失
             p.maxLife = p.life;
