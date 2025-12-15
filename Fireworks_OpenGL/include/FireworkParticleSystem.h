@@ -73,6 +73,7 @@ private:
         float tailTimer = 0.0f;       // 拖尾生成计时器
         float explodeAtHeight = 0.0f; // 随机爆炸高度
         glm::vec2 imageOffset = glm::vec2(0.0f); // 图片粒子的偏移（相对于中心）
+        std::string imagePath = "";  // 图片烟花的路径（仅对Image类型有效）
     };
 
     // 图片数据结构
