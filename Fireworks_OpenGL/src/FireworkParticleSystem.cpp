@@ -161,8 +161,10 @@ void FireworkParticleSystem::update(float deltaTime) {
             p.position += p.velocity * dt;
             p.velocity += glm::vec3(0, gravity, 0) * dt;
             p.life -= dt;
-            p.color = calculateColorGradient(p);
+			if (p.type != FireworkType::Image)
+                p.color = calculateColorGradient(p);
             
+
             if (!p.isTail) createTail(p, prevPos);
         }
     }
@@ -566,8 +568,8 @@ void FireworkParticleSystem::runTest(float currentTime) {
     float randomZ = -9.0f + dis(gen) * 6.0f;
     glm::vec3 launchPos(randomX, 0.5f, randomZ);
 
-    // 随机尺寸（0.02f到0.05f）
-    float randomSize = 0.02f + dis(gen) * 0.03f;
+    // 随机尺寸（0.1f到0.15f）
+    float randomSize = 0.1f + dis(gen) * 0.05f;
 
     // 随机选择烟花类型（Image概率为15%）
     float typeRoll = dis(gen);
@@ -588,7 +590,7 @@ void FireworkParticleSystem::runTest(float currentTime) {
         launcher.secondaryColor = glm::vec4(1.0f);
         launcher.life = 1.5f * (0.4f + dis(gen) * 0.2f);
         launcher.maxLife = launcher.life;
-        launcher.size = randomSize * 2.5f;
+        launcher.size = randomSize * 3.5f;
         launcher.type = selectedType;
         launcher.isTail = false;
         launcher.canExplodeAgain = false;
@@ -735,12 +737,12 @@ void FireworkParticleSystem::generateImageParticles(const glm::vec3& center, con
             p.velocity = glm::vec3(posX * expandSpeed, posY * expandSpeed, 0.0f);
             
             // 降低亮度避免bloom效果（bloom阈值为1.5）
-            p.color = pixelColor * 0.3f;
-            p.initialColor = pixelColor * 0.3f;
+            p.color = pixelColor * 0.11f;
+            p.initialColor = pixelColor * 0.11f;
             
             p.life = 0.4f;
             p.maxLife = p.life;
-            p.size = childSize * 1.2f;
+            p.size = 0.015f;
             p.type = FireworkType::Image;
             p.isTail = true;  
             p.canExplodeAgain = false;
