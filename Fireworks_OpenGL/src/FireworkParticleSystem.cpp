@@ -207,7 +207,7 @@ void FireworkParticleSystem::update(float deltaTime) {
     for (auto& tail : tailParticles) {
         if (tail.life > 0.0f) {
             float t = 1.0f - (tail.life / tail.maxLife);
-            tail.size = (std::max)(0.01f, tail.size * (1.0f - t * 0.1f));
+            tail.size = (std::max)(0.01f, tail.size * (1.0f - t * 0.05f));
             tail.life -= dt;
             tail.color = calculateColorGradient(tail);
         }
@@ -368,7 +368,7 @@ void FireworkParticleSystem::generateSphereParticles(const glm::vec3& center, co
         float v = dis(gen);
         float theta = u * 2.0f * 3.14159265f;
         float phi = acos(2.0f * v - 1.0f);
-        float r = radius * (0.8f + 0.4f * dis(gen)); // 半径有一定随机性
+        float r = radius * (1.1f + 0.3f * dis(gen)); // 半径有一定随机性
 
         Particle p;
         p.position = center;
@@ -419,7 +419,7 @@ void FireworkParticleSystem::generateRingParticles(const glm::vec3& center, cons
 void FireworkParticleSystem::generateMultiLayerParticles(const glm::vec3& center, const glm::vec4& color, int count, float radiusScale) {
     int layers = 3;
     int particlesPerLayer = count / layers;
-    float baseRadius = radiusScale * 0.5f;
+    float baseRadius = radiusScale * 0.9f;
 
     for (int layer = 0; layer < layers; ++layer) {
         float layerRadius = baseRadius + layer * (radiusScale * 0.3f);
@@ -511,7 +511,7 @@ void FireworkParticleSystem::generateHeartParticles(const glm::vec3& center, con
             x + dis(gen) * 0.3f,
             y + dis(gen) * 0.3f + 1.0f, // 向上偏移
             dis(gen) * 0.5f - 0.25f // Z方向随机
-        );
+        ) * 1.5f;
         p.color = color;
         p.initialColor = color;
         p.life = 0.45f + 0.15f * dis(gen);  // 🔧 缩短：0.45-0.6秒（原本 0.75-1.0秒）
@@ -565,7 +565,7 @@ void FireworkParticleSystem::runTest(float currentTime) {
 
     // 随机位置（x在0到14之间，z在-9到-3之间）
     float randomX = -4.0f + dis(gen) * 14.0f;
-    float randomZ = -9.0f + dis(gen) * 6.0f;
+    float randomZ = 0.0f + dis(gen) * 6.0f;
     glm::vec3 launchPos(randomX, 0.5f, randomZ);
 
     // 随机尺寸（0.1f到0.15f）
@@ -740,7 +740,7 @@ void FireworkParticleSystem::generateImageParticles(const glm::vec3& center, con
             p.color = pixelColor * 0.11f;
             p.initialColor = pixelColor * 0.11f;
             
-            p.life = 0.4f;
+            p.life = 0.8f;
             p.maxLife = p.life;
             p.size = 0.015f;
             p.type = FireworkType::Image;
