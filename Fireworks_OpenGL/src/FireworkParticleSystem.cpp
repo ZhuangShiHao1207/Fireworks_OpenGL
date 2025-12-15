@@ -313,8 +313,8 @@ void FireworkParticleSystem::createExplosion(const Particle& source, bool isSeco
     }
 
     // Use initialColor instead of current color to keep explosions bright
-    // 🔧 允许图片烟花也有二次爆炸（移除了 source.type != FireworkType::Image 的判断）
-    if (!isSecondary) {
+    // 🔧 图片烟花不进行二次爆炸，避免消失时突然发亮
+    if (!isSecondary && source.type != FireworkType::Image) {
         // 添加延迟0.1秒的第二次爆炸
         DelayedExplosion delayed;
         delayed.position = source.position;
