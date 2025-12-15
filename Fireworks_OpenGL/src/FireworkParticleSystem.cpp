@@ -161,8 +161,8 @@ void FireworkParticleSystem::update(float deltaTime) {
             p.position += p.velocity * dt;
             p.velocity += glm::vec3(0, gravity, 0) * dt;
             p.life -= dt;
-			if (p.type != FireworkType::Image)
-                p.color = calculateColorGradient(p);
+			// if (p.type != FireworkType::Image)
+            p.color = calculateColorGradient(p);
             
 
             if (!p.isTail) createTail(p, prevPos);
@@ -283,8 +283,7 @@ glm::vec4 FireworkParticleSystem::calculateColorGradient(const Particle& p) cons
     else {
         // 末段：快速淡出（只在最后15%生命值时）
         float fadeRatio = lifeRatio / 0.15f;
-        resultColor = glm::vec4(p.initialColor.r, p.initialColor.g, 
-                                p.initialColor.b, fadeRatio);
+        resultColor = glm::vec4(p.initialColor.r*fadeRatio, p.initialColor.g*fadeRatio, p.initialColor.b*fadeRatio, 1.0f);
     }
 
     return resultColor;
