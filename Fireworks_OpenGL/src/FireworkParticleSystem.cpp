@@ -172,7 +172,7 @@ void FireworkParticleSystem::update(float deltaTime) {
         delayed.timer -= dt;
         if (delayed.timer <= 0.0f) {
             // 触发第二次爆炸，根据类型生成相同形状但范围更大的爆炸
-            int count = 150; // 第二次爆炸粒子数
+            int count = 90; // 第二次爆炸粒子数
             switch (delayed.type) {
             case FireworkType::Sphere:
                 generateSphereParticles(delayed.position, delayed.color, count, delayed.radius, false);
@@ -290,7 +290,7 @@ glm::vec4 FireworkParticleSystem::calculateColorGradient(const Particle& p) cons
 
 // 创建爆炸粒子
 void FireworkParticleSystem::createExplosion(const Particle& source, bool isSecondary) {
-    int count = isSecondary ? 150 : 240; // 第一次爆炸粒子翻倍，第二次更多
+    int count = isSecondary ? 90 : 150; // 第一次爆炸粒子，第二次更多
 
     // 主爆炸播放音效
     if (audioInitialized && !isSecondary) {
@@ -525,11 +525,18 @@ void FireworkParticleSystem::generateHeartParticles(const glm::vec3& center, con
 // 测试方法：依次发射各种类型烟花
 void FireworkParticleSystem::runTest(float currentTime) {
     static float lastTestTime = 0.0f;
+    static bool skipNextLaunch = false; // 跟踪是否需要跳过下一次发射
 
-    // 每1.5秒发射一次
-    if (currentTime - lastTestTime < 1.5f) return;
+    // 每1秒发射一次
+    if (currentTime - lastTestTime < 1.0f) return;
 
     lastTestTime = currentTime;
+
+    // 如果上次是图片烟花，跳过这次发射
+    if (skipNextLaunch) {
+        skipNextLaunch = false;
+        return;
+    }
 
     // 生成完全随机的HSV颜色对
     auto generateRandomColorPair = []() -> std::pair<glm::vec4, glm::vec4> {
@@ -562,12 +569,12 @@ void FireworkParticleSystem::runTest(float currentTime) {
     // 随机尺寸（0.02f到0.05f）
     float randomSize = 0.02f + dis(gen) * 0.03f;
 
-    // 随机选择烟花类型（Image概率降低至15%）
+    // 随机选择烟花类型（Image概率为15%）
     float typeRoll = dis(gen);
     FireworkType selectedType;
     
-    if (typeRoll < 0.1f) {
-        // 10% 概率：Image（随机选择word.png或image.png）
+    if (typeRoll < 0.15f) {
+        // 15% 概率：Image（随机选择word.png或image.png）
         selectedType = FireworkType::Image;
         std::string imagePath = (dis(gen) < 0.5f) 
             ? "assets/firework_images/word.png" 
@@ -597,22 +604,23 @@ void FireworkParticleSystem::runTest(float currentTime) {
         }
         
         launcherParticles.push_back(launcher);
+        skipNextLaunch = true; // 图片烟花发射后，跳过下一次发射
         return;
     }
-    else if (typeRoll < 0.10f + 0.35f) {
+    else if (typeRoll < 0.15f + 0.3f) {
         // 35% 概率：双层不同色Sphere
         selectedType = FireworkType::Sphere;
         auto colors = generateRandomColorPair();
         launch(launchPos, selectedType, 1.5f, colors.first, colors.second, randomSize);
     }
-    else if (typeRoll < 0.10f + 0.35f * 2) {
+    else if (typeRoll < 0.15f + 0.7f) {
         // 35% 概率：三层不同色Sphere（使用MultiLayer）
         selectedType = FireworkType::MultiLayer;
         auto colors = generateRandomColorPair();
         launch(launchPos, selectedType, 1.5f, colors.first, colors.second, randomSize);
     }
     else {
-        // 20% 概率：单层Heart
+        // 15% 概率：单层Heart
         selectedType = FireworkType::Heart;
         auto colors = generateRandomColorPair();
         // 单层Heart使用相同颜色（不是双色）
@@ -723,16 +731,16 @@ void FireworkParticleSystem::generateImageParticles(const glm::vec3& center, con
             // 速度：从中心向外扩散，保持图片形状
             // 初始速度：向图片对应位置扩散（放大效果）
             // 扩散速度基于距离中心的位置
-            float expandSpeed = 0.6f; // 扩散速度系数
+            float expandSpeed = 0.8f; // 扩散速度系数
             p.velocity = glm::vec3(posX * expandSpeed, posY * expandSpeed, 0.0f);
             
-            // 保持原始颜色，不增强亮度
-            p.color = pixelColor * 0.3f;
-            p.initialColor = pixelColor * 0.3f;
+            // 降低亮度避免bloom效果（bloom阈值为1.5）
+            p.color = pixelColor * 0.15f;
+            p.initialColor = pixelColor * 0.15f;
             
-            p.life = 0.3f;
+            p.life = 0.4f;
             p.maxLife = p.life;
-            p.size = childSize * 1.0f;
+            p.size = childSize * 1.2f;
             p.type = FireworkType::Image;
             p.isTail = false;  // 🔧 改为 false，允许生成拖尾
             p.canExplodeAgain = false;
