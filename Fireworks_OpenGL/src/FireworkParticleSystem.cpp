@@ -693,8 +693,8 @@ void FireworkParticleSystem::generateImageParticles(const glm::vec3& center, con
     int step = 1;
     
     // 计算图片缩放比例，使其在3D空间中合适大小
-    float scaleX = 6.0f / image.width;  // 图片宽度映射到6个单位
-    float scaleY = 6.0f / image.height; // 图片高度映射到6个单位
+    float scaleX = 4.0f / image.width;  // 图片宽度映射到4个单位
+    float scaleY = 4.0f / image.height; // 图片高度映射到4个单位
     float scale = (std::min)(scaleX, scaleY); // 使用较小的缩放保持比例
 
     // 图片中心化
@@ -723,12 +723,12 @@ void FireworkParticleSystem::generateImageParticles(const glm::vec3& center, con
             // 速度：从中心向外扩散，保持图片形状
             // 初始速度：向图片对应位置扩散（放大效果）
             // 扩散速度基于距离中心的位置
-            float expandSpeed = 0.5f; // 扩散速度系数
+            float expandSpeed = 0.6f; // 扩散速度系数
             p.velocity = glm::vec3(posX * expandSpeed, posY * expandSpeed, 0.0f);
             
             // 保持原始颜色，不增强亮度
-            p.color = pixelColor * 0.5f;
-            p.initialColor = pixelColor * 0.5f;
+            p.color = pixelColor * 0.3f;
+            p.initialColor = pixelColor * 0.3f;
             
             p.life = 0.3f;
             p.maxLife = p.life;
