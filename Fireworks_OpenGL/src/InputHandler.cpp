@@ -622,6 +622,13 @@ void mouse_button_callback(GLFWwindow* window, int button, int action, int mods)
             launchPosition.y = 0.5f;
         }
 
+        bool isInBookArea = (launchPosition.x >= -8 && launchPosition.x <= 15) && (launchPosition.z >= -5 && launchPosition.z <= 12);
+        if (!isInBookArea) { 
+            std::cout << "[边界检测] 点击位置超出书本范围！ X="
+                << launchPosition.x << " Z=" << launchPosition.z << std::endl;
+            return; 
+        }
+
         // 确保发射位置在合理范围内（避免太远或太近）
         // 限制离原点的水平距离
         float maxHorizontalDistance = 50.0f;
@@ -653,7 +660,7 @@ void mouse_button_callback(GLFWwindow* window, int button, int action, int mods)
 
         // 随机轻微颜色变化
         float colorVariation = 0.9f + dis(gen) * 0.2f;
-
+        
         // 更新UI中的烟花计数
         if (uiManager) {
             uiManager->IncrementFireworkCount();
