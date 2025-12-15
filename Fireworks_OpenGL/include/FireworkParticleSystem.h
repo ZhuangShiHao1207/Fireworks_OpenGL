@@ -51,7 +51,7 @@ public:
 
     // 尺寸和物理参数
     float launcherSize = 0.1f;     // 上升弹粒子大小
-    float childSize = 0.35f;        // 爆炸子粒子大小
+    float childSize = 0.3f;        // 爆炸子粒子大小
     float gravity = -5.0f;          // 重力加速度（负Y方向）
     float timeScale = 0.18f;         // 时间缩放（1.0=正常，0.5=慢动作）
 
