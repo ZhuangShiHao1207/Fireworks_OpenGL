@@ -726,10 +726,10 @@ void UIManager::InitializeArtTexts() {
     // 注意：这里使用UTF-8编码的中文字符串
     std::vector<std::string> messages = {
         u8"烟花粒子系统展示",
-        u8"1、展示天空盒、地面与模型",
-        u8"2、单独展示部分烟花",
-        u8"3、随机发射烟花",
-        u8"4、点击地面发射烟花",
+        u8"展示天空盒、地面与模型",
+        u8"单独展示部分烟花",
+        u8"随机发射烟花",
+        u8"点击地面发射烟花",
         u8"感谢观看",
     };
 
@@ -749,7 +749,7 @@ void UIManager::InitializeArtTexts() {
         artText.text = messages[i];
         artText.color = colors[i];
         artText.x = screenWidth / 2.0f;
-        artText.y = screenHeight / 2.0f - 100.0f * scale; // 屏幕中央偏上
+        artText.y = screenHeight / 2.0f - 350.0f * scale; // 屏幕中央偏上
         artText.scale = 2.0f * scale;  //字体缩放
         artText.alpha = 0.0f;
         artText.time = 0.0f;
@@ -785,7 +785,7 @@ void UIManager::StartArtTextAnimation(int index) {
 
     // 重新计算居中位置（考虑窗口大小可能已改变）
     artText.x = screenWidth / 2.0f;
-    artText.y = screenHeight / 2.0f - 100.0f;
+    artText.y = screenHeight / 2.0f - 350.0f;
 
     std::cout << "[UIManager] Art text animation started: " << index + 1 << std::endl;
 }

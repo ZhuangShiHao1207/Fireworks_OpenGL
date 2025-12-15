@@ -115,6 +115,145 @@
     <None Include="assets\shaders\post.fs" />
     <None Include="assets\shaders\skybox.fs" />
     <None Include="assets\shaders\text.fs" />
+    <None Include="assets\shaders\blur.vs" />
+    <None Include="assets\shaders\firework.vs" />
+    <None Include="assets\shaders\ground.vs" />
+    <None Include="assets\shaders\model.vs" />
+    <None Include="assets\shaders\post.vs" />
+    <None Include="assets\shaders\skybox.vs" />
+    <None Include="assets\shaders\text.vs" />
+    <None Include="assets\shaders\blur.vs" />
+    <None Include="assets\shaders\firework.vs" />
+    <None Include="assets\shaders\ground.vs" />
+    <None Include="assets\shaders\model.vs" />
+    <None Include="assets\shaders\post.vs" />
+    <None Include="assets\shaders\skybox.vs" />
+    <None Include="assets\shaders\text.vs" />
+    <None Include="assets\shaders\blur.vs" />
+    <None Include="assets\shaders\firework.vs" />
+    <None Include="assets\shaders\ground.vs" />
+    <None Include="assets\shaders\model.vs" />
+    <None Include="assets\shaders\post.vs" />
+    <None Include="assets\shaders\skybox.vs" />
+    <None Include="assets\shaders\text.vs" />
+    <None Include="assets\shaders\blur.vs" />
+    <None Include="assets\shaders\firework.vs" />
+    <None Include="assets\shaders\ground.vs" />
+    <None Include="assets\shaders\model.vs" />
+    <None Include="assets\shaders\post.vs" />
+    <None Include="assets\shaders\skybox.vs" />
+    <None Include="assets\shaders\text.vs" />
+    <None Include="assets\shaders\blur.vs" />
+    <None Include="assets\shaders\firework.vs" />
+    <None Include="assets\shaders\ground.vs" />
+    <None Include="assets\shaders\model.vs" />
+    <None Include="assets\shaders\post.vs" />
+    <None Include="assets\shaders\skybox.vs" />
+    <None Include="assets\shaders\text.vs" />
+    <None Include="assets\shaders\blur.vs" />
+    <None Include="assets\shaders\firework.vs" />
+    <None Include="assets\shaders\ground.vs" />
+    <None Include="assets\shaders\model.vs" />
+    <None Include="assets\shaders\post.vs" />
+    <None Include="assets\shaders\skybox.vs" />
+    <None Include="assets\shaders\text.vs" />
+    <None Include="assets\shaders\blur.vs" />
+    <None Include="assets\shaders\firework.vs" />
+    <None Include="assets\shaders\ground.vs" />
+    <None Include="assets\shaders\model.vs" />
+    <None Include="assets\shaders\post.vs" />
+    <None Include="assets\shaders\skybox.vs" />
+    <None Include="assets\shaders\text.vs" />
+    <None Include="assets\shaders\*.fs">
+      <Filter>assets/shader</Filter>
+    </None>
+    <None Include="assets\shaders\*.vs">
+      <Filter>assets/shader</Filter>
+    </None>
+    <None Include="assets\shaders\*.fs">
+      <Filter>assets/shader</Filter>
+    </None>
+    <None Include="assets\shaders\*.vs">
+      <Filter>assets/shader</Filter>
+    </None>
+    <None Include="assets\shaders\*.fs">
+      <Filter>assets/shader</Filter>
+    </None>
+    <None Include="assets\shaders\*.vs">
+      <Filter>assets/shader</Filter>
+    </None>
+    <None Include="assets\shaders\*.fs">
+      <Filter>assets/shader</Filter>
+    </None>
+    <None Include="assets\shaders\*.vs">
+      <Filter>assets/shader</Filter>
+    </None>
+    <None Include="assets\shaders\*.fs">
+      <Filter>assets/shader</Filter>
+    </None>
+    <None Include="assets\shaders\*.vs">
+      <Filter>assets/shader</Filter>
+    </None>
+    <None Include="assets\shaders\*.fs">
+      <Filter>assets/shader</Filter>
+    </None>
+    <None Include="assets\shaders\*.fs">
+      <Filter>assets/shader</Filter>
+    </None>
+    <None Include="assets\shaders\*.fs">
+      <Filter>assets/shader</Filter>
+    </None>
+    <None Include="assets\shaders\*.vs">
+      <Filter>assets/shader</Filter>
+    </None>
+    <None Include="assets\shaders\*.vs">
+      <Filter>assets/shader</Filter>
+    </None>
+    <None Include="assets\shaders\*.vs">
+      <Filter>assets/shader</Filter>
+    </None>
+    <None Include="assets\shaders\blur.fs" />
+    <None Include="assets\shaders\firework.fs" />
+    <None Include="assets\shaders\ground.fs" />
+    <None Include="assets\shaders\model.fs" />
+    <None Include="assets\shaders\post.fs" />
+    <None Include="assets\shaders\skybox.fs" />
+    <None Include="assets\shaders\text.fs" />
+    <None Include="assets\shaders\blur.fs" />
+    <None Include="assets\shaders\firework.fs" />
+    <None Include="assets\shaders\ground.fs" />
+    <None Include="assets\shaders\model.fs" />
+    <None Include="assets\shaders\post.fs" />
+    <None Include="assets\shaders\skybox.fs" />
+    <None Include="assets\shaders\text.fs" />
+    <None Include="assets\shaders\blur.fs" />
+    <None Include="assets\shaders\firework.fs" />
+    <None Include="assets\shaders\ground.fs" />
+    <None Include="assets\shaders\model.fs" />
+    <None Include="assets\shaders\post.fs" />
+    <None Include="assets\shaders\skybox.fs" />
+    <None Include="assets\shaders\text.fs" />
+    <None Include="assets\shaders\blur.fs" />
+    <None Include="assets\shaders\firework.fs" />
+    <None Include="assets\shaders\ground.fs" />
+    <None Include="assets\shaders\model.fs" />
+    <None Include="assets\shaders\post.fs" />
+    <None Include="assets\shaders\skybox.fs" />
+    <None Include="assets\shaders\text.fs" />
+    <None Include="assets\shaders\blur.fs" />
+    <None Include="assets\shaders\firework.fs" />
+    <None Include="assets\shaders\ground.fs" />
+    <None Include="assets\shaders\model.fs" />
+    <None Include="assets\shaders\post.fs" />
+    <None Include="assets\shaders\skybox.fs" />
+    <None Include="assets\shaders\text.fs" />
+    <None Include="assets\shaders\blur.fs" />
+    <None Include="assets\shaders\firework.fs" />
+    <None Include="assets\shaders\ground.fs" />
+    <None Include="assets\shaders\model.fs" />
+    <None Include="assets\shaders\post.fs" />
+    <None Include="assets\shaders\skybox.fs" />
+    <None Include="assets\shaders\text.fs" />
     <None Include="assets\shaders\blur.fs" />
     <None Include="assets\shaders\firework.fs" />
     <None Include="assets\shaders\ground.fs" />
@@ -171,13 +310,6 @@
     <None Include="assets\shaders\post.vs" />
     <None Include="assets\shaders\skybox.vs" />
     <None Include="assets\shaders\text.vs" />
-    <None Include="assets\shaders\blur.vs" />
-    <None Include="assets\shaders\firework.vs" />
-    <None Include="assets\shaders\ground.vs" />
-    <None Include="assets\shaders\model.vs" />
-    <None Include="assets\shaders\post.vs" />
-    <None Include="assets\shaders\skybox.vs" />
-    <None Include="assets\shaders\text.vs" />
     <None Include="assets\shaders\*.fs">
       <Filter>assets/shader</Filter>
     </None>
@@ -211,16 +343,10 @@
     <None Include="assets\shaders\*.fs">
       <Filter>assets/shader</Filter>
     </None>
-    <None Include="assets\shaders\*.fs">
-      <Filter>assets/shader</Filter>
-    </None>
-    <None Include="assets\shaders\*.fs">
-      <Filter>assets/shader</Filter>
-    </None>
     <None Include="assets\shaders\*.vs">
       <Filter>assets/shader</Filter>
     </None>
-    <None Include="assets\shaders\*.vs">
+    <None Include="assets\shaders\*.fs">
       <Filter>assets/shader</Filter>
     </None>
     <None Include="assets\shaders\*.vs">
