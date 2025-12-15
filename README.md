@@ -113,6 +113,7 @@ Fireworks_OpenGL/
 │   │   ├── textures/
 │   │   ├── skybox/
 │   │   ├── sounds/
+│   │   ├── fonts/        # UI用字体文件
 │   │   ├── model/         # 3D模型文件（如tropical_island.glb）
 │   │   ├── ground/        # 地面纹理
 │   │── external/          # 第三方库（源码形式）
@@ -337,6 +338,54 @@ xcopy /y /d "$(VcpkgRoot)\installed\x64-windows\bin\assimp-vc143-mt.dll" "$(OutD
 
 ------
 
+### 5. 配置 freetype — 使用 vcpkg(已安装)
+
+#### 使用vcpkg安装FreeType
+
+```bash
+# 打开PowerShell，进入vcpkg目录
+cd C:\vcpkg  # 根据你的实际路径
+.\vcpkg install freetype:x64-windows
+```
+
+#### 配置Visual Studio项目
+在项目属性中添加：
+
+C/C++ → 常规 → 附加包含目录（添加）：
+
+```text
+$(VcpkgRoot)\installed\x64-windows\include
+```
+
+链接器 → 常规 → 附加库目录（添加）：
+
+Debug配置：
+
+```text
+$(VcpkgRoot)\installed\x64-windows\debug\lib
+```
+
+Release配置：
+
+```text
+$(VcpkgRoot)\installed\x64-windows\lib
+```
+
+链接器 → 输入 → 附加依赖项（添加）：
+
+Debug配置：
+
+```text
+freetyped.lib
+```
+
+Release配置：
+
+```text
+freetype.lib
+```
+
+
 ## ⚙️ 四、配置 Visual Studio（完整版，可用于检查）
 
 右键项目 → 属性 → 配置：Release / Debug、平台：x64
@@ -382,6 +431,7 @@ $(VcpkgRoot)installed\x64-windows\lib
 glfw3.lib
 opengl32.lib
 assimp-vc143-mtd.lib
+freetyped.lib
 ```
 
 **Release 配置**：
@@ -389,6 +439,7 @@ assimp-vc143-mtd.lib
 glfw3.lib
 opengl32.lib
 assimp-vc143-mt.lib
+freetype.lib
 ```
 
 ------
@@ -398,6 +449,7 @@ assimp-vc143-mt.lib
 Command Line：
 ```cmd
 xcopy /y /d "[vcpkg路径]\installed\x64-windows\bin\assimp-vc143-mt.dll" "$(OutDir)"
+xcopy /y /d "$(VcpkgRoot)\installed\x64-windows\bin\freetype.dll" "$(OutDir)"
 ```
 
 ------

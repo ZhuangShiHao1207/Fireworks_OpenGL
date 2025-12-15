@@ -4,6 +4,7 @@
 #include "FireworkParticleSystem.h"
 #include "PostProcessor.h"
 #include <iostream>
+#include <UIManager.h>
 #include <random>
 
 static std::random_device rd;
@@ -21,6 +22,8 @@ extern bool sceneLightsEnabled;
 extern PointLightManager lightManager;
 extern FireworkParticleSystem fireworkSystem;
 extern PostProcessor* postProcessor;
+extern int g_fireworkKeyPressCount;
+extern UIManager* uiManager;
 
 glm::vec4 HSVtoRGB(float h, float s, float v) {
     float r, g, b;
@@ -104,6 +107,9 @@ void processInput(GLFWwindow* window)
         glfwSetInputMode(window, GLFW_CURSOR, mouseEnabled ? GLFW_CURSOR_DISABLED : GLFW_CURSOR_NORMAL);
         firstMouse = true; // 重置首次鼠标以避免摄像机跳动
         mKeyPressed = true;
+        if (uiManager) {
+            uiManager->SetMouseEnabled(mouseEnabled);
+        }
         std::cout << "鼠标控制: " << (mouseEnabled ? "锁定（摄像机控制已启用）" : "自由（可移出窗口）") << std::endl;
     }
     if (glfwGetKey(window, GLFW_KEY_M) == GLFW_RELEASE)
@@ -115,10 +121,26 @@ void processInput(GLFWwindow* window)
     {
         sceneLightsEnabled = !sceneLightsEnabled;
         lKeyPressed = true;
+        if (uiManager) {
+            uiManager->SetSceneLightsEnabled(sceneLightsEnabled);
+        }
         std::cout << "[Lights] Scene lights: " << (sceneLightsEnabled ? "ON" : "OFF") << std::endl;
     }
     if (glfwGetKey(window, GLFW_KEY_L) == GLFW_RELEASE)
         lKeyPressed = false;
+
+    // 切换控制提示时
+    static bool hKeyPressed = false;
+    if (glfwGetKey(window, GLFW_KEY_H) == GLFW_PRESS && !hKeyPressed) {
+        if (uiManager) {
+            uiManager->ToggleAllText();  // 改为隐藏所有文本
+        }
+        hKeyPressed = true;
+        std::cout << "[UI] Toggled all UI text" << std::endl;
+    }
+    if (glfwGetKey(window, GLFW_KEY_H) == GLFW_RELEASE) {
+        hKeyPressed = false;
+    }
 
     // 测试：添加临时烟花光源
     static bool tKeyPressed = false;
@@ -137,6 +159,27 @@ void processInput(GLFWwindow* window)
     if (glfwGetKey(window, GLFW_KEY_T) == GLFW_RELEASE)
         tKeyPressed = false;
 
+    // F1-F6: 显示中文艺术字
+    static bool fKeysPressed[6] = { false };
+
+    for (int i = 0; i < 6; i++) {
+        int key = GLFW_KEY_F1 + i;
+
+        if (glfwGetKey(window, key) == GLFW_PRESS && !fKeysPressed[i]) {
+            if (uiManager) {
+                uiManager->StartArtTextAnimation(i);
+            }
+            fKeysPressed[i] = true;
+
+            // 可选：在控制台输出信息
+            // std::cout << "[Input] F" << (i + 1) << " pressed - Chinese art text " 
+            //           << (i + 1) << " started" << std::endl;
+        }
+        if (glfwGetKey(window, key) == GLFW_RELEASE) {
+            fKeysPressed[i] = false;
+        }
+    }
+
     // 发射烟花 --> 通过三个通道控制颜色
     static bool key1Pressed = false;
     if (glfwGetKey(window, GLFW_KEY_1) == GLFW_PRESS && !key1Pressed)
@@ -150,6 +193,13 @@ void processInput(GLFWwindow* window)
             glm::vec4(1.0f, 1.0f, 0.5f, 1.0f), // 添加secondaryColor参数
             fireworkSystem.launcherSize);
         key1Pressed = true;
+
+        // 更新UI状态
+        if (uiManager) {
+            uiManager->SetFireworkType(1);
+            uiManager->IncrementFireworkCount();
+        }
+
         std::cout << "[Firework] Launch Sphere!" << std::endl;
     }
     if (glfwGetKey(window, GLFW_KEY_1) == GLFW_RELEASE)
@@ -167,6 +217,13 @@ void processInput(GLFWwindow* window)
             glm::vec4(0.5f, 1.0f, 1.0f, 1.0f), // 添加secondaryColor参数
             fireworkSystem.launcherSize);
         key2Pressed = true;
+
+        // 更新UI状态
+        if (uiManager) {
+            uiManager->SetFireworkType(2);
+            uiManager->IncrementFireworkCount();
+        }
+
         std::cout << "[Firework] Launch Ring!" << std::endl;
     }
     if (glfwGetKey(window, GLFW_KEY_2) == GLFW_RELEASE)
@@ -185,6 +242,13 @@ void processInput(GLFWwindow* window)
             fireworkSystem.launcherSize);
 
         key3Pressed = true;
+
+        // 更新UI状态
+        if (uiManager) {
+            uiManager->SetFireworkType(3);
+            uiManager->IncrementFireworkCount();
+        }
+
         std::cout << "[Firework] Launch Heart!" << std::endl;
     }
     if (glfwGetKey(window, GLFW_KEY_3) == GLFW_RELEASE)
@@ -202,6 +266,13 @@ void processInput(GLFWwindow* window)
             glm::vec4(0.3f, 0.8f, 1.0f, 1.0f), // 添加secondaryColor参数
             fireworkSystem.launcherSize);
         key4Pressed = true;
+
+        // 更新UI状态
+        if (uiManager) {
+            uiManager->SetFireworkType(4);
+            uiManager->IncrementFireworkCount();
+        }
+
         std::cout << "[Firework] Launch MultiLayer!" << std::endl;
     }
     if (glfwGetKey(window, GLFW_KEY_4) == GLFW_RELEASE)
@@ -219,6 +290,13 @@ void processInput(GLFWwindow* window)
             glm::vec4(1.0f, 0.8f, 0.2f, 1.0f), // 添加secondaryColor参数
             fireworkSystem.launcherSize);
         key5Pressed = true;
+
+        // 更新UI状态
+        if (uiManager) {
+            uiManager->SetFireworkType(5);
+            uiManager->IncrementFireworkCount();
+        }
+
         std::cout << "[Firework] Launch Spiral!" << std::endl;
     }
     if (glfwGetKey(window, GLFW_KEY_5) == GLFW_RELEASE)
@@ -236,6 +314,13 @@ void processInput(GLFWwindow* window)
             glm::vec4(0.8f, 0.3f, 1.0f, 1.0f), // 添加secondaryColor参数
             fireworkSystem.launcherSize);
         key6Pressed = true;
+
+        // 更新UI状态
+        if (uiManager) {
+            uiManager->SetFireworkType(6);
+            uiManager->IncrementFireworkCount();
+        }
+
         std::cout << "[Firework] Launch Sphere (Purple)!" << std::endl;
     }
     if (glfwGetKey(window, GLFW_KEY_6) == GLFW_RELEASE)
@@ -464,6 +549,11 @@ void framebuffer_size_callback(GLFWwindow* window, int width, int height)
         postProcessor = new PostProcessor(width, height);
         std::cout << "[Resize] PostProcessor recreated with size: " << width << "x" << height << std::endl;
     }
+    // 如果 uiManager 存在，更新UI窗口以匹配新的窗口大小
+    if (uiManager) {
+        uiManager->UpdateScreenSize(width, height);
+        std::cout << "[Resize] UI updated with size: " << width << "x" << height << std::endl;
+    }
 }
 
 // glfw: 鼠标移动时调用此回调函数
@@ -488,6 +578,177 @@ void mouse_callback(GLFWwindow* window, double xposIn, double yposIn)
     lastY = ypos;
 
     camera.ProcessMouseMovement(xoffset, yoffset);
+}
+
+// glfw: 鼠标点击时调用此回调函数
+void mouse_button_callback(GLFWwindow* window, int button, int action, int mods)
+{
+    static int currentFireworkType = 1; // 在这里声明，作为静态变量
+
+    // 只在鼠标锁定模式下发射烟花
+    if (!mouseEnabled) return;
+
+    // 检查是否是左键按下
+    if (button == GLFW_MOUSE_BUTTON_LEFT && action == GLFW_PRESS)
+    {
+        // 计算摄像机射线与地面(y=0)的交点
+        glm::vec3 launchPosition;
+
+        // 正确的射线与地面交点计算
+        // 射线方程: P = camera.Position + t * camera.Front
+        // 地面方程: y = 0
+        // 代入: camera.Position.y + t * camera.Front.y = 0
+        // 解出: t = -camera.Position.y / camera.Front.y
+
+        // 检查视线方向是否有垂直分量
+        if (fabs(camera.Front.y) > 0.0001f) {
+            // 计算参数t
+            float t = -camera.Position.y / camera.Front.y;
+
+            // 只有当t > 0时，交点才在摄像机前方
+            if (t > 0) {
+                launchPosition = camera.Position + camera.Front * t;
+                launchPosition.y = 0.5f; // 确保在地面上方发射
+            }
+            else {
+                // t <= 0，说明地面在摄像机后方，使用固定距离
+                launchPosition = camera.Position + camera.Front * 30.0f;
+                launchPosition.y = 0.5f;
+            }
+        }
+        else {
+            // 视线基本水平（垂直分量接近0），使用固定距离
+            launchPosition = camera.Position + camera.Front * 30.0f;
+            launchPosition.y = 0.5f;
+        }
+
+        // 确保发射位置在合理范围内（避免太远或太近）
+        // 限制离原点的水平距离
+        float maxHorizontalDistance = 50.0f;
+        glm::vec2 horizontalPos(launchPosition.x, launchPosition.z);
+        float distanceFromCenter = glm::length(horizontalPos);
+
+        if (distanceFromCenter > maxHorizontalDistance) {
+            // 归一化并限制距离
+            glm::vec2 dir = glm::normalize(horizontalPos) * maxHorizontalDistance;
+            launchPosition.x = dir.x;
+            launchPosition.z = dir.y;
+        }
+
+        // 确保不会发射到中心点太近的位置
+        float minDistance = 3.0f;
+        if (distanceFromCenter < minDistance) {
+            glm::vec2 dir = glm::normalize(horizontalPos) * minDistance;
+            launchPosition.x = dir.x;
+            launchPosition.z = dir.y;
+        }
+
+        // 添加随机数生成器用于随机效果
+        static std::random_device rd;
+        static std::mt19937 gen(rd());
+        static std::uniform_real_distribution<float> dis(0.0f, 1.0f);
+
+        // 随机生命周期：0.8-1.2秒，控制爆炸高度
+        float randomLife = 0.8f + dis(gen) * 0.4f;
+
+        // 随机轻微颜色变化
+        float colorVariation = 0.9f + dis(gen) * 0.2f;
+
+        // 更新UI中的烟花计数
+        if (uiManager) {
+            uiManager->IncrementFireworkCount();
+        }
+
+        // 发射烟花
+        switch (currentFireworkType) {
+        case 1:
+            fireworkSystem.launch(
+                launchPosition,
+                FireworkParticleSystem::FireworkType::Sphere,
+                randomLife, // 使用随机生命周期
+                glm::vec4(1.0f, 1.0f, 0.5f, 1.0f) * colorVariation,
+                glm::vec4(1.0f, 1.0f, 0.5f, 1.0f) * colorVariation,
+                fireworkSystem.launcherSize
+            );
+            std::cout << "[Mouse] Launch Sphere firework at ("
+                << launchPosition.x << ", " << launchPosition.y << ", " << launchPosition.z << ")"
+                << " with life " << randomLife << std::endl;
+            break;
+
+        case 2:
+            fireworkSystem.launch(
+                launchPosition,
+                FireworkParticleSystem::FireworkType::Ring,
+                randomLife,
+                glm::vec4(0.5f, 1.0f, 1.0f, 1.0f) * colorVariation,
+                glm::vec4(0.5f, 1.0f, 1.0f, 1.0f) * colorVariation,
+                fireworkSystem.launcherSize
+            );
+            std::cout << "[Mouse] Launch Ring firework" << std::endl;
+            break;
+
+        case 3:
+            fireworkSystem.launch(
+                launchPosition,
+                FireworkParticleSystem::FireworkType::Heart,
+                randomLife,
+                glm::vec4(1.0f, 0.5f, 1.0f, 1.0f) * colorVariation,
+                glm::vec4(1.0f, 0.5f, 1.0f, 1.0f) * colorVariation,
+                fireworkSystem.launcherSize
+            );
+            std::cout << "[Mouse] Launch Heart firework" << std::endl;
+            break;
+
+        case 4:
+            fireworkSystem.launch(
+                launchPosition,
+                FireworkParticleSystem::FireworkType::MultiLayer,
+                randomLife,
+                glm::vec4(0.3f, 0.8f, 1.0f, 1.0f) * colorVariation,
+                glm::vec4(0.3f, 0.8f, 1.0f, 1.0f) * colorVariation,
+                fireworkSystem.launcherSize
+            );
+            std::cout << "[Mouse] Launch MultiLayer firework" << std::endl;
+            break;
+
+        case 5:
+            fireworkSystem.launch(
+                launchPosition,
+                FireworkParticleSystem::FireworkType::Spiral,
+                randomLife,
+                glm::vec4(1.0f, 0.8f, 0.2f, 1.0f) * colorVariation,
+                glm::vec4(1.0f, 0.8f, 0.2f, 1.0f) * colorVariation,
+                fireworkSystem.launcherSize
+            );
+            std::cout << "[Mouse] Launch Spiral firework" << std::endl;
+            break;
+
+        case 6:
+            fireworkSystem.launch(
+                launchPosition,
+                FireworkParticleSystem::FireworkType::Image,
+                randomLife,
+                glm::vec4(0.8f, 0.3f, 1.0f, 1.0f) * colorVariation,
+                glm::vec4(0.8f, 0.3f, 1.0f, 1.0f) * colorVariation,
+                fireworkSystem.launcherSize
+            );
+            std::cout << "[Mouse] Launch DoubleExplosion firework" << std::endl;
+            break;
+        }
+    }
+
+    // 鼠标右键切换烟花类型
+    if (button == GLFW_MOUSE_BUTTON_RIGHT && action == GLFW_PRESS && mouseEnabled)
+    {
+        currentFireworkType = (currentFireworkType % 6) + 1;
+
+        if (uiManager) {
+            uiManager->SetFireworkType(currentFireworkType);
+            uiManager->ShowHint("Mouse firework type changed", 1.0f);
+        }
+
+        std::cout << "[Mouse] Firework type changed to: " << currentFireworkType << std::endl;
+    }
 }
 
 // glfw: 鼠标滚轮滚动时调用此回调函数

@@ -1,154 +1,241 @@
 ﻿<?xml version="1.0" encoding="utf-8"?>
 <Project ToolsVersion="4.0" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
   <ItemGroup>
-    <Filter Include="源文件">
-      <UniqueIdentifier>{4FC737F1-C7A5-4376-A066-2A32D752A2FF}</UniqueIdentifier>
-      <Extensions>cpp;c;cc;cxx;c++;cppm;ixx;def;odl;idl;hpj;bat;asm;asmx</Extensions>
-    </Filter>
-    <Filter Include="头文件">
-      <UniqueIdentifier>{93995380-89BD-4b04-88EB-625FBE52EBFB}</UniqueIdentifier>
-      <Extensions>h;hh;hpp;hxx;h++;hm;inl;inc;ipp;xsd</Extensions>
-    </Filter>
-    <Filter Include="资源文件">
-      <UniqueIdentifier>{67DA6AB6-F800-4c08-8B7A-83BB121AAD01}</UniqueIdentifier>
-      <Extensions>rc;ico;cur;bmp;dlg;rc2;rct;bin;rgs;gif;jpg;jpeg;jpe;resx;tiff;tif;png;wav;mfcribbon-ms</Extensions>
-    </Filter>
-  </ItemGroup>
-  <ItemGroup>
-    <ClCompile Include="main.cpp">
-      <Filter>源文件</Filter>
-    </ClCompile>
-    <ClCompile Include="external\glad\src\glad.c">
-      <Filter>源文件</Filter>
-    </ClCompile>
-    <ClCompile Include="stb_image_impl.cpp">
-      <Filter>源文件</Filter>
+    <ClCompile Include="external\glad\src\glad.c" />
+    <ClCompile Include="main.cpp" />
+    <ClCompile Include="miniaudio_impl.cpp" />
+    <ClCompile Include="stb_image_impl.cpp" />
+    <ClCompile Include="src\FireworkParticleSystem.cpp">
+      <Filter>src</Filter>
     </ClCompile>
     <ClCompile Include="src\InputHandler.cpp">
-      <Filter>源文件</Filter>
-    </ClCompile>
-    <ClCompile Include="src\FireworkParticleSystem.cpp">
-      <Filter>源文件</Filter>
+      <Filter>src</Filter>
     </ClCompile>
     <ClCompile Include="PostProcessor.cpp">
-      <Filter>源文件</Filter>
+      <Filter>src</Filter>
     </ClCompile>
-    <ClCompile Include="miniaudio_impl.cpp">
-      <Filter>源文件</Filter>
+    <ClCompile Include="src\UIManager.cpp">
+      <Filter>src</Filter>
+    </ClCompile>
+    <ClCompile Include="src\TextRenderer.cpp">
+      <Filter>src</Filter>
     </ClCompile>
   </ItemGroup>
   <ItemGroup>
-    <ClInclude Include="include\Shader.h">
-      <Filter>头文件</Filter>
-    </ClInclude>
     <ClInclude Include="include\Camera.h">
-      <Filter>头文件</Filter>
-    </ClInclude>
-    <ClInclude Include="include\Skybox.h">
-      <Filter>头文件</Filter>
-    </ClInclude>
-    <ClInclude Include="include\Ground.h">
-      <Filter>头文件</Filter>
-    </ClInclude>
-    <ClInclude Include="include\stb_image.h">
-      <Filter>头文件</Filter>
-    </ClInclude>
-    <ClInclude Include="include\Mesh.h">
-      <Filter>头文件</Filter>
-    </ClInclude>
-    <ClInclude Include="include\Model.h">
-      <Filter>头文件</Filter>
-    </ClInclude>
-    <ClInclude Include="include\PointLight.h">
-      <Filter>头文件</Filter>
+      <Filter>include</Filter>
     </ClInclude>
     <ClInclude Include="include\FireworkParticleSystem.h">
-      <Filter>头文件</Filter>
+      <Filter>include</Filter>
+    </ClInclude>
+    <ClInclude Include="include\Ground.h">
+      <Filter>include</Filter>
     </ClInclude>
     <ClInclude Include="include\InputHandler.h">
-      <Filter>头文件</Filter>
+      <Filter>include</Filter>
     </ClInclude>
-    <ClInclude Include="PostProcessor.h">
-      <Filter>头文件</Filter>
+    <ClInclude Include="include\Mesh.h">
+      <Filter>include</Filter>
     </ClInclude>
     <ClInclude Include="include\miniaudio.h">
-      <Filter>头文件</Filter>
+      <Filter>include</Filter>
+    </ClInclude>
+    <ClInclude Include="include\Model.h">
+      <Filter>include</Filter>
+    </ClInclude>
+    <ClInclude Include="include\PointLight.h">
+      <Filter>include</Filter>
+    </ClInclude>
+    <ClInclude Include="PostProcessor.h">
+      <Filter>include</Filter>
+    </ClInclude>
+    <ClInclude Include="include\Shader.h">
+      <Filter>include</Filter>
+    </ClInclude>
+    <ClInclude Include="include\Skybox.h">
+      <Filter>include</Filter>
+    </ClInclude>
+    <ClInclude Include="include\stb_image.h">
+      <Filter>include</Filter>
+    </ClInclude>
+    <ClInclude Include="include\TextRenderer.h">
+      <Filter>include</Filter>
+    </ClInclude>
+    <ClInclude Include="include\UIManager.h">
+      <Filter>include</Filter>
     </ClInclude>
   </ItemGroup>
   <ItemGroup>
-    <None Include="assets\shaders\*.fs" />
-    <None Include="assets\shaders\*.fs" />
-    <None Include="assets\shaders\*.fs" />
-    <None Include="assets\shaders\*.fs" />
-    <None Include="assets\shaders\*.fs" />
-    <None Include="assets\shaders\*.fs" />
-    <None Include="assets\shaders\*.fs" />
-    <None Include="assets\shaders\*.vs" />
-    <None Include="assets\shaders\*.vs" />
-    <None Include="assets\shaders\*.vs" />
-    <None Include="assets\shaders\*.vs" />
-    <None Include="assets\shaders\*.vs" />
-    <None Include="assets\shaders\*.vs" />
-    <None Include="assets\shaders\*.vs" />
-    <None Include="assets\shaders\*.fs" />
-    <None Include="assets\shaders\*.fs" />
-    <None Include="assets\shaders\*.fs" />
-    <None Include="assets\shaders\*.fs" />
-    <None Include="assets\shaders\*.fs" />
-    <None Include="assets\shaders\*.fs" />
-    <None Include="assets\shaders\*.vs" />
-    <None Include="assets\shaders\*.vs" />
-    <None Include="assets\shaders\*.vs" />
-    <None Include="assets\shaders\*.vs" />
-    <None Include="assets\shaders\*.vs" />
-    <None Include="assets\shaders\*.vs" />
-    <None Include="assets\shaders\*.fs" />
-    <None Include="assets\shaders\*.fs" />
-    <None Include="assets\shaders\*.fs" />
-    <None Include="assets\shaders\*.fs" />
-    <None Include="assets\shaders\*.fs" />
-    <None Include="assets\shaders\*.fs" />
-    <None Include="assets\shaders\*.vs" />
-    <None Include="assets\shaders\*.vs" />
-    <None Include="assets\shaders\*.vs" />
-    <None Include="assets\shaders\*.vs" />
-    <None Include="assets\shaders\*.vs" />
-    <None Include="assets\shaders\*.vs" />
-    <None Include="assets\shaders\*.fs" />
-    <None Include="assets\shaders\*.fs" />
-    <None Include="assets\shaders\*.fs" />
-    <None Include="assets\shaders\*.fs" />
-    <None Include="assets\shaders\*.fs" />
-    <None Include="assets\shaders\*.fs" />
-    <None Include="assets\shaders\*.vs" />
-    <None Include="assets\shaders\*.vs" />
-    <None Include="assets\shaders\*.vs" />
-    <None Include="assets\shaders\*.vs" />
-    <None Include="assets\shaders\*.vs" />
-    <None Include="assets\shaders\*.vs" />
-    <None Include="assets\shaders\*.fs" />
-    <None Include="assets\shaders\*.fs" />
-    <None Include="assets\shaders\*.fs" />
-    <None Include="assets\shaders\*.fs" />
-    <None Include="assets\shaders\*.fs" />
-    <None Include="assets\shaders\*.fs" />
-    <None Include="assets\shaders\*.vs" />
-    <None Include="assets\shaders\*.vs" />
-    <None Include="assets\shaders\*.vs" />
-    <None Include="assets\shaders\*.vs" />
-    <None Include="assets\shaders\*.vs" />
-    <None Include="assets\shaders\*.vs" />
-    <None Include="assets\shaders\*.fs" />
-    <None Include="assets\shaders\*.fs" />
-    <None Include="assets\shaders\*.fs" />
-    <None Include="assets\shaders\*.fs" />
-    <None Include="assets\shaders\*.fs" />
-    <None Include="assets\shaders\*.fs" />
-    <None Include="assets\shaders\*.vs" />
-    <None Include="assets\shaders\*.vs" />
-    <None Include="assets\shaders\*.vs" />
-    <None Include="assets\shaders\*.vs" />
-    <None Include="assets\shaders\*.vs" />
-    <None Include="assets\shaders\*.vs" />
+    <None Include="assets\shaders\blur.fs" />
+    <None Include="assets\shaders\firework.fs" />
+    <None Include="assets\shaders\ground.fs" />
+    <None Include="assets\shaders\model.fs" />
+    <None Include="assets\shaders\post.fs" />
+    <None Include="assets\shaders\skybox.fs" />
+    <None Include="assets\shaders\text.fs" />
+    <None Include="assets\shaders\blur.fs" />
+    <None Include="assets\shaders\firework.fs" />
+    <None Include="assets\shaders\ground.fs" />
+    <None Include="assets\shaders\model.fs" />
+    <None Include="assets\shaders\post.fs" />
+    <None Include="assets\shaders\skybox.fs" />
+    <None Include="assets\shaders\text.fs" />
+    <None Include="assets\shaders\blur.fs" />
+    <None Include="assets\shaders\firework.fs" />
+    <None Include="assets\shaders\ground.fs" />
+    <None Include="assets\shaders\model.fs" />
+    <None Include="assets\shaders\post.fs" />
+    <None Include="assets\shaders\skybox.fs" />
+    <None Include="assets\shaders\text.fs" />
+    <None Include="assets\shaders\blur.fs" />
+    <None Include="assets\shaders\firework.fs" />
+    <None Include="assets\shaders\ground.fs" />
+    <None Include="assets\shaders\model.fs" />
+    <None Include="assets\shaders\post.fs" />
+    <None Include="assets\shaders\skybox.fs" />
+    <None Include="assets\shaders\text.fs" />
+    <None Include="assets\shaders\blur.fs" />
+    <None Include="assets\shaders\firework.fs" />
+    <None Include="assets\shaders\ground.fs" />
+    <None Include="assets\shaders\model.fs" />
+    <None Include="assets\shaders\post.fs" />
+    <None Include="assets\shaders\skybox.fs" />
+    <None Include="assets\shaders\text.fs" />
+    <None Include="assets\shaders\blur.fs" />
+    <None Include="assets\shaders\firework.fs" />
+    <None Include="assets\shaders\ground.fs" />
+    <None Include="assets\shaders\model.fs" />
+    <None Include="assets\shaders\post.fs" />
+    <None Include="assets\shaders\skybox.fs" />
+    <None Include="assets\shaders\text.fs" />
+    <None Include="assets\shaders\blur.fs" />
+    <None Include="assets\shaders\firework.fs" />
+    <None Include="assets\shaders\ground.fs" />
+    <None Include="assets\shaders\model.fs" />
+    <None Include="assets\shaders\post.fs" />
+    <None Include="assets\shaders\skybox.fs" />
+    <None Include="assets\shaders\text.fs" />
+    <None Include="assets\shaders\blur.fs" />
+    <None Include="assets\shaders\firework.fs" />
+    <None Include="assets\shaders\ground.fs" />
+    <None Include="assets\shaders\model.fs" />
+    <None Include="assets\shaders\post.fs" />
+    <None Include="assets\shaders\skybox.fs" />
+    <None Include="assets\shaders\text.fs" />
+    <None Include="assets\shaders\blur.vs" />
+    <None Include="assets\shaders\firework.vs" />
+    <None Include="assets\shaders\ground.vs" />
+    <None Include="assets\shaders\model.vs" />
+    <None Include="assets\shaders\post.vs" />
+    <None Include="assets\shaders\skybox.vs" />
+    <None Include="assets\shaders\text.vs" />
+    <None Include="assets\shaders\blur.vs" />
+    <None Include="assets\shaders\firework.vs" />
+    <None Include="assets\shaders\ground.vs" />
+    <None Include="assets\shaders\model.vs" />
+    <None Include="assets\shaders\post.vs" />
+    <None Include="assets\shaders\skybox.vs" />
+    <None Include="assets\shaders\text.vs" />
+    <None Include="assets\shaders\blur.vs" />
+    <None Include="assets\shaders\firework.vs" />
+    <None Include="assets\shaders\ground.vs" />
+    <None Include="assets\shaders\model.vs" />
+    <None Include="assets\shaders\post.vs" />
+    <None Include="assets\shaders\skybox.vs" />
+    <None Include="assets\shaders\text.vs" />
+    <None Include="assets\shaders\blur.vs" />
+    <None Include="assets\shaders\firework.vs" />
+    <None Include="assets\shaders\ground.vs" />
+    <None Include="assets\shaders\model.vs" />
+    <None Include="assets\shaders\post.vs" />
+    <None Include="assets\shaders\skybox.vs" />
+    <None Include="assets\shaders\text.vs" />
+    <None Include="assets\shaders\blur.vs" />
+    <None Include="assets\shaders\firework.vs" />
+    <None Include="assets\shaders\ground.vs" />
+    <None Include="assets\shaders\model.vs" />
+    <None Include="assets\shaders\post.vs" />
+    <None Include="assets\shaders\skybox.vs" />
+    <None Include="assets\shaders\text.vs" />
+    <None Include="assets\shaders\blur.vs" />
+    <None Include="assets\shaders\firework.vs" />
+    <None Include="assets\shaders\ground.vs" />
+    <None Include="assets\shaders\model.vs" />
+    <None Include="assets\shaders\post.vs" />
+    <None Include="assets\shaders\skybox.vs" />
+    <None Include="assets\shaders\text.vs" />
+    <None Include="assets\shaders\blur.vs" />
+    <None Include="assets\shaders\firework.vs" />
+    <None Include="assets\shaders\ground.vs" />
+    <None Include="assets\shaders\model.vs" />
+    <None Include="assets\shaders\post.vs" />
+    <None Include="assets\shaders\skybox.vs" />
+    <None Include="assets\shaders\text.vs" />
+    <None Include="assets\shaders\blur.vs" />
+    <None Include="assets\shaders\firework.vs" />
+    <None Include="assets\shaders\ground.vs" />
+    <None Include="assets\shaders\model.vs" />
+    <None Include="assets\shaders\post.vs" />
+    <None Include="assets\shaders\skybox.vs" />
+    <None Include="assets\shaders\text.vs" />
+    <None Include="assets\shaders\*.fs">
+      <Filter>assets/shader</Filter>
+    </None>
+    <None Include="assets\shaders\*.vs">
+      <Filter>assets/shader</Filter>
+    </None>
+    <None Include="assets\shaders\*.fs">
+      <Filter>assets/shader</Filter>
+    </None>
+    <None Include="assets\shaders\*.vs">
+      <Filter>assets/shader</Filter>
+    </None>
+    <None Include="assets\shaders\*.fs">
+      <Filter>assets/shader</Filter>
+    </None>
+    <None Include="assets\shaders\*.vs">
+      <Filter>assets/shader</Filter>
+    </None>
+    <None Include="assets\shaders\*.fs">
+      <Filter>assets/shader</Filter>
+    </None>
+    <None Include="assets\shaders\*.vs">
+      <Filter>assets/shader</Filter>
+    </None>
+    <None Include="assets\shaders\*.fs">
+      <Filter>assets/shader</Filter>
+    </None>
+    <None Include="assets\shaders\*.vs">
+      <Filter>assets/shader</Filter>
+    </None>
+    <None Include="assets\shaders\*.fs">
+      <Filter>assets/shader</Filter>
+    </None>
+    <None Include="assets\shaders\*.fs">
+      <Filter>assets/shader</Filter>
+    </None>
+    <None Include="assets\shaders\*.fs">
+      <Filter>assets/shader</Filter>
+    </None>
+    <None Include="assets\shaders\*.vs">
+      <Filter>assets/shader</Filter>
+    </None>
+    <None Include="assets\shaders\*.vs">
+      <Filter>assets/shader</Filter>
+    </None>
+    <None Include="assets\shaders\*.vs">
+      <Filter>assets/shader</Filter>
+    </None>
+  </ItemGroup>
+  <ItemGroup>
+    <Filter Include="assets/shader">
+      <UniqueIdentifier>{c9ac977f-1a5a-427e-8996-558301ace100}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="src">
+      <UniqueIdentifier>{a9e1913b-8b5b-4cde-9a89-cf97c8f5dd5f}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="include">
+      <UniqueIdentifier>{561548ae-ad51-43db-86fd-c5d749fe6d8c}</UniqueIdentifier>
+    </Filter>
   </ItemGroup>
 </Project>
