@@ -93,7 +93,7 @@ void FireworkParticleSystem::launch(const glm::vec3& position, FireworkType type
     p.color = primaryColor * scale;
     p.initialColor = primaryColor;
     p.secondaryColor = secondaryColor;
-    p.life = life * (0.4f + dis(gen) * 0.2f);  // 随机寿命，让爆炸高度随机
+    p.life = life * (0.6f + dis(gen) * 0.2f);  // 随机寿命，让爆炸高度随机
     p.maxLife = p.life;
     p.size = size * 2.5f;  // 🔧 增大升空粒子大小（原本是 size，现在是 2.5 倍）
     p.type = type;
@@ -187,7 +187,7 @@ void FireworkParticleSystem::update(float deltaTime) {
                 generateSpiralParticles(delayed.position, delayed.color, count, delayed.radius);
                 break;
             case FireworkType::Heart:
-                generateHeartParticles(delayed.position, delayed.color, count, delayed.radius);
+                //generateHeartParticles(delayed.position, delayed.color, count, delayed.radius);
                 break;
             }
             // 第二次爆炸不添加光源
@@ -527,8 +527,8 @@ void FireworkParticleSystem::runTest(float currentTime) {
     static float lastTestTime = 0.0f;
     static bool skipNextLaunch = false; // 跟踪是否需要跳过下一次发射
 
-    // 每1秒发射一次
-    if (currentTime - lastTestTime < 1.0f) return;
+    // 每0.8秒发射一次
+    if (currentTime - lastTestTime < 0.8f) return;
 
     lastTestTime = currentTime;
 
@@ -735,14 +735,14 @@ void FireworkParticleSystem::generateImageParticles(const glm::vec3& center, con
             p.velocity = glm::vec3(posX * expandSpeed, posY * expandSpeed, 0.0f);
             
             // 降低亮度避免bloom效果（bloom阈值为1.5）
-            p.color = pixelColor * 0.15f;
-            p.initialColor = pixelColor * 0.15f;
+            p.color = pixelColor * 0.3f;
+            p.initialColor = pixelColor * 0.3f;
             
             p.life = 0.4f;
             p.maxLife = p.life;
             p.size = childSize * 1.2f;
             p.type = FireworkType::Image;
-            p.isTail = true;  // 🔧 改为 false，允许生成拖尾
+            p.isTail = true;  
             p.canExplodeAgain = false;
             
             explosionParticles.push_back(p);

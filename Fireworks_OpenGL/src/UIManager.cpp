@@ -749,7 +749,7 @@ void UIManager::InitializeArtTexts() {
         artText.text = messages[i];
         artText.color = colors[i];
         artText.x = screenWidth / 2.0f;
-        artText.y = screenHeight / 2.0f - 350.0f * scale; // 屏幕中央偏上
+        artText.y = screenHeight / 2.0f - 420.0f * scale; // 屏幕中央偏上
         artText.scale = 2.0f * scale;  //字体缩放
         artText.alpha = 0.0f;
         artText.time = 0.0f;
@@ -785,7 +785,7 @@ void UIManager::StartArtTextAnimation(int index) {
 
     // 重新计算居中位置（考虑窗口大小可能已改变）
     artText.x = screenWidth / 2.0f;
-    artText.y = screenHeight / 2.0f - 350.0f;
+    artText.y = screenHeight / 2.0f - 420.0f;
 
     std::cout << "[UIManager] Art text animation started: " << index + 1 << std::endl;
 }
