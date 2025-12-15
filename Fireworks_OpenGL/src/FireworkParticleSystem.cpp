@@ -565,7 +565,7 @@ void FireworkParticleSystem::runTest(float currentTime) {
 
     // 随机位置（x在0到14之间，z在-9到-3之间）
     float randomX = -4.0f + dis(gen) * 14.0f;
-    float randomZ = 0.0f + dis(gen) * 6.0f;
+    float randomZ = -2.5f + dis(gen) * 4.0f;
     glm::vec3 launchPos(randomX, 0.5f, randomZ);
 
     // 随机尺寸（0.1f到0.15f）
