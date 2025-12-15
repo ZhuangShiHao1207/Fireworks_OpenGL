@@ -311,8 +311,8 @@ void FireworkParticleSystem::createExplosion(const Particle& source, bool isSeco
     }
 
     // Use initialColor instead of current color to keep explosions bright
-    // 🔧 允许图片烟花也有二次爆炸（移除了 source.type != FireworkType::Image 的判断）
-    if (!isSecondary) {
+    // 🔧 图片烟花不进行二次爆炸，避免消失时突然发亮
+    if (!isSecondary && source.type != FireworkType::Image) {
         // 添加延迟0.1秒的第二次爆炸
         DelayedExplosion delayed;
         delayed.position = source.position;
@@ -742,7 +742,7 @@ void FireworkParticleSystem::generateImageParticles(const glm::vec3& center, con
             p.maxLife = p.life;
             p.size = childSize * 1.2f;
             p.type = FireworkType::Image;
-            p.isTail = false;  // 🔧 改为 false，允许生成拖尾
+            p.isTail = true;  // 🔧 改为 false，允许生成拖尾
             p.canExplodeAgain = false;
             
             explosionParticles.push_back(p);
