@@ -107,28 +107,28 @@ int main()
     lightManager.AddPermanentLight(
         glm::vec3(0.0f, 8.0f, 5.0f),       // 位置：上方偏前
         glm::vec3(0.9f, 0.9f, 1.0f),       // 颜色：淡蓝白色
-        0.5f                                // 强度：较弱
+        0.3f                                // 强度：较弱
     );
     
     // 辅助光源 - 补光，照亮书本侧面
     lightManager.AddPermanentLight(
         glm::vec3(-5.0f, 5.0f, 0.0f),      // 位置：左侧
         glm::vec3(1.0f, 0.95f, 0.9f),      // 颜色：暖白色
-        0.2f                                // 强度：微弱
+        0.1f                                // 强度：微弱
     );
     
     // 背景光源 - 填充阴影
     lightManager.AddPermanentLight(
         glm::vec3(5.0f, 5.0f, -5.0f),      // 位置：右后方
         glm::vec3(0.85f, 0.9f, 1.0f),      // 颜色：冷白色
-        0.5f                                // 强度：很弱
+        0.3f                                // 强度：很弱
     );
     
     // 地面补光 - 照亮地面
     lightManager.AddPermanentLight(
         glm::vec3(0.0f, 2.0f, 0.0f),       // 位置：较低位置
         glm::vec3(0.8f, 0.85f, 0.9f),      // 颜色：淡蓝色
-        0.8f                                // 强度：极弱
+        0.5f                                // 强度：极弱
     );
 
     std::cout << "\n=== Fireworks OpenGL ===" << std::endl;
@@ -229,7 +229,7 @@ int main()
         groundShader->setFloat("groundShininess", 32.0f);        // 地面较低光泽度
         groundShader->setFloat("groundSpecularStrength", 0.3f);  // 水面适度镜面反射
         
-        // ✅ 优化雾效参数以匹配星空天空盒
+        // 优化雾效参数以匹配星空天空盒
         groundShader->setVec3("fogColor", glm::vec3(0.02f, 0.04f, 0.12f));  // 深蓝偏黑，匹配夜空
         groundShader->setFloat("fogDensity", 0.030f);  // 降低密度，使过渡更柔和
         groundShader->setFloat("fogStart", 15.0f);      // 提前开始雾效
@@ -277,7 +277,7 @@ int main()
         modelShader->setFloat("materialShininess", 64.0f);   // 镜面高光锐度（32-128 典型值）
         modelShader->setFloat("specularStrength", 0.5f);     // 镜面高光强度（0.0-1.0）
         
-        // ✅ 优化雾效参数以匹配星空天空盒
+        // 优化雾效参数以匹配星空天空盒
         modelShader->setVec3("fogColor", glm::vec3(0.02f, 0.04f, 0.12f));  // 深蓝偏黑，匹配夜空
         modelShader->setFloat("fogDensity", 0.015f);  // 降低密度，使过渡更柔和
         modelShader->setFloat("fogStart", 20.0f);      // 提前开始雾效

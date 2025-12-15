@@ -95,12 +95,13 @@ void FireworkParticleSystem::launch(const glm::vec3& position, FireworkType type
     p.secondaryColor = secondaryColor;
     p.life = life * (0.4f + dis(gen) * 0.2f);  // 随机寿命，让爆炸高度随机
     p.maxLife = p.life;
-    p.size = size;
+    p.size = size * 2.5f;  // 🔧 增大升空粒子大小（原本是 size，现在是 2.5 倍）
     p.type = type;
     p.isTail = false;
     p.canExplodeAgain = false;
     p.isDualColor = (secondaryColor != glm::vec4(1.0f));  // 如果是默认值，则是单色
     p.rotationAngle = 0.0f;
+    p.imagePath = "";  // 默认空路径
 
     launcherParticles.push_back(p);
 }
@@ -264,13 +265,14 @@ glm::vec4 FireworkParticleSystem::calculateColorGradient(const Particle& p) cons
 
     if (lifeRatio > 0.95f) {
         // 初始阶段：稍微明亮（缩短到只有最开始5%的时间）
-        float brightness = 1.0f; // 最多增强到1.15倍
-        resultColor = glm::vec4(
-            (glm::min)(p.initialColor.r * brightness, 1.0f), 
-            (glm::min)(p.initialColor.g * brightness, 1.0f), 
-            (glm::min)(p.initialColor.b * brightness, 1.0f), 
-            1.0f
-        );
+//         float brightness = 1.0f; // 最多增强到1.15倍
+//         resultColor = glm::vec4(
+//             (glm::min)(p.initialColor.r * brightness, 1.0f), 
+//             (glm::min)(p.initialColor.g * brightness, 1.0f), 
+//             (glm::min)(p.initialColor.b * brightness, 1.0f), 
+//             1.0f
+//         );
+        resultColor = glm::vec4(p.initialColor.r, p.initialColor.g, p.initialColor.b, 1.0f);
     }
     else if (lifeRatio > 0.15f) {
         // 中段：保持原色明亮（延长保持原色的时间）
@@ -309,8 +311,8 @@ void FireworkParticleSystem::createExplosion(const Particle& source, bool isSeco
     }
 
     // Use initialColor instead of current color to keep explosions bright
-    // 图片烟花不需要延迟二次爆炸
-    if (!isSecondary && source.type != FireworkType::Image) {
+    // 🔧 允许图片烟花也有二次爆炸（移除了 source.type != FireworkType::Image 的判断）
+    if (!isSecondary) {
         // 添加延迟0.1秒的第二次爆炸
         DelayedExplosion delayed;
         delayed.position = source.position;
@@ -346,13 +348,18 @@ void FireworkParticleSystem::createExplosion(const Particle& source, bool isSeco
         generateHeartParticles(source.position, source.initialColor, count);
         break;
     case FireworkType::Image:
-        // 图片烟花使用固定路径（不采样，处理所有像素）
-        generateImageParticles(source.position, "assets/firework_images/image.png", 1);
+        // 图片烟花使用动态路径（从粒子中获取）
+        if (!source.imagePath.empty()) {
+            generateImageParticles(source.position, source.imagePath, 1);
+        } else {
+            // 回退到默认路径
+            generateImageParticles(source.position, "assets/firework_images/image.png", 1);
+        }
         break;
     }
 }
 
-// 球形烟花
+// 球形烟花 - 🔧 缩短生命周期
 void FireworkParticleSystem::generateSphereParticles(const glm::vec3& center, const glm::vec4& color, int count, float radius, bool canExplode) {
     for (int i = 0; i < count; ++i) {
         float u = dis(gen);
@@ -370,7 +377,8 @@ void FireworkParticleSystem::generateSphereParticles(const glm::vec3& center, co
         ) * r;
         p.color = color;
         p.initialColor = color;
-        p.life = 0.6f + 0.25f * dis(gen);
+		// 调整生命周期（0.4-0.55s）
+        p.life = 0.4f + 0.15f * dis(gen);
         p.maxLife = p.life;
         p.size = childSize;
         p.type = FireworkType::Sphere;
@@ -395,7 +403,7 @@ void FireworkParticleSystem::generateRingParticles(const glm::vec3& center, cons
         );
         p.color = color;
         p.initialColor = color;
-        p.life = 0.6f + 0.25f * dis(gen);
+        p.life = 0.35f + 0.15f * dis(gen);  // 🔧 缩短：0.35-0.5秒（原本 0.6-0.85秒）
         p.maxLife = p.life;
         p.size = childSize;
         p.type = FireworkType::Ring;
@@ -438,7 +446,8 @@ void FireworkParticleSystem::generateMultiLayerParticles(const glm::vec3& center
             ) * layerRadius;
             p.color = layerColor;
             p.initialColor = layerColor;
-            p.life = 0.5f + 0.15f * dis(gen) + layer * 0.15f; // 外层寿命更长
+			// 外层寿命更长 （整体寿命：）
+            p.life = 0.4f + 0.15f * dis(gen) + layer * 0.1f; // 🔧 缩短：0.3-0.6秒（原本 0.5-1.1秒）
             p.maxLife = p.life;
             p.size = childSize * (1.0f + layer * 0.2f); // 外层更大
             p.type = FireworkType::MultiLayer;
@@ -469,7 +478,7 @@ void FireworkParticleSystem::generateSpiralParticles(const glm::vec3& center, co
         );
         p.color = color;
         p.initialColor = color;
-        p.life = 0.75f + 0.25f * dis(gen);
+        p.life = 0.45f + 0.15f * dis(gen);  // 🔧 缩短：0.45-0.6秒（原本 0.75-1.0秒）
         p.maxLife = p.life;
         p.size = childSize;
         p.type = FireworkType::Spiral;
@@ -480,7 +489,7 @@ void FireworkParticleSystem::generateSpiralParticles(const glm::vec3& center, co
     }
 }
 
-// 心形烟花
+// 心形烟花 - 🔧 缩短生命周期
 void FireworkParticleSystem::generateHeartParticles(const glm::vec3& center, const glm::vec4& color, int count, float radiusScale) {
     for (int i = 0; i < count; ++i) {
         float t = (float)i / count * 2.0f * 3.14159265f;
@@ -503,7 +512,7 @@ void FireworkParticleSystem::generateHeartParticles(const glm::vec3& center, con
         );
         p.color = color;
         p.initialColor = color;
-        p.life = 0.75f + 0.25f * dis(gen);
+        p.life = 0.45f + 0.15f * dis(gen);  // 🔧 缩短：0.45-0.6秒（原本 0.75-1.0秒）
         p.maxLife = p.life;
         p.size = childSize;
         p.type = FireworkType::Heart;
@@ -517,20 +526,10 @@ void FireworkParticleSystem::generateHeartParticles(const glm::vec3& center, con
 void FireworkParticleSystem::runTest(float currentTime) {
     static float lastTestTime = 0.0f;
 
-    // 每3秒发射一次
-    if (currentTime - lastTestTime < 3.0f) return;
+    // 每1.5秒发射一次
+    if (currentTime - lastTestTime < 1.5f) return;
 
     lastTestTime = currentTime;
-
-    // 双色烟花类型数组（对应按键7,8,Z,X,C,V）
-    FireworkType dualColorTypes[] = {
-        FireworkType::Sphere,    // 7键
-        FireworkType::Ring,      // 8键
-        FireworkType::Heart,     // Z键
-        FireworkType::MultiLayer,// X键
-        FireworkType::Spiral,    // C键
-        FireworkType::Sphere     // V键（也是球形）
-    };
 
     // 生成完全随机的HSV颜色对
     auto generateRandomColorPair = []() -> std::pair<glm::vec4, glm::vec4> {
@@ -553,30 +552,72 @@ void FireworkParticleSystem::runTest(float currentTime) {
         glm::vec4 secondaryColor = HSVtoRGB(hue2, saturation2, value2);
 
         return { primaryColor, secondaryColor };
-        };
+    };
 
-    // 随机选择一种烟花类型
-    int typeIndex = static_cast<int>(dis(gen) * 6) % 6;
-    FireworkType selectedType = dualColorTypes[typeIndex];
-
-    // 生成完全随机颜色对（100%概率）
-    std::pair<glm::vec4, glm::vec4> selectedColors = generateRandomColorPair();
-
-    // 随机位置（x在-8到8之间，z在-5到5之间）
-    float randomX = -8.0f + dis(gen) * 16.0f;
-    float randomZ = -5.0f + dis(gen) * 10.0f;
+    // 随机位置（x在0到14之间，z在-9到-3之间）
+    float randomX = -4.0f + dis(gen) * 14.0f;
+    float randomZ = -9.0f + dis(gen) * 6.0f;
     glm::vec3 launchPos(randomX, 0.5f, randomZ);
 
     // 随机尺寸（0.02f到0.05f）
     float randomSize = 0.02f + dis(gen) * 0.03f;
 
-    // 随机寿命（0.5f到1.5f）
-    // float randomLife = 0.5f + dis(gen) * 1.0f;
-
-    // 发射烟花
-    launch(launchPos, selectedType, 1.5f,
-        selectedColors.first, selectedColors.second, randomSize);
-
+    // 随机选择烟花类型（Image概率降低至15%）
+    float typeRoll = dis(gen);
+    FireworkType selectedType;
+    
+    if (typeRoll < 0.1f) {
+        // 10% 概率：Image（随机选择word.png或image.png）
+        selectedType = FireworkType::Image;
+        std::string imagePath = (dis(gen) < 0.5f) 
+            ? "assets/firework_images/word.png" 
+            : "assets/firework_images/image.png";
+        
+        Particle launcher;
+        launcher.position = launchPos;
+        launcher.velocity = glm::vec3(0.0f, 12.0f, 0.0f);
+        launcher.color = glm::vec4(1.0f);
+        launcher.initialColor = glm::vec4(1.0f);
+        launcher.secondaryColor = glm::vec4(1.0f);
+        launcher.life = 1.5f * (0.4f + dis(gen) * 0.2f);
+        launcher.maxLife = launcher.life;
+        launcher.size = randomSize * 2.5f;
+        launcher.type = selectedType;
+        launcher.isTail = false;
+        launcher.canExplodeAgain = false;
+        launcher.isDualColor = false;
+        launcher.rotationAngle = 0.0f;
+        launcher.imagePath = imagePath;  // 设置图片路径
+        
+        // 播放升空音效
+        if (audioInitialized) {
+            int index = static_cast<int>(dis(gen) * 2) % 2;
+            std::string path = "assets/sounds/firework/rise/firework_rise_0" + std::to_string(index + 1) + ".wav";
+            ma_engine_play_sound(&audioEngine, path.c_str(), NULL);
+        }
+        
+        launcherParticles.push_back(launcher);
+        return;
+    }
+    else if (typeRoll < 0.10f + 0.35f) {
+        // 35% 概率：双层不同色Sphere
+        selectedType = FireworkType::Sphere;
+        auto colors = generateRandomColorPair();
+        launch(launchPos, selectedType, 1.5f, colors.first, colors.second, randomSize);
+    }
+    else if (typeRoll < 0.10f + 0.35f * 2) {
+        // 35% 概率：三层不同色Sphere（使用MultiLayer）
+        selectedType = FireworkType::MultiLayer;
+        auto colors = generateRandomColorPair();
+        launch(launchPos, selectedType, 1.5f, colors.first, colors.second, randomSize);
+    }
+    else {
+        // 20% 概率：单层Heart
+        selectedType = FireworkType::Heart;
+        auto colors = generateRandomColorPair();
+        // 单层Heart使用相同颜色（不是双色）
+        launch(launchPos, selectedType, 1.5f, colors.first, glm::vec4(1.0f), randomSize);
+    }
 }
 
 void FireworkParticleSystem::cleanupGL() {
@@ -652,8 +693,8 @@ void FireworkParticleSystem::generateImageParticles(const glm::vec3& center, con
     int step = 1;
     
     // 计算图片缩放比例，使其在3D空间中合适大小
-    float scaleX = 3.0f / image.width;  // 图片宽度映射到3个单位
-    float scaleY = 3.0f / image.height; // 图片高度映射到3个单位
+    float scaleX = 6.0f / image.width;  // 图片宽度映射到6个单位
+    float scaleY = 6.0f / image.height; // 图片高度映射到6个单位
     float scale = (std::min)(scaleX, scaleY); // 使用较小的缩放保持比例
 
     // 图片中心化
@@ -689,11 +730,11 @@ void FireworkParticleSystem::generateImageParticles(const glm::vec3& center, con
             p.color = pixelColor * 0.5f;
             p.initialColor = pixelColor * 0.5f;
             
-            p.life = 0.5f; // 0.5秒后消失
+            p.life = 0.3f;
             p.maxLife = p.life;
-            p.size = childSize ; // 稍大一些让图片更清晰
+            p.size = childSize * 1.0f;
             p.type = FireworkType::Image;
-            p.isTail = true; // 标记为拖尾粒子，防止生成拖尾
+            p.isTail = false;  // 🔧 改为 false，允许生成拖尾
             p.canExplodeAgain = false;
             
             explosionParticles.push_back(p);
