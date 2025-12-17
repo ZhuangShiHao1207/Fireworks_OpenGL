@@ -228,14 +228,14 @@ public:
             // 注视岛屿中心
             Front = glm::normalize(CinematicTargetCenter - Position);
         }
-        // 第三阶段 (8.5-11s): 返回并下降到烟花观赏点（更慢，更低）
+        // 第三阶段 (8.5-11s): 返回并下降到烟花观赏点
         else if (t < 11.0f) {
-            float phase = (t - 8.5f) / 2.5f; // 延长到2.5秒
+            float phase = (t - 8.5f) / 2.5f; 
             phase = smoothstep(0.0f, 1.0f, phase); // 平滑过渡
             
             // 从轨道位置到烟花观赏点，降低高度，拉远距离
             glm::vec3 startPos = glm::vec3(4.0f, 6.5f, 20.0f);
-            glm::vec3 endPos = glm::vec3(4.0f, 3.0f, 16.0f); // 更低，稍微后退，向右
+            glm::vec3 endPos = glm::vec3(4.0f, 3.0f, 20.0f);
             Position = glm::mix(startPos, endPos, phase);
             
             // 渐渐仰视天空

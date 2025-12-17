@@ -122,28 +122,28 @@ int main()
     lightManager.AddPermanentLight(
         glm::vec3(0.0f, 8.0f, 5.0f),       // 位置：上方偏前
         glm::vec3(0.9f, 0.9f, 1.0f),       // 颜色：淡蓝白色
-        0.3f                                // 强度：较弱
+        0.5f                                // 强度
     );
     
     // 辅助光源 - 补光，照亮书本侧面
     lightManager.AddPermanentLight(
         glm::vec3(-5.0f, 5.0f, 0.0f),      // 位置：左侧
         glm::vec3(1.0f, 0.95f, 0.9f),      // 颜色：暖白色
-        0.1f                                // 强度：微弱
+        0.3f                              
     );
     
     // 背景光源 - 填充阴影
     lightManager.AddPermanentLight(
         glm::vec3(5.0f, 5.0f, -5.0f),      // 位置：右后方
         glm::vec3(0.85f, 0.9f, 1.0f),      // 颜色：冷白色
-        0.3f                                // 强度：很弱
+        0.5f                             
     );
     
     // 地面补光 - 照亮地面
     lightManager.AddPermanentLight(
         glm::vec3(0.0f, 2.0f, 0.0f),       // 位置：较低位置
         glm::vec3(0.8f, 0.85f, 0.9f),      // 颜色：淡蓝色
-        0.5f                                // 强度：极弱
+        0.5f                                
     );
 
     std::cout << "\n=== Fireworks OpenGL ===" << std::endl;
@@ -340,6 +340,8 @@ int main()
 		// 获取电影模式的淡入淡出透明度并应用
 		float fadeAlpha = camera.GetCinematicFadeAlpha();
 		postProcessor->SetFadeAlpha(fadeAlpha);
+        postProcessor->SetBloomEnabled(true);   // 开启Bloom
+        postProcessor->SetExposure(1.0);        // 设置曝光度为1.0
 		postProcessor->Render();
 
         // 更新UI管理器

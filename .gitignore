@@ -418,4 +418,9 @@ FodyWeavers.xsd
 *.msp
 
 **build/
+*.ppt
 *.pptx
+# videos
+*.mp4
+*.mov
+*.avi

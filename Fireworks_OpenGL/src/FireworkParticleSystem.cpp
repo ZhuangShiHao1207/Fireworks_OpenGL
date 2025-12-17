@@ -160,6 +160,7 @@ void FireworkParticleSystem::update(float deltaTime) {
             
             p.position += p.velocity * dt;
             p.velocity += glm::vec3(0, gravity, 0) * dt;
+			p.velocity *= 0.993f; // 空气阻力
             p.life -= dt;
 			// if (p.type != FireworkType::Image)
             p.color = calculateColorGradient(p);
@@ -367,7 +368,7 @@ void FireworkParticleSystem::generateSphereParticles(const glm::vec3& center, co
         float v = dis(gen);
         float theta = u * 2.0f * 3.14159265f;
         float phi = acos(2.0f * v - 1.0f);
-        float r = radius * (1.1f + 0.3f * dis(gen)); // 半径有一定随机性
+        float r = radius * (1.5f + 0.15f * dis(gen)); // 半径有一定随机性
 
         Particle p;
         p.position = center;
@@ -375,7 +376,7 @@ void FireworkParticleSystem::generateSphereParticles(const glm::vec3& center, co
             sin(phi) * cos(theta),
             sin(phi) * sin(theta),
             cos(phi)
-        ) * r;
+        ) * r * 2.0f;
         p.color = color;
         p.initialColor = color;
 		// 调整生命周期（0.4-0.55s）
@@ -401,7 +402,7 @@ void FireworkParticleSystem::generateRingParticles(const glm::vec3& center, cons
             cos(angle) * r,
             0.5f + dis(gen) * 0.5f, // 轻微向上
             sin(angle) * r
-        );
+        ) * 2.0f;
         p.color = color;
         p.initialColor = color;
         p.life = 0.35f + 0.15f * dis(gen);  // 🔧 缩短：0.35-0.5秒（原本 0.6-0.85秒）
@@ -418,7 +419,7 @@ void FireworkParticleSystem::generateRingParticles(const glm::vec3& center, cons
 void FireworkParticleSystem::generateMultiLayerParticles(const glm::vec3& center, const glm::vec4& color, int count, float radiusScale) {
     int layers = 3;
     int particlesPerLayer = count / layers;
-    float baseRadius = radiusScale * 0.9f;
+    float baseRadius = radiusScale * 0.8f;
 
     for (int layer = 0; layer < layers; ++layer) {
         float layerRadius = baseRadius + layer * (radiusScale * 0.3f);
@@ -444,13 +445,13 @@ void FireworkParticleSystem::generateMultiLayerParticles(const glm::vec3& center
                 sin(phi) * cos(theta),
                 sin(phi) * sin(theta),
                 cos(phi)
-            ) * layerRadius;
+            ) * layerRadius * 2.2f;
             p.color = layerColor;
             p.initialColor = layerColor;
 			// 外层寿命更长 （整体寿命：）
             p.life = 0.4f + 0.15f * dis(gen) + layer * 0.1f; // 🔧 缩短：0.3-0.6秒（原本 0.5-1.1秒）
             p.maxLife = p.life;
-            p.size = childSize * (1.0f + layer * 0.2f); // 外层更大
+            p.size = childSize * (1.0f + layer * 0.02f); // 外层更大
             p.type = FireworkType::MultiLayer;
             p.isTail = false;
             p.canExplodeAgain = false;
@@ -476,7 +477,7 @@ void FireworkParticleSystem::generateSpiralParticles(const glm::vec3& center, co
             cos(angle) * r * 0.8f,
             1.5f + dis(gen) * 0.5f,
             sin(angle) * r * 0.8f
-        );
+        ) * 2.0f;
         p.color = color;
         p.initialColor = color;
         p.life = 0.45f + 0.15f * dis(gen);  // 🔧 缩短：0.45-0.6秒（原本 0.75-1.0秒）
@@ -510,7 +511,7 @@ void FireworkParticleSystem::generateHeartParticles(const glm::vec3& center, con
             x + dis(gen) * 0.3f,
             y + dis(gen) * 0.3f + 1.0f, // 向上偏移
             dis(gen) * 0.5f - 0.25f // Z方向随机
-        ) * 1.5f;
+        ) * 3.2f;
         p.color = color;
         p.initialColor = color;
         p.life = 0.45f + 0.15f * dis(gen);  // 🔧 缩短：0.45-0.6秒（原本 0.75-1.0秒）
@@ -568,7 +569,7 @@ void FireworkParticleSystem::runTest(float currentTime) {
     glm::vec3 launchPos(randomX, 0.5f, randomZ);
 
     // 随机尺寸（0.1f到0.15f）
-    float randomSize = 0.1f + dis(gen) * 0.05f;
+    float randomSize = 0.21f + dis(gen) * 0.01f;
 
     // 随机选择烟花类型（Image概率为15%）
     float typeRoll = dis(gen);
@@ -733,15 +734,15 @@ void FireworkParticleSystem::generateImageParticles(const glm::vec3& center, con
             // 初始速度：向图片对应位置扩散（放大效果）
             // 扩散速度基于距离中心的位置
             float expandSpeed = 0.8f; // 扩散速度系数
-            p.velocity = glm::vec3(posX * expandSpeed, posY * expandSpeed, 0.0f);
+            p.velocity = glm::vec3(posX * expandSpeed, posY * expandSpeed, 0.0f) * 2.5f;
             
             // 降低亮度避免bloom效果（bloom阈值为1.5）
-            p.color = pixelColor * 0.11f;
-            p.initialColor = pixelColor * 0.11f;
+            p.color = pixelColor * 0.2f;
+            p.initialColor = pixelColor * 0.2f;
             
             p.life = 0.8f;
             p.maxLife = p.life;
-            p.size = 0.015f;
+            p.size = 0.02f;
             p.type = FireworkType::Image;
             p.isTail = true;  
             p.canExplodeAgain = false;

@@ -11,13 +11,13 @@
     <ClCompile Include="src\InputHandler.cpp">
       <Filter>src</Filter>
     </ClCompile>
-    <ClCompile Include="PostProcessor.cpp">
-      <Filter>src</Filter>
-    </ClCompile>
     <ClCompile Include="src\UIManager.cpp">
       <Filter>src</Filter>
     </ClCompile>
     <ClCompile Include="src\TextRenderer.cpp">
+      <Filter>src</Filter>
+    </ClCompile>
+    <ClCompile Include="src\PostProcessor.cpp">
       <Filter>src</Filter>
     </ClCompile>
   </ItemGroup>
@@ -46,9 +46,6 @@
     <ClInclude Include="include\PointLight.h">
       <Filter>include</Filter>
     </ClInclude>
-    <ClInclude Include="PostProcessor.h">
-      <Filter>include</Filter>
-    </ClInclude>
     <ClInclude Include="include\Shader.h">
       <Filter>include</Filter>
     </ClInclude>
@@ -62,6 +59,9 @@
       <Filter>include</Filter>
     </ClInclude>
     <ClInclude Include="include\UIManager.h">
+      <Filter>include</Filter>
+    </ClInclude>
+    <ClInclude Include="include\PostProcessor.h">
       <Filter>include</Filter>
     </ClInclude>
   </ItemGroup>
@@ -108,20 +108,6 @@
     <None Include="assets\shaders\post.fs" />
     <None Include="assets\shaders\skybox.fs" />
     <None Include="assets\shaders\text.fs" />
-    <None Include="assets\shaders\blur.fs" />
-    <None Include="assets\shaders\firework.fs" />
-    <None Include="assets\shaders\ground.fs" />
-    <None Include="assets\shaders\model.fs" />
-    <None Include="assets\shaders\post.fs" />
-    <None Include="assets\shaders\skybox.fs" />
-    <None Include="assets\shaders\text.fs" />
-    <None Include="assets\shaders\blur.vs" />
-    <None Include="assets\shaders\firework.vs" />
-    <None Include="assets\shaders\ground.vs" />
-    <None Include="assets\shaders\model.vs" />
-    <None Include="assets\shaders\post.vs" />
-    <None Include="assets\shaders\skybox.vs" />
-    <None Include="assets\shaders\text.vs" />
     <None Include="assets\shaders\blur.vs" />
     <None Include="assets\shaders\firework.vs" />
     <None Include="assets\shaders\ground.vs" />
@@ -352,6 +338,20 @@
     <None Include="assets\shaders\*.vs">
       <Filter>assets/shader</Filter>
     </None>
+    <None Include="assets\shaders\*.fs" />
+    <None Include="assets\shaders\*.fs" />
+    <None Include="assets\shaders\*.fs" />
+    <None Include="assets\shaders\*.fs" />
+    <None Include="assets\shaders\*.fs" />
+    <None Include="assets\shaders\*.fs" />
+    <None Include="assets\shaders\*.fs" />
+    <None Include="assets\shaders\*.vs" />
+    <None Include="assets\shaders\*.vs" />
+    <None Include="assets\shaders\*.vs" />
+    <None Include="assets\shaders\*.vs" />
+    <None Include="assets\shaders\*.vs" />
+    <None Include="assets\shaders\*.vs" />
+    <None Include="assets\shaders\*.vs" />
   </ItemGroup>
   <ItemGroup>
     <Filter Include="assets/shader">

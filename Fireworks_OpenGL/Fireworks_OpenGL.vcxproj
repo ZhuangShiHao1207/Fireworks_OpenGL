@@ -139,9 +139,9 @@ xcopy /y /d "$(VcpkgRoot)\installed\x64-windows\bin\freetype.dll" "$(OutDir)"</C
     <ClCompile Include="external\glad\src\glad.c" />
     <ClCompile Include="main.cpp" />
     <ClCompile Include="miniaudio_impl.cpp" />
-    <ClCompile Include="PostProcessor.cpp" />
     <ClCompile Include="src\InputHandler.cpp" />
     <ClCompile Include="src\FireworkParticleSystem.cpp" />
+    <ClCompile Include="src\PostProcessor.cpp" />
     <ClCompile Include="src\TextRenderer.cpp" />
     <ClCompile Include="src\UIManager.cpp" />
     <ClCompile Include="stb_image_impl.cpp" />
@@ -154,13 +154,13 @@ xcopy /y /d "$(VcpkgRoot)\installed\x64-windows\bin\freetype.dll" "$(OutDir)"</C
     <ClInclude Include="include\miniaudio.h" />
     <ClInclude Include="include\Model.h" />
     <ClInclude Include="include\PointLight.h" />
+    <ClInclude Include="include\PostProcessor.h" />
     <ClInclude Include="include\Shader.h" />
     <ClInclude Include="include\Skybox.h" />
     <ClInclude Include="include\InputHandler.h" />
     <ClInclude Include="include\stb_image.h" />
     <ClInclude Include="include\TextRenderer.h" />
     <ClInclude Include="include\UIManager.h" />
-    <ClInclude Include="PostProcessor.h" />
   </ItemGroup>
   <ItemGroup>
     <None Include="assets\shaders\*.fs" />
