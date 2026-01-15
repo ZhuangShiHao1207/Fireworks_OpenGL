@@ -250,9 +250,9 @@ int main()
         groundShader->setFloat("groundSpecularStrength", 0.3f);  // 水面适度镜面反射
         
         // 优化雾效参数以匹配星空天空盒
-        groundShader->setVec3("fogColor", glm::vec3(0.02f, 0.04f, 0.12f));  // 深蓝偏黑，匹配夜空
-        groundShader->setFloat("fogDensity", 0.030f);  // 降低密度，使过渡更柔和
-        groundShader->setFloat("fogStart", 15.0f);      // 提前开始雾效
+        groundShader->setVec3("fogColor", glm::vec3(0.05f, 0.08f, 0.2f));  // 深蓝偏黑，匹配夜空
+        groundShader->setFloat("fogDensity", 0.07f);  // 降低密度，使过渡更柔和
+        groundShader->setFloat("fogStart", 9.0f);
         
         if (ground.hasTexture) {
             groundShader->setInt("groundTexture", 0);
@@ -299,8 +299,8 @@ int main()
         
         // 优化雾效参数以匹配星空天空盒
         modelShader->setVec3("fogColor", glm::vec3(0.02f, 0.04f, 0.12f));  // 深蓝偏黑，匹配夜空
-        modelShader->setFloat("fogDensity", 0.015f);  // 降低密度，使过渡更柔和
-        modelShader->setFloat("fogStart", 20.0f);      // 提前开始雾效
+        modelShader->setFloat("fogDensity", 0.02f);  // 降低密度，使过渡更柔和
+        modelShader->setFloat("fogStart", 10.0f);      // 提前开始雾效
 
         // 设置模型光源（与地面相同）
         modelShader->setInt("numLights", numLights);

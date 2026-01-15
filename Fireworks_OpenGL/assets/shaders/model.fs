@@ -101,6 +101,6 @@ void main()
     }
     
     result = mix(result, fogColor, fogFactor);
-    
+
     FragColor = vec4(result, 1.0);
 }
